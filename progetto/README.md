@@ -53,6 +53,9 @@ Codice in `js/microsoft.js`; si attiva compilando `CONFIG.microsoft` in `js/dati
   di esempio); poi resta all'offerta, anche riscaricando il PDF dopo una correzione;
   anno da "Preventivo del" al momento dell'assegnazione (altrimenti l'anno in corso);
   2026 parte da 0148, gli altri anni da 0001. Nell'Artifact il progressivo viene dal registro condiviso
-  (capability `db`, collezione `offerte`, un documento per numero con numero/anno/data); in locale da un
-  contatore del browser, quindi va verificato a mano.
+  (capability `db`, collezione `offerte`, un documento per numero con numero/anno/data); con Microsoft 365 dalla lista SharePoint.
+- **Senza registro condiviso** (sito pubblicato senza SharePoint, o file aperto in locale) il numero è
+  **anno + data dello scarico del PDF in formato mmgg**: `OFF-2026-1103` per un PDF scaricato il 3 novembre.
+  L'anno resta quello di "Preventivo del" (o l'anno in corso). Due offerte scaricate lo stesso giorno, anche da
+  colleghi diversi, hanno lo stesso numero.
 - Il tipo di offerta (Commessa singola / Pacchetto commesse) resta quello scelto quando si attivano o tolgono i dati di esempio.

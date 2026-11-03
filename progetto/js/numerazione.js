@@ -1,7 +1,7 @@
 // Numero d'offerta automatico: PREFISSO-ANNO-PROGRESSIVO (CONFIG.numerazione).
 // Pubblicato come Artifact, il progressivo viene da un registro condiviso (capability "db",
 // collezione "offerte": un documento per numero, con numero, anno e data — nessun dato del cliente).
-// In locale non c'è registro: il numero viene da un contatore del browser.
+// Senza registro (sito pubblicato senza SharePoint, o file in locale) il numero è PREFISSO-ANNO-MMGG, con la data dello scarico del PDF.
 // Con Microsoft 365 configurato (CONFIG.microsoft) il numero viene dalla lista SharePoint (js/microsoft.js).
 
 const annoOfferta = (f) => {
@@ -34,13 +34,11 @@ async function numeroDaRegistro(anno) {
   throw new Error('nessun numero libero trovato');
 }
 
-function numeroDaContatoreLocale(anno) {
-  const chiave = 'wes-offerta-contatore-' + anno;
-  let ultimo = 0;
-  try { ultimo = Number(localStorage.getItem(chiave)) || 0; } catch (e) {}
-  const n = Math.max(partenzaAnno(anno), ultimo + 1);
-  try { localStorage.setItem(chiave, String(n)); } catch (e) {}
-  return formattaNumero(anno, n);
+// Numero dalla data del clic su "Scarica PDF", in formato mmgg (es. 3 novembre → OFF-2026-1103).
+// Due offerte scaricate lo stesso giorno hanno lo stesso numero.
+function numeroDaDataLocale(anno) {
+  const oggi = new Date(), due = (n) => String(n).padStart(2, '0');
+  return CONFIG.numerazione.prefisso + '-' + anno + '-' + due(oggi.getMonth() + 1) + due(oggi.getDate());
 }
 
 // Restituisce il numero assegnato, oppure null se il registro non risponde.
@@ -52,7 +50,7 @@ async function nuovoNumeroOfferta(f) {
     try { const r = await numeroDaSharePoint(f); f.spId = r.id; return r.numero; }
     catch (e) { console.error(e); return null; }
   }
-  if (!registroCondiviso()) return numeroDaContatoreLocale(anno);
+  if (!registroCondiviso()) return numeroDaDataLocale(anno);
   try { return await numeroDaRegistro(anno); }
   catch (e) { return null; }
 }

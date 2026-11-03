@@ -4,6 +4,8 @@
 const CONFIG = {
   // Numero offerta: PREFISSO-ANNO-PROGRESSIVO (es. OFF-2026-0148). L'anno è quello di "Preventivo del"
   // (o l'anno in corso); il progressivo riparte ogni anno da 1, salvo i valori di partenza indicati qui.
+  // Senza registro condiviso (SharePoint o Artifact) il numero è PREFISSO-ANNO-MMGG, con mese e giorno
+  // dello scarico del PDF (es. OFF-2026-1103); cifre e partenza valgono solo per il progressivo di SharePoint.
   numerazione: { prefisso: 'OFF', cifre: 4, partenza: { 2026: 148 } },
   datiEsempioAllAvvio: false,    // true = all'avvio (senza offerta in corso) il modulo parte con i dati di esempio
   importiPagamentoAutomatici: true, // false = gli importi delle scadenze si inseriscono a mano

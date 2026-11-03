@@ -130,7 +130,6 @@ function aggiorna() {
 
   // Il numero non si scrive nel modulo: compare in testata e nel PDF quando viene assegnato (Scarica PDF).
   out('numeroOfferta', pieno(f.numOfferta) ? f.numOfferta.trim() : 'Numero da assegnare');
-
   // Oggetto: Commessa singola / Pacchetto commesse
   const pacchetto = isPacchetto(f);
   $('#sec-1').classList.toggle('modo-pacchetto', pacchetto);
@@ -209,7 +208,7 @@ function aggiorna() {
   out('suggerimento', nErr ? 'Puoi generare l’anteprima, ma i campi mancanti compariranno come [●].' : 'Il documento riprende testi e struttura del modello WES.');
 
   $('.interruttore').classList.toggle('acceso', stato.esempio);
-  if (!$('#anteprima').hidden) {
+  if (!$('#anteprima').hidden && !stato.generazionePdf) {   // durante la generazione i fogli non vanno ridisegnati
     const n = impaginaPdf($('#pdf-pagine'), f);
     out('numeroPagine', n + (n === 1 ? ' pagina' : ' pagine'));
   }
@@ -341,14 +340,14 @@ async function scaricaPdf() {
     if (!stato.esempio && !(await assicuraNumero())) return;   // senza numero niente PDF: il messaggio lo dà assicuraNumero
     const nome = 'offerta-' + nomeFile() + '.pdf';
     let pdf;
-    try { pdf = await generaPdf(); }
+    try { stato.generazionePdf = true; pdf = await generaPdf(); }
     catch (e) {
       console.error(e);
       if (inArtifact) { toast('Non è stato possibile generare il PDF'); return; }
       stampaPdf();
       aggiornaRegistro({ UltimoPdf: new Date().toISOString() });
       return;
-    }
+    } finally { stato.generazionePdf = false; }
     if (await salvaFile(nome, pdf)) {
       toast('PDF salvato — ' + nome);
       aggiornaRegistro({ UltimoPdf: new Date().toISOString() });
