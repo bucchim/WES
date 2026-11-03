@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Modulo Offerta WES</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<div class="app">
+
+  <header class="barra no-print">
+    <div class="barra-in">
+      <div class="marchio">
+        <span class="marchio-wes">WES</span>
+        <span class="separatore"></span>
+        <span class="marchio-sub">International</span>
+      </div>
+      <div class="separatore alto"></div>
+      <div class="titolo-doc">
+        <h1>Nuova offerta</h1>
+        <span class="codice" data-out="numeroOfferta"></span>
+        <span class="stato"><span class="pallino"></span>Bozza</span>
+      </div>
+      <div class="riempi"></div>
+      <button type="button" class="interruttore" data-azione="esempio">
+        <span class="binario"><span class="manopola"></span></span>
+        Dati di esempio
+      </button>
+      <button type="button" class="btn" data-azione="nuova">Nuova offerta</button>
+      <input id="file-bozza" type="file" accept=".json,application/json" hidden>
+      <button type="button" class="btn" data-azione="apri-bozza">Apri bozza</button>
+      <button type="button" class="btn" data-azione="salva-bozza">Salva bozza</button>
+      <button type="button" class="btn primario" data-azione="anteprima">Anteprima PDF</button>
+    </div>
+  </header>
+
+  <div class="layout no-print">
+
+    <nav class="indice">
+      <div class="indice-titolo">Sezioni del documento</div>
+      <div id="nav-sezioni"></div>
+
+      <div class="riepilogo">
+        <span class="indice-titolo">Totale riservato</span>
+        <div class="riepilogo-totale" data-out="riservato"></div>
+        <div class="progresso"><div class="progresso-barra" id="progresso"></div></div>
+        <span class="nota" data-out="completamento"></span>
+      </div>
+      <div class="legenda">
+        <span class="indice-titolo">Legenda</span>
+        <div><span class="campione bianco"></span>Campo compilabile</div>
+        <div><span class="campione calcolato"></span>Valore calcolato</div>
+        <div><span class="campione fisso"></span>Testo fisso del documento</div>
+      </div>
+    </nav>
+
+    <main>
+      <div class="avviso">
+        <div class="avviso-titolo">Offerta economica e conferma d’ordine</div>
+        <div>Compila → controlla → anteprima → esporta PDF. La struttura, i testi contrattuali e le diciture economiche riproducono il modello WES e non sono modificabili.</div>
+      </div>
+
+      <!-- Cliente e commessa -->
+      <section id="sec-0" class="scheda">
+        <header class="scheda-testa">
+          <h2>Cliente e commessa</h2>
+          <span class="sottotitolo">Intestazione del documento</span>
+        </header>
+        <div class="due-colonne">
+          <div class="colonna">
+            <div class="gruppo">Cliente</div>
+            <label class="campo"><span>Ragione sociale <i>*</i></span>
+              <input data-campo="cliRag" placeholder="Es. Rossi Industriale S.p.A.">
+              <small class="errore" data-errore="cliRag"></small>
+            </label>
+            <label class="campo"><span>C.F./P.IVA</span>
+              <input data-campo="cliPiva" class="mono" placeholder="IT00000000000">
+            </label>
+            <label class="campo"><span>Referente <i>*</i></span>
+              <input data-campo="cliRef" placeholder="Nome e cognome">
+              <small class="errore" data-errore="cliRef"></small>
+            </label>
+            <label class="campo"><span>E-mail <i>*</i></span>
+              <input data-campo="cliMail" type="email" placeholder="nome@azienda.it">
+              <small class="errore" data-errore="cliMail"></small>
+            </label>
+          </div>
+          <div class="colonna">
+            <div class="gruppo">Commessa</div>
+            <label class="campo"><span>Numero offerta</span>
+              <input data-campo="numOfferta" id="numero-offerta" class="mono" placeholder="Assegnato in automatico alla creazione dell’offerta">
+              <small class="nota" data-out="notaNumero"></small>
+            </label>
+            <label class="campo"><span>Evento / Progetto <i>*</i></span>
+              <input data-campo="cmEvento" placeholder="Es. Salone del Mobile 2027 — Pad. 7, Stand B21">
+              <small class="errore" data-errore="cmEvento"></small>
+            </label>
+            <div class="affiancati">
+              <label class="campo"><span>Data <i>*</i></span>
+                <input data-campo="cmData" placeholder="13–18 aprile 2027">
+                <small class="errore" data-errore="cmData"></small>
+              </label>
+              <label class="campo"><span>Luogo <i>*</i></span>
+                <input data-campo="cmLuogo" placeholder="Fiera Milano Rho">
+                <small class="errore" data-errore="cmLuogo"></small>
+              </label>
+            </div>
+            <div class="affiancati">
+              <label class="campo"><span>Preventivo del</span>
+                <input data-campo="cmPrev" placeholder="20/08/2026">
+              </label>
+              <label class="campo"><span>Validità</span>
+                <input data-campo="cmVal" placeholder="30 giorni">
+              </label>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 1. Oggetto dell'offerta -->
+      <section id="sec-1" class="scheda">
+        <header class="scheda-testa"><span class="num">01</span><h2>Oggetto dell’offerta</h2></header>
+        <p class="intro" data-out="introOggetto"></p>
+        <div class="modalita">
+          <span class="modalita-etichetta">Tipo di offerta</span>
+          <div class="scelta scelta-modo" role="group" aria-label="Tipo di offerta">
+            <button type="button" data-modo-oggetto="singola">Commessa singola</button><button type="button" data-modo-oggetto="pacchetto">Pacchetto commesse</button>
+          </div>
+          <span class="nota se-pacchetto">Un evento per riga, con il relativo corrispettivo. Lo sconto si applica al totale del pacchetto.</span>
+        </div>
+        <div class="griglia g-oggetto">
+          <div class="riga testa"><div data-out="intestazioneOggetto">Descrizione</div><div class="dx">Corrispettivo</div></div>
+          <div id="voci-oggetto" class="se-singola"></div>
+          <div id="voci-pacchetto" class="se-pacchetto"></div>
+          <div class="riga chiara se-pacchetto aggiungi-riga">
+            <div><button type="button" class="btn piccolo" data-azione="aggiungi-evento">+ Aggiungi evento</button> <span class="nota" data-out="contoEventi"></span></div>
+            <div></div>
+          </div>
+          <div class="riga calcolata">
+            <div><b data-out="etichettaTotale">Totale</b> <span class="etichetta-calc">Calcolato</span></div>
+            <div class="dx mono" data-out="totale"></div>
+          </div>
+          <div class="riga chiara">
+            <div class="impilato"><span>Sconto</span><small data-out="notaSconto"></small></div>
+            <div><div class="importo"><span>− €</span><input data-campo="ogSconto" class="num" placeholder="0,00" inputmode="decimal"></div></div>
+          </div>
+          <div class="riga calcolata finale">
+            <div><b data-out="etichettaRiservato">Totale a voi riservato</b> <span class="etichetta-calc">Calcolato</span></div>
+            <div class="dx mono grande" data-out="riservato"></div>
+          </div>
+        </div>
+        <small class="errore blocco" data-errore="oggetto"></small>
+        <div class="testo-fisso">
+          <span class="lucchetto"></span>
+          <div><span class="fisso-titolo">Testo del documento — non modificabile</span>
+            <p class="se-singola" data-testo="iva"></p>
+            <p class="se-pacchetto" data-testo="pacchettoLayout"></p>
+            <p class="se-pacchetto" data-testo="pacchettoComprende"></p>
+            <p data-testo="esclusioni"></p></div>
+        </div>
+      </section>
+
+      <!-- 2. Servizi fiera -->
+      <section id="sec-2" class="scheda">
+        <header class="scheda-testa"><span class="num">02</span><h2>Servizi fiera</h2><div class="riempi"></div><span class="nota" data-out="contoTbd"></span></header>
+        <p class="nota sotto">Per ciascun servizio indica un importo definito oppure lascialo come TBD.</p>
+        <div class="griglia g-servizi">
+          <div class="riga testa"><div>Servizio</div><div>Modalità</div><div class="dx">Valore</div></div>
+          <div id="voci-servizi"></div>
+        </div>
+        <div class="fascia">
+          <label class="campo"><span>Fee di gestione</span>
+            <div class="importo"><input data-campo="fee" class="num" placeholder="0" inputmode="decimal"><span>%</span></div>
+          </label>
+          <div class="testo-fisso nudo">
+            <span class="lucchetto"></span>
+            <div><span class="fisso-titolo">Testo del documento — non modificabile</span>
+              <p data-testo="importiNonDisponibili"></p>
+              <p data-out="testoFee"></p></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 3. Modifiche progettuali -->
+      <section id="sec-3" class="scheda">
+        <header class="scheda-testa"><span class="num">03</span><h2>Modifiche progettuali</h2></header>
+        <div class="affiancati stretto">
+          <label class="campo"><span>Cicli di modifica inclusi</span>
+            <div class="importo"><span>n.</span><input data-campo="mpCicli" class="num" placeholder="0" inputmode="numeric"></div>
+          </label>
+          <label class="campo"><span>Costo per ciclo ulteriore</span>
+            <div class="importo"><span>€</span><input data-campo="mpCosto" class="num" placeholder="0,00" inputmode="decimal"><span>+ IVA</span></div>
+          </label>
+        </div>
+        <div class="testo-fisso">
+          <span class="lucchetto"></span>
+          <div><span class="fisso-titolo">Testo del documento — non modificabile</span>
+            <p data-out="testoCicli"></p>
+            <p data-out="testoCosto"></p>
+            <p data-testo="definizioneCiclo"></p>
+            <p data-testo="variazioneImporti"></p></div>
+        </div>
+      </section>
+
+      <!-- 4. Condizioni di pagamento -->
+      <section id="sec-4" class="scheda">
+        <header class="scheda-testa"><span class="num">04</span><h2>Condizioni di pagamento</h2></header>
+        <p class="nota sotto">Gli importi sono calcolati sul Totale a voi riservato (<span data-out="riservato"></span>).</p>
+        <div class="griglia g-pagamenti">
+          <div class="riga testa"><div>Scadenza</div><div class="dx">%</div><div class="dx">Importo</div></div>
+          <div id="voci-pagamento"></div>
+          <div class="riga somma" id="somma-pagamenti">
+            <div><b data-out="messaggioSomma"></b></div>
+            <div class="dx mono" data-out="sommaPct"></div>
+            <div class="dx mono" data-out="sommaImporti"></div>
+          </div>
+        </div>
+        <div class="fascia larga">
+          <label class="campo"><span>Termini di pagamento</span>
+            <div class="importo"><input data-campo="pgTermini" class="num corto" placeholder="30" inputmode="numeric"><span class="testo">giorni SBF</span></div>
+          </label>
+          <div class="testo-fisso">
+            <span class="lucchetto"></span>
+            <div><span class="fisso-titolo">Testo del documento — non modificabile</span>
+              <p data-testo="modalitaPagamento"></p></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 5. Condizioni particolari -->
+      <section id="sec-5" class="scheda">
+        <header class="scheda-testa"><span class="num">05</span><h2>Condizioni particolari concordate</h2></header>
+        <p class="intro" data-testo="condizioniIntro"></p>
+        <div class="colonna">
+          <label class="campo"><span>Condizione 1 <em>— facoltativa</em></span><textarea data-campo="cp1" rows="2" placeholder="Testo libero"></textarea></label>
+          <label class="campo"><span>Condizione 2 <em>— facoltativa</em></span><textarea data-campo="cp2" rows="2" placeholder="Testo libero"></textarea></label>
+          <label class="campo"><span>Condizione 3 <em>— facoltativa</em></span><textarea data-campo="cp3" rows="2" placeholder="Testo libero"></textarea></label>
+        </div>
+        <div class="testo-fisso">
+          <span class="lucchetto"></span>
+          <div><span class="fisso-titolo">Testo del documento — non modificabile</span>
+            <p data-testo="condizioniPrevalenza"></p></div>
+        </div>
+      </section>
+
+      <!-- 6. Accettazione -->
+      <section id="sec-6" class="scheda">
+        <header class="scheda-testa"><span class="num">06</span><h2>Accettazione dell’offerta</h2></header>
+        <p class="nota sotto">Sezione non compilabile: nel PDF restano gli spazi per la firma del Cliente.</p>
+        <div class="testo-fisso">
+          <span class="lucchetto"></span>
+          <div><span class="fisso-titolo">Testo del documento — non modificabile</span>
+            <p data-testo="accettazione"></p></div>
+        </div>
+        <div class="spazi-firma">
+          <div class="gruppo-firma">Per il Cliente — spazi riservati nel PDF</div>
+          <div class="due-colonne fitte">
+            <div class="firma"><span>Ragione sociale</span><b data-out="ragioneSociale"></b><small>Precompilato dai dati Cliente</small></div>
+            <div class="firma"><span>Nome e qualifica del firmatario</span><b class="vuota">Da compilare dal Cliente</b><small>Spazio vuoto nel PDF</small></div>
+            <div class="firma"><span>Luogo e data</span><b class="vuota">Da compilare dal Cliente</b><small>Spazio vuoto nel PDF</small></div>
+            <div class="firma"><span>Firma e timbro per accettazione</span><b class="vuota">Da compilare dal Cliente</b><small>Spazio vuoto nel PDF</small></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Controllo -->
+      <section class="scheda">
+        <header class="scheda-testa centrata"><h2>Controllo dell’offerta</h2><span class="badge" id="badge-controllo"></span></header>
+        <div id="lista-controlli" class="controlli"></div>
+        <div class="azioni">
+          <button type="button" class="btn primario grande" data-azione="anteprima">Anteprima PDF</button>
+          <button type="button" class="btn grande" data-azione="salva-bozza">Salva bozza</button>
+          <span class="nota" data-out="suggerimento"></span>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <!-- Anteprima PDF -->
+  <div class="pdf-overlay" id="anteprima" hidden>
+    <div class="pdf-barra no-print">
+      <div class="pdf-barra-in">
+        <span class="pdf-barra-titolo">Anteprima PDF</span>
+        <span class="pdf-barra-info"><span data-out="numeroOfferta"></span> · A4 · <span data-out="numeroPagine"></span></span>
+        <div class="riempi"></div>
+        <button type="button" class="btn scuro" data-azione="chiudi-anteprima">Torna alla modifica</button>
+        <button type="button" class="btn chiaro" data-azione="scarica-pdf">Scarica PDF</button>
+      </div>
+    </div>
+    <div class="pdf-pagine" id="pdf-pagine"></div>
+  </div>
+
+  <div class="toast no-print" id="toast" hidden></div>
+</div>
+
+<script src="js/dati.js"></script>
+<script src="js/calcoli.js"></script>
+<script src="js/numerazione.js"></script>
+<script src="js/pdf.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>
