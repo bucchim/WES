@@ -15,9 +15,10 @@ HTML, CSS e JavaScript semplici: nessuna installazione, nessun passaggio di comp
   (un evento per riga con corrispettivo, fino a `CONFIG.maxEventiPacchetto`; nel PDF: Totale pacchetto stand,
   Sconto con percentuale, Totale finale a voi riservato e i testi fissi del modello pluriennale).
 - **Controllo dell'offerta**: campi obbligatori, importi non numerici, percentuali che non fanno 100%, ecc.
-- **Bozze**: "Salva bozza" scarica un file `.json`, "Apri bozza" lo ricarica. L'ultima offerta resta inoltre
-  memorizzata nel browser (solo su quel PC e in quel browser).
-- **PDF**: "Anteprima PDF" → "Scarica PDF" apre la stampa del browser; scegliere **Salva come PDF**.
+- **Bozze**: "Salva bozza" scarica un file `.json` come copia di archivio (nel modulo non c'è più "Apri bozza").
+  L'ultima offerta resta memorizzata nel browser (solo su quel PC e in quel browser) e si ritrova riaprendo la pagina.
+- **PDF**: "Anteprima PDF" → "Scarica PDF" assegna il numero d'offerta e scarica subito il file PDF
+  (composto nella pagina con html2canvas e jsPDF da cdnjs; se non si caricano, ripiega sulla stampa del browser).
   Il documento è in A4 con logo WES e piè di pagina con i dati societari. Le sezioni si dispongono da sole
   sui fogli (`impaginaPdf` in `js/pdf.js`): di norma 2 pagine, di più se il pacchetto ha molti eventi.
 
@@ -33,6 +34,12 @@ HTML, CSS e JavaScript semplici: nessuna installazione, nessun passaggio di comp
 | Comportamento (bozze, anteprima, eventi) | `js/app.js` |
 | Aspetto | `css/style.css` |
 
+## Pubblicazione per i colleghi (Microsoft 365)
+
+Sito su Azure Static Web Apps collegato a questo repository, accesso con account Microsoft WES e registro
+offerte su una lista SharePoint: passi completi in [`docs/guida-configurazione-microsoft365.md`](docs/guida-configurazione-microsoft365.md).
+Codice in `js/microsoft.js`; si attiva compilando `CONFIG.microsoft` in `js/dati.js` (vuoto = come prima).
+
 ## Note
 
 - Il PDF riproduce il modello Word WES dell'offerta: badge in alto a destra (`assets/wes-badge-color.svg`, dal design system),
@@ -42,9 +49,10 @@ HTML, CSS e JavaScript semplici: nessuna installazione, nessun passaggio di comp
 - Una singola sezione più lunga di un foglio intero verrebbe tagliata (non capita con i limiti attuali).
 - Font del modulo (interfaccia): Helvetica Neue dal design system WES (a licenza, non incluso; ripiego Helvetica/Arial).
 - Numero d'offerta automatico `OFF-ANNO-NNNN` (`js/numerazione.js`, impostazioni in `CONFIG.numerazione`):
-  assegnato alla creazione dell'offerta ("Nuova offerta", uscita dai dati di esempio, apertura del modulo con
-  un'offerta in corso senza numero; non con i dati di esempio), altrimenti al primo "Salva bozza" o "Scarica PDF";
+  assegnato solo al primo "Scarica PDF" (un'offerta compilata e mai scaricata non consuma numeri; non con i dati
+  di esempio); poi resta all'offerta, anche riscaricando il PDF dopo una correzione;
   anno da "Preventivo del" al momento dell'assegnazione (altrimenti l'anno in corso);
   2026 parte da 0148, gli altri anni da 0001. Nell'Artifact il progressivo viene dal registro condiviso
   (capability `db`, collezione `offerte`, un documento per numero con numero/anno/data); in locale da un
-  contatore del browser, quindi va verificato a mano. "Nuova offerta" svuota il modulo per un nuovo numero.
+  contatore del browser, quindi va verificato a mano.
+- Il tipo di offerta (Commessa singola / Pacchetto commesse) resta quello scelto quando si attivano o tolgono i dati di esempio.

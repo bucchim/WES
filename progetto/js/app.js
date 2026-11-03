@@ -128,12 +128,8 @@ const out = (nome, valore) => $$(`[data-out="${nome}"]`).forEach(el => { el.text
 function aggiorna() {
   const f = stato.f, t = totali(f), pg = pagamenti(f, t), lista = controlli(f);
 
+  // Il numero non si scrive nel modulo: compare in testata e nel PDF quando viene assegnato (Scarica PDF).
   out('numeroOfferta', pieno(f.numOfferta) ? f.numOfferta.trim() : 'Numero da assegnare');
-  const campoNumero = $('#numero-offerta');
-  campoNumero.readOnly = registroCondiviso();   // nell'Artifact il numero viene solo dal registro condiviso
-  out('notaNumero', pieno(f.numOfferta)
-    ? (registroCondiviso() ? 'Assegnato dal registro condiviso delle offerte.' : 'Numero locale: verifica che non sia già stato usato da un collega.')
-    : 'Formato ' + CONFIG.numerazione.prefisso + '-' + annoOfferta(f) + '-NNNN, anno da “Preventivo del”.');
 
   // Oggetto: Commessa singola / Pacchetto commesse
   const pacchetto = isPacchetto(f);
@@ -225,46 +221,29 @@ const slug = (s) => String(s || '').normalize('NFD').replace(/[̀-ͯ]/g, '').toL
   .replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '').slice(0, 40);
 const nomeFile = () => [slug(stato.f.numOfferta) || 'senza-numero', slug(stato.f.cliRag)].filter(Boolean).join('-');
 
-// Assegna il numero d'offerta se manca: alla creazione dell'offerta ("Nuova offerta", uscita dai dati
-// di esempio, apertura del modulo con un'offerta in corso) e, se non è riuscito, al salvataggio o PDF.
-// Con i dati di esempio non si consuma un numero. Una sola richiesta alla volta.
-// Vero se l'offerta contiene qualcosa di diverso dal modulo vuoto (il numero e il tipo di offerta non contano).
-function offertaIniziata(f) {
-  const senza = (o) => { const c = copia(o); delete c.numOfferta; delete c.ogModo; return JSON.stringify(c); };
-  return senza(f) !== senza(VUOTO);
-}
-
+// Assegna il numero d'offerta se manca. Si chiama solo da "Scarica PDF": un'offerta compilata e mai
+// scaricata non consuma numeri. Una volta assegnato, il numero resta all'offerta (riscaricando il PDF
+// dopo una correzione non se ne consuma un altro). Con i dati di esempio non si assegna. Una sola richiesta alla volta.
 let richiestaNumero = null;
 function assicuraNumero() {
   if (pieno(stato.f.numOfferta)) return Promise.resolve(true);
+  if (msConfigurato() && !msCollegato()) { toast('Accedi con il tuo account Microsoft per ottenere il numero d’offerta'); return Promise.resolve(false); }
   if (!richiestaNumero) {
     richiestaNumero = nuovoNumeroOfferta(stato.f).then(numero => {
       richiestaNumero = null;
-      if (!numero) { toast('Numero non assegnato: serve l’accesso da Collaboratore a questa pagina, oppure il registro non risponde. Riprova.'); return false; }
+      if (!numero) {
+        toast(msConfigurato()
+          ? 'Numero non assegnato: la lista SharePoint non risponde o non hai il permesso di scriverci. Riprova o avvisa l’IT.'
+          : 'Numero non assegnato: serve l’accesso da Collaboratore a questa pagina, oppure il registro non risponde. Riprova.');
+        return false;
+      }
       stato.f.numOfferta = numero;
-      $('#numero-offerta').value = numero;
       aggiorna(); autosalva();
       toast('Assegnato il numero ' + numero);
       return true;
     });
   }
   return richiestaNumero;
-}
-
-// "Nuova offerta" svuota il modulo: chiede una seconda conferma sullo stesso pulsante.
-let timerNuova;
-function nuovaOfferta(btn) {
-  if (!btn.classList.contains('conferma')) {
-    btn.classList.add('conferma'); btn.textContent = 'Conferma: svuota il modulo';
-    clearTimeout(timerNuova);
-    timerNuova = setTimeout(() => { btn.classList.remove('conferma'); btn.textContent = 'Nuova offerta'; }, 4000);
-    return;
-  }
-  clearTimeout(timerNuova);
-  btn.classList.remove('conferma'); btn.textContent = 'Nuova offerta';
-  imposta(VUOTO, false); autosalva();
-  window.scrollTo({ top: 0, behavior: 'smooth' });
-  assicuraNumero();
 }
 
 let timerToast;
@@ -298,27 +277,17 @@ async function salvaFile(nome, dati) {
   return true;
 }
 
+// Riporta nella lista SharePoint i dati anagrafici aggiornati (nessun importo). Un errore non blocca il lavoro.
+function aggiornaRegistro(extra) {
+  aggiornaRegistroSharePoint(stato.f, extra).catch(e => { console.error(e); toast('Registro SharePoint non aggiornato: riprova più tardi'); });
+}
+
+// La bozza non assegna il numero (arriva solo con il PDF); se l'offerta ne ha già uno, aggiorna il registro.
 async function salvaBozza() {
-  await assicuraNumero();
+  aggiornaRegistro();
   const dati = { app: 'wes-offerta', versione: 1, offerta: stato.f.numOfferta, salvataggio: new Date().toISOString(), f: stato.f };
   const nome = 'bozza-' + nomeFile() + '.json';
   if (await salvaFile(nome, JSON.stringify(dati, null, 2))) toast('Bozza salvata come file — ' + nome);
-}
-
-function apriBozza(file) {
-  const reader = new FileReader();
-  reader.onload = () => {
-    try {
-      const dati = JSON.parse(reader.result);
-      if (!dati || dati.app !== 'wes-offerta' || typeof dati.f !== 'object') throw new Error();
-      imposta(dati.f, false);
-      autosalva();
-      toast('Bozza aperta — ' + file.name);
-    } catch (e) {
-      toast('File non valido: non è una bozza di offerta WES');
-    }
-  };
-  reader.readAsText(file);
 }
 
 function apriAnteprima() {
@@ -342,7 +311,7 @@ const caricaScript = (src) => new Promise((ok, ko) => {
   document.head.appendChild(s);
 });
 
-// Nell'Artifact il PDF viene composto nella pagina: ogni foglio A4 diventa un'immagine ad alta risoluzione.
+// Il PDF viene composto nella pagina: ogni foglio A4 diventa un'immagine ad alta risoluzione.
 async function generaPdf() {
   await caricaScript('https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js');
   await caricaScript('https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js');
@@ -362,22 +331,36 @@ async function generaPdf() {
   return pdf.output('blob');
 }
 
-// In locale il PDF si ottiene dalla stampa del browser ("Salva come PDF"); il titolo diventa il nome del file.
+// "Scarica PDF" è il momento in cui l'offerta prende il numero: lo si assegna (se manca e non sono
+// dati di esempio), lo si scrive nell'anteprima e si genera il file, che il browser scarica subito.
+// Se la composizione del PDF non riesce (es. librerie bloccate dalla rete) si ripiega sulla stampa del browser.
 async function scaricaPdf() {
-  await assicuraNumero();   // aggiorna anche l'anteprima con il numero appena assegnato
-  if (inArtifact) {
-    const btn = $('[data-azione="scarica-pdf"]');
-    btn.disabled = true; btn.textContent = 'Generazione…';
-    try {
-      const nome = 'offerta-' + nomeFile() + '.pdf';
-      if (await salvaFile(nome, await generaPdf())) toast('PDF salvato — ' + nome);
-    } catch (e) {
-      toast('Non è stato possibile generare il PDF');
-    } finally {
-      btn.disabled = false; btn.textContent = 'Scarica PDF';
+  const btn = $('[data-azione="scarica-pdf"]');
+  btn.disabled = true; btn.textContent = 'Generazione…';
+  try {
+    if (!stato.esempio && !(await assicuraNumero())) return;   // senza numero niente PDF: il messaggio lo dà assicuraNumero
+    const nome = 'offerta-' + nomeFile() + '.pdf';
+    let pdf;
+    try { pdf = await generaPdf(); }
+    catch (e) {
+      console.error(e);
+      if (inArtifact) { toast('Non è stato possibile generare il PDF'); return; }
+      stampaPdf();
+      aggiornaRegistro({ UltimoPdf: new Date().toISOString() });
+      return;
     }
-    return;
+    if (await salvaFile(nome, pdf)) {
+      toast('PDF salvato — ' + nome);
+      aggiornaRegistro({ UltimoPdf: new Date().toISOString() });
+    }
+  } finally {
+    btn.disabled = false; btn.textContent = 'Scarica PDF';
   }
+}
+
+// Ripiego: stampa del browser ("Salva come PDF"); il titolo diventa il nome del file.
+function stampaPdf() {
+  toast('Scegli “Salva come PDF” nella finestra di stampa');
   const titolo = document.title;
   document.title = 'offerta-' + nomeFile();
   const ripristina = () => { document.title = titolo; window.removeEventListener('afterprint', ripristina); };
@@ -400,8 +383,6 @@ function collegaEventi() {
     else return;
     aggiorna();
     autosalva();
-    // Il numero si assegna appena si inizia a compilare un'offerta vera (non i dati di esempio).
-    if (!stato.esempio && d.campo !== 'numOfferta' && offertaIniziata(stato.f)) assicuraNumero();
   });
 
   document.addEventListener('click', (e) => {
@@ -431,10 +412,12 @@ function collegaEventi() {
     const azione = e.target.closest('[data-azione]');
     if (!azione) return;
     switch (azione.dataset.azione) {
-      case 'esempio':
-        imposta(stato.esempio ? VUOTO : ESEMPIO, !stato.esempio); autosalva();
-        if (!stato.esempio) assicuraNumero();   // uscendo dai dati di esempio si crea un'offerta nuova
+      case 'esempio': {
+        // Il tipo di offerta scelto (Commessa singola / Pacchetto commesse) resta lo stesso in entrambe le direzioni.
+        const modo = stato.f.ogModo;
+        imposta(Object.assign(copia(stato.esempio ? VUOTO : ESEMPIO), { ogModo: modo }), !stato.esempio); autosalva();
         break;
+      }
       case 'aggiungi-evento':
         if (stato.f.pkEventi.length < CONFIG.maxEventiPacchetto) {
           stato.f.pkEventi.push(eventoVuoto());
@@ -442,19 +425,13 @@ function collegaEventi() {
           $(`#voci-pacchetto [data-evento="${stato.f.pkEventi.length - 1}"][data-prop="desc"]`).focus();
         }
         break;
-      case 'nuova': nuovaOfferta(azione); break;
-      case 'apri-bozza': $('#file-bozza').click(); break;
+      case 'accedi': msAccedi(); break;
+      case 'esci': msEsci(); break;
       case 'salva-bozza': salvaBozza(); break;
       case 'anteprima': apriAnteprima(); break;
       case 'chiudi-anteprima': chiudiAnteprima(); break;
       case 'scarica-pdf': scaricaPdf(); break;
     }
-  });
-
-  $('#file-bozza').addEventListener('change', (e) => {
-    const file = e.target.files && e.target.files[0];
-    if (file) apriBozza(file);
-    e.target.value = '';
   });
 
   // Evidenzia nell'indice la sezione visibile
@@ -472,9 +449,30 @@ function collegaEventi() {
 
 // ---------- Avvio ----------
 
+// Con Microsoft 365 configurato il modulo si usa solo dopo l'accesso con l'account aziendale:
+// fino ad allora resta coperto dalla schermata di accesso.
+async function avviaAccesso() {
+  if (!msConfigurato()) return;
+  const schermata = $('#accesso');
+  schermata.hidden = false;
+  try {
+    if (await msAvvia()) {
+      schermata.hidden = true;
+      $('#utente').hidden = false;
+      out('nomeUtente', msNomeUtente());
+    } else {
+      out('statoAccesso', 'Accedi con il tuo account Microsoft aziendale per usare il modulo.');
+      $('[data-azione="accedi"]').hidden = false;
+    }
+  } catch (e) {
+    console.error(e);
+    out('statoAccesso', 'Accesso non disponibile (' + e.message + '). Ricarica la pagina o avvisa l’IT.');
+  }
+}
+
 leggiAutosalvataggio();
 costruisci();
 scriviCampi();
 collegaEventi();
 aggiorna();
-if (!stato.esempio && offertaIniziata(stato.f)) assicuraNumero();
+avviaAccesso();

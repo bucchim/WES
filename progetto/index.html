@@ -28,13 +28,24 @@
         <span class="binario"><span class="manopola"></span></span>
         Dati di esempio
       </button>
-      <button type="button" class="btn" data-azione="nuova">Nuova offerta</button>
-      <input id="file-bozza" type="file" accept=".json,application/json" hidden>
-      <button type="button" class="btn" data-azione="apri-bozza">Apri bozza</button>
       <button type="button" class="btn" data-azione="salva-bozza">Salva bozza</button>
       <button type="button" class="btn primario" data-azione="anteprima">Anteprima PDF</button>
+      <span class="utente" id="utente" hidden>
+        <span data-out="nomeUtente"></span>
+        <button type="button" class="btn piccolo" data-azione="esci">Esci</button>
+      </span>
     </div>
   </header>
+
+  <!-- Accesso con l'account Microsoft aziendale (solo se CONFIG.microsoft è compilato) -->
+  <div class="accesso" id="accesso" hidden>
+    <div class="accesso-scheda">
+      <div class="marchio"><span class="marchio-wes">WES</span><span class="separatore"></span><span class="marchio-sub">International</span></div>
+      <h1>Modulo Offerta</h1>
+      <p data-out="statoAccesso">Verifica dell’accesso in corso…</p>
+      <button type="button" class="btn primario grande" data-azione="accedi" hidden>Accedi con Microsoft</button>
+    </div>
+  </div>
 
   <div class="layout no-print">
 
@@ -89,10 +100,6 @@
           </div>
           <div class="colonna">
             <div class="gruppo">Commessa</div>
-            <label class="campo"><span>Numero offerta</span>
-              <input data-campo="numOfferta" id="numero-offerta" class="mono" placeholder="Assegnato in automatico alla creazione dell’offerta">
-              <small class="nota" data-out="notaNumero"></small>
-            </label>
             <label class="campo"><span>Evento / Progetto <i>*</i></span>
               <input data-campo="cmEvento" placeholder="Es. Salone del Mobile 2027 — Pad. 7, Stand B21">
               <small class="errore" data-errore="cmEvento"></small>
@@ -170,11 +177,13 @@
           <div class="riga testa"><div>Servizio</div><div>Modalità</div><div class="dx">Valore</div></div>
           <div id="voci-servizi"></div>
         </div>
-        <div class="fascia">
-          <label class="campo"><span>Fee di gestione</span>
-            <div class="importo"><input data-campo="fee" class="num" placeholder="0" inputmode="decimal"><span>%</span></div>
+        <div class="griglia g-parametri">
+          <label class="riga"><div>Fee di gestione</div>
+            <div><div class="importo"><input data-campo="fee" class="num" placeholder="0" inputmode="decimal"><span>%</span></div></div>
           </label>
-          <div class="testo-fisso nudo">
+        </div>
+        <div>
+          <div class="testo-fisso">
             <span class="lucchetto"></span>
             <div><span class="fisso-titolo">Testo del documento — non modificabile</span>
               <p data-testo="importiNonDisponibili"></p>
@@ -186,12 +195,12 @@
       <!-- 3. Modifiche progettuali -->
       <section id="sec-3" class="scheda">
         <header class="scheda-testa"><span class="num">03</span><h2>Modifiche progettuali</h2></header>
-        <div class="affiancati stretto">
-          <label class="campo"><span>Cicli di modifica inclusi</span>
-            <div class="importo"><span>n.</span><input data-campo="mpCicli" class="num" placeholder="0" inputmode="numeric"></div>
+        <div class="griglia g-parametri">
+          <label class="riga"><div>Cicli di modifica inclusi</div>
+            <div><div class="importo"><span>n.</span><input data-campo="mpCicli" class="num" placeholder="0" inputmode="numeric"></div></div>
           </label>
-          <label class="campo"><span>Costo per ciclo ulteriore</span>
-            <div class="importo"><span>€</span><input data-campo="mpCosto" class="num" placeholder="0,00" inputmode="decimal"><span>+ IVA</span></div>
+          <label class="riga"><div>Costo per ciclo ulteriore</div>
+            <div><div class="importo"><span>€</span><input data-campo="mpCosto" class="num" placeholder="0,00" inputmode="decimal"><span>+ IVA</span></div></div>
           </label>
         </div>
         <div class="testo-fisso">
@@ -297,6 +306,8 @@
 
 <script src="js/dati.js"></script>
 <script src="js/calcoli.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@azure/msal-browser@2.38.3/lib/msal-browser.min.js"></script>
+<script src="js/microsoft.js"></script>
 <script src="js/numerazione.js"></script>
 <script src="js/pdf.js"></script>
 <script src="js/app.js"></script>

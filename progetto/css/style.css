@@ -138,6 +138,9 @@ main { display: flex; flex-direction: column; gap: 22px; min-width: 0; }
 .g-oggetto .riga { grid-template-columns: minmax(0,1fr) 220px; }
 .g-servizi .riga { grid-template-columns: minmax(0,1fr) 176px 210px; }
 .g-pagamenti .riga { grid-template-columns: minmax(0,1fr) 140px 200px; }
+/* Parametri singoli (fee, cicli di modifica): etichetta a sinistra, campo stretto a destra; tutta la riga attiva il campo */
+.g-parametri { margin-top: 20px; }
+.g-parametri .riga { grid-template-columns: minmax(0,1fr) 220px; cursor: text; }
 .riga > div { padding: 9px 18px; font-size: 14px; }
 .g-servizi .riga > div:nth-child(2), .g-pagamenti .riga > div:nth-child(2) { padding: 9px 12px; }
 .riga.testa { background: #FAF9F6; border-bottom-color: var(--bordo); }
@@ -237,6 +240,13 @@ main { display: flex; flex-direction: column; gap: 22px; min-width: 0; }
 .controllo[data-tono="info"] .punto { background: #4E7F9A; }
 .azioni { display: flex; align-items: center; gap: 12px; }
 
+/* Accesso Microsoft (solo con CONFIG.microsoft compilato) */
+.accesso { position: fixed; inset: 0; z-index: 90; background: var(--fondo); display: flex; align-items: center; justify-content: center; padding: 24px 16px; }
+.accesso-scheda { width: 100%; max-width: 420px; background: #fff; border: 1px solid var(--bordo); border-radius: 14px; padding: 28px 28px 30px; display: flex; flex-direction: column; gap: 14px; align-items: flex-start; }
+.accesso-scheda h1 { margin: 6px 0 0; font-size: 22px; font-weight: 700; }
+.accesso-scheda p { margin: 0; font-size: 13.5px; line-height: 1.55; color: var(--grigio-scuro); }
+.utente { display: flex; align-items: center; gap: 8px; font-size: 12.5px; color: var(--grigio-scuro); white-space: nowrap; }
+
 /* Toast */
 .toast { position: fixed; left: 50%; bottom: 28px; transform: translateX(-50%); z-index: 80; background: #1F2225; color: #F2F1EE; font-size: 13px; font-weight: 500; padding: 12px 20px; border-radius: 10px; box-shadow: 0 10px 30px rgba(0,0,0,.25); }
 
@@ -307,7 +317,7 @@ main { display: flex; flex-direction: column; gap: 22px; min-width: 0; }
   .due-colonne, .fascia, .fascia.larga { grid-template-columns: minmax(0,1fr); }
   .con-descrizione { flex-wrap: wrap; }
   .con-descrizione > span { white-space: normal; }
-  .g-oggetto .riga { grid-template-columns: minmax(0,1fr) 150px; }
+  .g-oggetto .riga, .g-parametri .riga { grid-template-columns: minmax(0,1fr) 150px; }
   .g-servizi .riga { grid-template-columns: minmax(0,1fr) minmax(0,1fr); }
   .g-servizi .riga > div:first-child { grid-column: 1 / -1; padding-bottom: 0; }
   .g-servizi .riga.testa > div:nth-child(2) { display: none; }

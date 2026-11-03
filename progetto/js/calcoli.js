@@ -58,7 +58,7 @@ function controlli(f) {
   ];
   const mancanti = obbligatori.filter(r => !pieno(f[r[0]]));
   if (mancanti.length) out.push({ tono: 'error', titolo: mancanti.length + (mancanti.length === 1 ? ' campo obbligatorio mancante' : ' campi obbligatori mancanti'), nota: mancanti.map(m => m[1]).join(' · '), sezione: 'sec-0' });
-  if (!pieno(f.numOfferta)) out.push({ tono: 'info', titolo: 'Numero offerta da assegnare', nota: 'Si assegna appena inizi a compilare l’offerta o premi “Nuova offerta”; con i dati di esempio non viene assegnato.', sezione: 'sec-0' });
+  if (!pieno(f.numOfferta)) out.push({ tono: 'info', titolo: 'Numero offerta da assegnare', nota: 'Si assegna quando scarichi il PDF e resta all’offerta anche se lo riscarichi; con i dati di esempio non viene assegnato.', sezione: 'sec-0' });
   if (pieno(f.cliMail) && !emailValida(f.cliMail)) out.push({ tono: 'error', titolo: 'E-mail non valida', nota: 'Controlla l’indirizzo del referente cliente.', sezione: 'sec-0' });
 
   const pacchetto = isPacchetto(f);

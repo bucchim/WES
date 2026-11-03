@@ -9,7 +9,18 @@ const CONFIG = {
   importiPagamentoAutomatici: true, // false = gli importi delle scadenze si inseriscono a mano
   firmaWesNelPdf: false,          // true = aggiunge lo spazio "Per WES — Firma" nel PDF
   maxEventiPacchetto: 10,         // righe massime nel Pacchetto commesse (oltre, la pagina 1 del PDF non basta)
-  chiaveAutosalvataggio: 'wes-offerta-autosave'
+  chiaveAutosalvataggio: 'wes-offerta-autosave',
+
+  // Microsoft 365 (vedi docs/guida-configurazione-microsoft365.md). Con tenantId e clientId compilati
+  // il modulo chiede l'accesso con l'account aziendale e tiene il registro offerte nella lista SharePoint.
+  // Lasciati vuoti, il modulo funziona senza accesso e con un contatore locale.
+  microsoft: {
+    tenantId: '',                                   // ID directory (tenant) di Microsoft Entra ID
+    clientId: '',                                   // ID applicazione (client) dell'app registration
+    sito: 'NOMETENANT.sharepoint.com:/sites/NOMESITO', // sito SharePoint che contiene la lista
+    lista: 'Registro offerte',                      // nome della lista
+    colonnaNumero: 'NumeroOfferta'                  // colonna del numero (lista creata da Excel); il numero va anche in Title
+  }
 };
 
 // Copia profonda dei dati (servono copie indipendenti degli eventi del pacchetto).
@@ -79,7 +90,7 @@ const TESTI = {
 };
 
 const VUOTO = {
-  numOfferta: '',
+  numOfferta: '', spId: '',   // spId = ID della riga nella lista SharePoint (registro offerte)
   cliRag: '', cliPiva: '', cliRef: '', cliMail: '', cmEvento: '', cmData: '', cmLuogo: '', cmPrev: '', cmVal: '',
   ogModo: 'singola', pkEventi: [eventoVuoto(), eventoVuoto()],
   ogIdea: '', ogStand: '', ogPers: '', ogOrg: '', ogAltro: '', ogAltroDesc: '', ogSconto: '',

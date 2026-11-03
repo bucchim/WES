@@ -1,7 +1,8 @@
 // Numero d'offerta automatico: PREFISSO-ANNO-PROGRESSIVO (CONFIG.numerazione).
 // Pubblicato come Artifact, il progressivo viene da un registro condiviso (capability "db",
 // collezione "offerte": un documento per numero, con numero, anno e data — nessun dato del cliente).
-// In locale non c'è registro: il numero viene da un contatore del browser ed è modificabile a mano.
+// In locale non c'è registro: il numero viene da un contatore del browser.
+// Con Microsoft 365 configurato (CONFIG.microsoft) il numero viene dalla lista SharePoint (js/microsoft.js).
 
 const annoOfferta = (f) => {
   const m = String(f.cmPrev || '').match(/\b(20\d{2})\b/);
@@ -43,8 +44,14 @@ function numeroDaContatoreLocale(anno) {
 }
 
 // Restituisce il numero assegnato, oppure null se il registro non risponde.
+// Ordine: lista SharePoint (se configurata) → registro dell'Artifact su claude.ai → contatore locale.
 async function nuovoNumeroOfferta(f) {
   const anno = annoOfferta(f);
+  if (msConfigurato()) {
+    if (!msCollegato()) return null;
+    try { const r = await numeroDaSharePoint(f); f.spId = r.id; return r.numero; }
+    catch (e) { console.error(e); return null; }
+  }
   if (!registroCondiviso()) return numeroDaContatoreLocale(anno);
   try { return await numeroDaRegistro(anno); }
   catch (e) { return null; }
