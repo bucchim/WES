@@ -1,7 +1,7 @@
 // Numero d'offerta automatico: PREFISSO-ANNO-PROGRESSIVO (CONFIG.numerazione).
 // Pubblicato come Artifact, il progressivo viene da un registro condiviso (capability "db",
 // collezione "offerte": un documento per numero, con numero, anno e data — nessun dato del cliente).
-// Senza registro (sito pubblicato senza SharePoint, o file in locale) il numero è PREFISSO-ANNO-MMGG, con la data dello scarico del PDF.
+// Senza registro (sito pubblicato senza SharePoint, o file in locale) il numero è PREFISSO-ANNO-MMGG, con la data in cui si apre la prima volta l'anteprima del PDF.
 // Con Microsoft 365 configurato (CONFIG.microsoft) il numero viene dalla lista SharePoint (js/microsoft.js).
 
 const annoOfferta = (f) => {
@@ -34,8 +34,8 @@ async function numeroDaRegistro(anno) {
   throw new Error('nessun numero libero trovato');
 }
 
-// Numero dalla data del clic su "Scarica PDF", in formato mmgg (es. 3 novembre → OFF-2026-1103).
-// Due offerte scaricate lo stesso giorno hanno lo stesso numero.
+// Numero dalla data di assegnazione (prima anteprima), in formato mmgg (es. 3 novembre → OFF-2026-1103).
+// Due offerte create lo stesso giorno hanno lo stesso numero.
 function numeroDaDataLocale(anno) {
   const oggi = new Date(), due = (n) => String(n).padStart(2, '0');
   return CONFIG.numerazione.prefisso + '-' + anno + '-' + due(oggi.getMonth() + 1) + due(oggi.getDate());

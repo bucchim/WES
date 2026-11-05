@@ -12,10 +12,10 @@ e registro offerte su una lista SharePoint.
 - **Registro**: al primo "Scarica PDF" di un'offerta il modulo aggiunge una riga alla lista SharePoint
   "Registro offerte", **con i permessi dell'utente collegato** (Microsoft Graph). Il numero d'offerta
   `OFF-ANNO-NNNN` si ricava dalla lista, quindi non si ripete anche se due colleghi lavorano insieme.
-  La riga si aggiorna quando si salva la bozza o si scarica il PDF.
+  La riga si aggiorna a ogni PDF scaricato.
 - **Cosa va nel registro**: solo dati anagrafici e di avanzamento (numero, cliente, evento, luogo,
   date, tipo di offerta, stato, data dell'ultimo PDF; autore e data di creazione li aggiunge SharePoint).
-  **Nessun importo.** Le offerte complete restano nella bozza (.json) e nel PDF di chi le compila.
+  **Nessun importo.** Le offerte complete restano nel PDF di chi le compila.
 - **Nessuna password o chiave nel codice**: un'app a pagina singola non usa client secret.
 
 Tempo stimato: circa un'ora. Servono: amministratore Entra ID (o almeno Application Administrator,
@@ -138,8 +138,7 @@ una sottoscrizione Azure (il piano gratuito di Static Web Apps non ha costi, ma 
 ## Passo 5 — Prova
 
 1. Apri l'URL del sito in una finestra anonima → **Accedi con Microsoft** → entra con il tuo account WES.
-2. Compila il nome di un cliente e premi **Salva bozza**: il numero resta da assegnare e nella lista non
-   compare nessuna riga.
+2. Compila il nome di un cliente: il numero resta da assegnare e nella lista non compare nessuna riga.
 3. Premi **Anteprima PDF → Scarica PDF**: si scarica il PDF con il numero `OFF-2026-0148` (o la partenza
    impostata) e nella lista "Registro offerte" compare una riga con quel numero, Stato `Bozza` e `UltimoPdf`.
    Riscaricando il PDF il numero non cambia e si aggiorna solo `UltimoPdf`.

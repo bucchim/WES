@@ -5,12 +5,14 @@ const CONFIG = {
   // Numero offerta: PREFISSO-ANNO-PROGRESSIVO (es. OFF-2026-0148). L'anno è quello di "Preventivo del"
   // (o l'anno in corso); il progressivo riparte ogni anno da 1, salvo i valori di partenza indicati qui.
   // Senza registro condiviso (SharePoint o Artifact) il numero è PREFISSO-ANNO-MMGG, con mese e giorno
-  // dello scarico del PDF (es. OFF-2026-1103); cifre e partenza valgono solo per il progressivo di SharePoint.
+  // della prima apertura dell'anteprima PDF (es. OFF-2026-1103); cifre e partenza valgono solo per il progressivo di SharePoint.
   numerazione: { prefisso: 'OFF', cifre: 4, partenza: { 2026: 148 } },
   datiEsempioAllAvvio: false,    // true = all'avvio (senza offerta in corso) il modulo parte con i dati di esempio
   importiPagamentoAutomatici: true, // false = gli importi delle scadenze si inseriscono a mano
   firmaWesNelPdf: false,          // true = aggiunge lo spazio "Per WES — Firma" nel PDF
   maxEventiPacchetto: 10,         // righe massime nel Pacchetto commesse (oltre, la pagina 1 del PDF non basta)
+  maxVociOggetto: 12,             // righe massime nell'Oggetto della Commessa singola
+  maxCondizioni: 10,              // condizioni particolari massime
   chiaveAutosalvataggio: 'wes-offerta-autosave',
 
   // Microsoft 365 (vedi docs/guida-configurazione-microsoft365.md). Con tenantId e clientId compilati
@@ -28,6 +30,7 @@ const CONFIG = {
 // Copia profonda dei dati (servono copie indipendenti degli eventi del pacchetto).
 const copia = (o) => JSON.parse(JSON.stringify(o));
 const eventoVuoto = () => ({ desc: '', imp: '' });
+const LIMITI_LISTE = { pkEventi: 'maxEventiPacchetto', ogVoci: 'maxVociOggetto', condizioni: 'maxCondizioni' };
 
 // Carta intestata: riprende testata e piè di pagina del modello Word WES dell'offerta.
 const CARTA_INTESTATA = {
@@ -39,7 +42,9 @@ const CARTA_INTESTATA = {
   datiSocietari: 'C.F. e P. IVA 05592110968 | REA: 1834008 | Nr. Iscr. Reg. Imprese Mi05592110968 | Capitale Sociale: euro 15.000,00 i.v.'
 };
 
-// 1. Oggetto dell'offerta — voci con corrispettivo (l'ultima ha descrizione libera).
+// 1. Oggetto dell'offerta (Commessa singola) — righe proposte in un'offerta nuova. Descrizione e corrispettivo
+// sono modificabili e se ne possono aggiungere o togliere. Nelle versioni precedenti ogni voce era un campo fisso
+// (campo): serve solo a recuperare le offerte salvate prima del cambio.
 const VOCI_OGGETTO = [
   { campo: 'ogIdea',  etichetta: 'Ideazione e progettazione' },
   { campo: 'ogStand', etichetta: 'Stand a noleggio come da layout' },
@@ -47,6 +52,7 @@ const VOCI_OGGETTO = [
   { campo: 'ogOrg',   etichetta: 'Organizzazione, Coordinamento e Gestione' },
   { campo: 'ogAltro', etichetta: 'Altre componenti di offerta', descrizione: 'ogAltroDesc' }
 ];
+const vociOggettoIniziali = () => VOCI_OGGETTO.map(v => ({ desc: v.etichetta, imp: '' }));
 
 // 2. Servizi fiera — ognuno può essere "importo" oppure "TBD" (l'ultimo ha descrizione libera).
 const SERVIZI = [
@@ -93,34 +99,42 @@ const TESTI = {
 
 const VUOTO = {
   numOfferta: '', spId: '',   // spId = ID della riga nella lista SharePoint (registro offerte)
-  cliRag: '', cliPiva: '', cliRef: '', cliMail: '', cmEvento: '', cmData: '', cmLuogo: '', cmPrev: '', cmVal: '',
-  ogModo: 'singola', pkEventi: [eventoVuoto(), eventoVuoto()],
-  ogIdea: '', ogStand: '', ogPers: '', ogOrg: '', ogAltro: '', ogAltroDesc: '', ogSconto: '',
+  cliRag: '', cliPiva: '', cliRef: '', cliMail: '', numCommessa: '', cmEvento: '', cmData: '', cmLuogo: '', cmPrev: '', cmVal: '',
+  ogModo: 'singola', ogVoci: vociOggettoIniziali(), pkEventi: [eventoVuoto(), eventoVuoto()],
+  ogSconto: '',
   s0m: 'imp', s0v: '', s1m: 'imp', s1v: '', s2m: 'imp', s2v: '', s3m: 'imp', s3v: '',
   s4m: 'imp', s4v: '', s5m: 'imp', s5v: '', s6m: 'imp', s6v: '', s7m: 'imp', s7v: '', s7desc: '',
   fee: '', mpCicli: '', mpCosto: '', pgPct1: '', pgPct2: '', pgPct3: '', pgMan1: '', pgMan2: '', pgMan3: '',
-  pgLabel2: '', pgTermini: '', cp1: '', cp2: '', cp3: ''
+  pgLabel2: '', pgTermini: '30', condizioni: ['']   // termini: 30 giorni data fattura, modificabile
 };
 
 const ESEMPIO = {
   numOfferta: '',
   cliRag: 'Industriale S.p.A.', cliPiva: 'IT02345678901', cliRef: 'Elena Bertani', cliMail: 'e.bertani@rossi-industriale.it',
   cmEvento: 'Salone del Mobile 2027 — Pad. 7, Stand B21', cmData: '13–18 aprile 2027', cmLuogo: 'Fiera Milano Rho',
-  cmPrev: '20/08/2026', cmVal: '30 giorni',
+  numCommessa: 'C-2027-031', cmPrev: '20/08/2026', cmVal: '30 giorni',
   ogModo: 'singola',
+  ogVoci: [
+    { desc: 'Ideazione e progettazione', imp: '12.500,00' },
+    { desc: 'Stand a noleggio come da layout', imp: '68.400,00' },
+    { desc: 'Spese nostro personale on-site', imp: '7.200,00' },
+    { desc: 'Organizzazione, Coordinamento e Gestione', imp: '9.800,00' },
+    { desc: 'Altre componenti di offerta: grafiche e stampe di allestimento', imp: '4.300,00' }
+  ],
   pkEventi: [ // eventi inventati, usati se nei dati di esempio si passa a "Pacchetto commesse"
     { desc: 'Salone del Mobile Milano 2027 – stand a noleggio 96 mq', imp: '128.000,00' },
     { desc: 'Maison&Objet Parigi 2028 – stand a noleggio 60 mq', imp: '84.500,00' },
     { desc: 'Salone del Mobile Milano 2029 – stand a noleggio 96 mq', imp: '128.000,00' }
   ],
-  ogIdea: '12.500,00', ogStand: '68.400,00', ogPers: '7.200,00', ogOrg: '9.800,00', ogAltro: '4.300,00', ogAltroDesc: 'Grafiche e stampe di allestimento', ogSconto: '5.900,00',
+  ogSconto: '5.900,00',
   s0m: 'imp', s0v: '3.400,00', s1m: 'tbd', s1v: '', s2m: 'imp', s2v: '2.150,00', s3m: 'imp', s3v: '890,00',
   s4m: 'tbd', s4v: '', s5m: 'imp', s5v: '1.600,00', s6m: 'tbd', s6v: '', s7m: 'imp', s7v: '1.200,00',
   s7desc: 'Fotografo e video timelapse allestimento',
   fee: '8', mpCicli: '2', mpCosto: '850,00',
   pgPct1: '30', pgPct2: '40', pgPct3: '30', pgMan1: '', pgMan2: '', pgMan3: '',
   pgLabel2: 'consegna progetto esecutivo', pgTermini: '30',
-  cp1: 'Lo smontaggio e lo sgombero dell’area sono compresi nel corrispettivo indicato al punto 1.',
-  cp2: 'Eventuali costi di rifacimento grafiche derivanti da nuovi file cliente sono esclusi.',
-  cp3: ''
+  condizioni: [
+    'Lo smontaggio e lo sgombero dell’area sono compresi nel corrispettivo indicato al punto 1.',
+    'Eventuali costi di rifacimento grafiche derivanti da nuovi file cliente sono esclusi.'
+  ]
 };

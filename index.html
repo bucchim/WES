@@ -14,20 +14,16 @@
     <div class="barra-in">
       <div class="marchio">
         <span class="marchio-wes">WES</span>
-        <span class="separatore"></span>
-        <span class="marchio-sub">International</span>
       </div>
       <div class="separatore alto"></div>
       <div class="titolo-doc">
         <h1>Nuova offerta</h1>
-        <span class="codice" data-out="numeroOfferta"></span>
         <span class="stato"><span class="pallino"></span>Bozza</span>      </div>
       <div class="riempi"></div>
       <button type="button" class="interruttore" data-azione="esempio">
         <span class="binario"><span class="manopola"></span></span>
         Dati di esempio
       </button>
-      <button type="button" class="btn" data-azione="salva-bozza">Salva bozza</button>
       <button type="button" class="btn primario" data-azione="anteprima">Anteprima PDF</button>
       <span class="utente" id="utente" hidden>
         <span data-out="nomeUtente"></span>
@@ -39,7 +35,7 @@
   <!-- Accesso con l'account Microsoft aziendale (solo se CONFIG.microsoft è compilato) -->
   <div class="accesso" id="accesso" hidden>
     <div class="accesso-scheda">
-      <div class="marchio"><span class="marchio-wes">WES</span><span class="separatore"></span><span class="marchio-sub">International</span></div>
+      <div class="marchio"><span class="marchio-wes">WES</span></div>
       <h1>Modulo Offerta</h1>
       <p data-out="statoAccesso">Verifica dell’accesso in corso…</p>
       <button type="button" class="btn primario grande" data-azione="accedi" hidden>Accedi con Microsoft</button>
@@ -99,6 +95,9 @@
           </div>
           <div class="colonna">
             <div class="gruppo">Commessa</div>
+            <label class="campo"><span>Numero commessa</span>
+              <input data-campo="numCommessa" placeholder="Es. C-2027-031">
+            </label>
             <label class="campo"><span>Evento / Progetto <i>*</i></span>
               <input data-campo="cmEvento" placeholder="Es. Salone del Mobile 2027 — Pad. 7, Stand B21">
               <small class="errore" data-errore="cmEvento"></small>
@@ -139,9 +138,13 @@
         <div class="griglia g-oggetto">
           <div class="riga testa"><div data-out="intestazioneOggetto">Descrizione</div><div class="dx">Corrispettivo</div></div>
           <div id="voci-oggetto" class="se-singola"></div>
+          <div class="riga chiara se-singola aggiungi-riga">
+            <div><button type="button" class="btn piccolo" data-azione="aggiungi-riga" data-lista="ogVoci">+ Aggiungi riga</button> <span class="nota" data-out="conto-ogVoci"></span></div>
+            <div></div>
+          </div>
           <div id="voci-pacchetto" class="se-pacchetto"></div>
           <div class="riga chiara se-pacchetto aggiungi-riga">
-            <div><button type="button" class="btn piccolo" data-azione="aggiungi-evento">+ Aggiungi evento</button> <span class="nota" data-out="contoEventi"></span></div>
+            <div><button type="button" class="btn piccolo" data-azione="aggiungi-riga" data-lista="pkEventi">+ Aggiungi evento</button> <span class="nota" data-out="conto-pkEventi"></span></div>
             <div></div>
           </div>
           <div class="riga calcolata">
@@ -225,10 +228,12 @@
             <div class="dx mono" data-out="sommaImporti"></div>
           </div>
         </div>
-        <div class="fascia larga">
-          <label class="campo"><span>Termini di pagamento</span>
-            <div class="importo"><input data-campo="pgTermini" class="num corto" placeholder="30" inputmode="numeric"><span class="testo">giorni SBF</span></div>
+        <div class="griglia g-parametri g-termini">
+          <label class="riga"><div>Termini di pagamento</div>
+            <div><div class="importo"><input data-campo="pgTermini" class="num" placeholder="0" inputmode="numeric" maxlength="3"><span class="testo">giorni data fattura</span></div></div>
           </label>
+        </div>
+        <div>
           <div class="testo-fisso">
             <span class="lucchetto"></span>
             <div><span class="fisso-titolo">Testo del documento — non modificabile</span>
@@ -241,10 +246,10 @@
       <section id="sec-5" class="scheda">
         <header class="scheda-testa"><span class="num">05</span><h2>Condizioni particolari concordate</h2></header>
         <p class="intro" data-testo="condizioniIntro"></p>
-        <div class="colonna">
-          <label class="campo"><span>Condizione 1 <em>— facoltativa</em></span><textarea data-campo="cp1" rows="2" placeholder="Testo libero"></textarea></label>
-          <label class="campo"><span>Condizione 2 <em>— facoltativa</em></span><textarea data-campo="cp2" rows="2" placeholder="Testo libero"></textarea></label>
-          <label class="campo"><span>Condizione 3 <em>— facoltativa</em></span><textarea data-campo="cp3" rows="2" placeholder="Testo libero"></textarea></label>
+        <div class="colonna" id="voci-condizioni"></div>
+        <div class="aggiungi-condizione">
+          <button type="button" class="btn piccolo" data-azione="aggiungi-riga" data-lista="condizioni">+ Aggiungi condizione</button>
+          <span class="nota" data-out="conto-condizioni"></span>
         </div>
         <div class="testo-fisso">
           <span class="lucchetto"></span>
@@ -279,7 +284,6 @@
         <div id="lista-controlli" class="controlli"></div>
         <div class="azioni">
           <button type="button" class="btn primario grande" data-azione="anteprima">Anteprima PDF</button>
-          <button type="button" class="btn grande" data-azione="salva-bozza">Salva bozza</button>
           <span class="nota" data-out="suggerimento"></span>
         </div>
       </section>

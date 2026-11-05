@@ -1,5 +1,5 @@
 // Interfaccia del modulo: costruisce le righe ripetute, collega i campi allo stato,
-// aggiorna i valori calcolati, gestisce bozze, anteprima e PDF.
+// aggiorna i valori calcolati, gestisce autosalvataggio, anteprima e PDF.
 
 const $ = (sel, el = document) => el.querySelector(sel);
 const $$ = (sel, el = document) => [...el.querySelectorAll(sel)];
@@ -21,15 +21,6 @@ function costruisci() {
     <button type="button" class="voce-indice" data-vai="${s.id}">
       <span class="voce-num">${s.num}</span><span class="voce-titolo">${s.titolo}</span><span class="voce-stato"></span>
     </button>`).join('');
-
-  $('#voci-oggetto').innerHTML = VOCI_OGGETTO.map(v => `
-    <div class="riga${v.descrizione ? ' chiara' : ''}">
-      <div class="${v.descrizione ? 'con-descrizione' : ''}">
-        <span>${v.etichetta}</span>
-        ${v.descrizione ? `<input data-campo="${v.descrizione}" class="descrizione" placeholder="Descrizione libera">` : ''}
-      </div>
-      <div>${campoImporto(v.campo)}</div>
-    </div>`).join('');
 
   $('#voci-servizi').innerHTML = SERVIZI.map((nome, i) => `
     <div class="riga${i === SERVIZIO_CON_DESCRIZIONE ? ' chiara' : ''}" data-servizio="${i}">
@@ -65,36 +56,70 @@ function costruisci() {
 
 // ---------- Stato ↔ campi ----------
 
-// Righe del Pacchetto commesse: si ricostruiscono quando si aggiunge o toglie un evento.
-function costruisciEventi() {
-  const ev = stato.f.pkEventi, unico = ev.length <= 1;
-  $('#voci-pacchetto').innerHTML = ev.map((e, i) => `
+// Righe ripetute (voci della Commessa singola, eventi del pacchetto, condizioni particolari): si ricostruiscono
+// quando se ne aggiunge o toglie una. Ogni campo porta data-lista, data-indice e (per le righe con importo) data-prop.
+const RIGHE = {
+  ogVoci: { contenitore: '#voci-oggetto', nome: 'voce', segnaposto: 'Descrizione della voce' },
+  pkEventi: { contenitore: '#voci-pacchetto', nome: 'evento', segnaposto: 'Es. Fiera, città, anno – stand a noleggio … mq' }
+};
+
+function costruisciRighe(lista) {
+  if (lista === 'condizioni') return costruisciCondizioni();
+  const r = RIGHE[lista], righe = stato.f[lista], unica = righe.length <= 1;
+  $(r.contenitore).innerHTML = righe.map((e, i) => `
     <div class="riga">
       <div class="evento">
-        <input class="descrizione" data-evento="${i}" data-prop="desc" placeholder="Es. Fiera, città, anno – stand a noleggio … mq" aria-label="Evento ${i + 1}">
-        <button type="button" class="rimuovi" data-rimuovi-evento="${i}" title="Rimuovi evento" aria-label="Rimuovi evento ${i + 1}"${unico ? ' disabled' : ''}>×</button>
+        <input class="descrizione" data-lista="${lista}" data-indice="${i}" data-prop="desc" placeholder="${r.segnaposto}" aria-label="${r.nome} ${i + 1}">
+        <button type="button" class="rimuovi" data-rimuovi="${lista}" data-indice="${i}" title="Rimuovi ${r.nome}" aria-label="Rimuovi ${r.nome} ${i + 1}"${unica ? ' disabled' : ''}>×</button>
       </div>
-      <div><div class="importo"><span>€</span><input data-evento="${i}" data-prop="imp" class="num" placeholder="0,00" inputmode="decimal" aria-label="Corrispettivo evento ${i + 1}"></div></div>
+      <div><div class="importo"><span>€</span><input data-lista="${lista}" data-indice="${i}" data-prop="imp" class="num" placeholder="0,00" inputmode="decimal" aria-label="Corrispettivo ${r.nome} ${i + 1}"></div></div>
     </div>`).join('');
-  $$('#voci-pacchetto [data-evento]').forEach(el => { el.value = ev[el.dataset.evento][el.dataset.prop] || ''; });
+  $$(`${r.contenitore} [data-lista]`).forEach(el => { el.value = righe[el.dataset.indice][el.dataset.prop] || ''; });
+}
+
+// Condizioni particolari: la prima resta sempre, le altre si aggiungono e si tolgono.
+function costruisciCondizioni() {
+  const c = stato.f.condizioni;
+  $('#voci-condizioni').innerHTML = c.map((_, i) => `
+    <div class="campo">
+      <span>Condizione ${i + 1} <em>— facoltativa</em></span>
+      <div class="condizione">
+        <textarea data-lista="condizioni" data-indice="${i}" rows="2" placeholder="Testo libero" aria-label="Condizione ${i + 1}"></textarea>
+        ${i ? `<button type="button" class="rimuovi" data-rimuovi="condizioni" data-indice="${i}" title="Rimuovi condizione" aria-label="Rimuovi condizione ${i + 1}">×</button>` : ''}
+      </div>
+    </div>`).join('');
+  $$('#voci-condizioni [data-lista]').forEach(el => { el.value = c[el.dataset.indice] || ''; });
 }
 
 function scriviCampi() {
   $$('[data-campo]').forEach(el => { el.value = stato.f[el.dataset.campo] ?? ''; });
-  costruisciEventi();
+  Object.keys(LIMITI_LISTE).forEach(costruisciRighe);
 }
 
-// Unisce dati salvati (bozza o autosalvataggio) al modello vuoto, accettando anche bozze precedenti al pacchetto.
+// Unisce dati salvati (autosalvataggio) al modello vuoto, recuperando anche i formati precedenti:
+// voci fisse dell'oggetto (ogIdea…ogAltro) e condizioni cp1…cp3.
 function normalizza(dati) {
   const f = copia(VUOTO);
+  const righe = (v, max) => v.slice(0, max).map(e => ({ desc: String((e && e.desc) || ''), imp: String((e && e.imp) || '') }));
   Object.keys(VUOTO).forEach(k => {
-    if (k === 'pkEventi') {
-      if (Array.isArray(dati.pkEventi) && dati.pkEventi.length) {
-        f.pkEventi = dati.pkEventi.slice(0, CONFIG.maxEventiPacchetto).map(e => ({ desc: String((e && e.desc) || ''), imp: String((e && e.imp) || '') }));
-      }
+    if (k === 'pkEventi' || k === 'ogVoci') {
+      if (Array.isArray(dati[k]) && dati[k].length) f[k] = righe(dati[k], CONFIG[LIMITI_LISTE[k]]);
+    } else if (k === 'condizioni') {
+      if (Array.isArray(dati.condizioni) && dati.condizioni.length) f.condizioni = dati.condizioni.slice(0, CONFIG.maxCondizioni).map(c => String(c || ''));
     } else if (dati[k] !== undefined) f[k] = String(dati[k]);
   });
+  if (!Array.isArray(dati.ogVoci) && VOCI_OGGETTO.some(v => dati[v.campo] !== undefined)) {
+    f.ogVoci = VOCI_OGGETTO.map(v => ({
+      desc: v.etichetta + (v.descrizione && pieno(dati[v.descrizione] || '') ? ': ' + dati[v.descrizione] : ''),
+      imp: String(dati[v.campo] || '')
+    }));
+  }
+  if (!Array.isArray(dati.condizioni)) {
+    const vecchie = ['cp1', 'cp2', 'cp3'].map(k => String(dati[k] || '')).filter(pieno);
+    if (vecchie.length) f.condizioni = vecchie;
+  }
   if (f.ogModo !== 'pacchetto') f.ogModo = 'singola';
+  if (!pieno(f.pgTermini)) f.pgTermini = VUOTO.pgTermini;   // offerte salvate prima del valore predefinito (30)
   return f;
 }
 
@@ -128,8 +153,8 @@ const out = (nome, valore) => $$(`[data-out="${nome}"]`).forEach(el => { el.text
 function aggiorna() {
   const f = stato.f, t = totali(f), pg = pagamenti(f, t), lista = controlli(f);
 
-  // Il numero non si scrive nel modulo: compare in testata e nel PDF quando viene assegnato (Scarica PDF).
-  out('numeroOfferta', pieno(f.numOfferta) ? f.numOfferta.trim() : 'Numero da assegnare');
+  // Numero in testa al documento: il Numero commessa, oppure quello automatico se il campo è vuoto.
+  out('numeroOfferta', pieno(numeroDocumento(f)) ? numeroDocumento(f).trim() : 'Numero da assegnare');
   // Oggetto: Commessa singola / Pacchetto commesse
   const pacchetto = isPacchetto(f);
   $('#sec-1').classList.toggle('modo-pacchetto', pacchetto);
@@ -137,9 +162,12 @@ function aggiorna() {
   out('intestazioneOggetto', pacchetto ? 'Evento' : 'Descrizione');
   out('etichettaTotale', pacchetto ? 'Totale pacchetto stand' : 'Totale');
   out('etichettaRiservato', pacchetto ? 'Totale finale a voi riservato' : 'Totale a voi riservato');
-  const nEventi = eventi(f).length;
-  out('contoEventi', nEventi + (nEventi === 1 ? ' evento' : ' eventi') + (nEventi >= CONFIG.maxEventiPacchetto ? ' — massimo raggiunto' : ''));
-  $('[data-azione="aggiungi-evento"]').disabled = nEventi >= CONFIG.maxEventiPacchetto;
+  const parole = { ogVoci: ['voce', 'voci'], pkEventi: ['evento', 'eventi'], condizioni: ['condizione', 'condizioni'] };
+  Object.keys(LIMITI_LISTE).forEach(k => {
+    const n = f[k].length, max = CONFIG[LIMITI_LISTE[k]];
+    out('conto-' + k, n + ' ' + parole[k][n === 1 ? 0 : 1] + (n >= max ? ' — massimo raggiunto' : ''));
+    $(`[data-azione="aggiungi-riga"][data-lista="${k}"]`).disabled = n >= max;
+  });
 
   out('totale', t.compilato ? eur(t.totale) : '—');
   out('riservato', t.riservato === null ? '—' : eur(t.riservato));
@@ -175,8 +203,7 @@ function aggiorna() {
     cliRag: obbligatorio('cliRag'), cliRef: obbligatorio('cliRef'),
     cliMail: pieno(f.cliMail) && !emailValida(f.cliMail) ? 'Indirizzo e-mail non valido.' : obbligatorio('cliMail'),
     cmEvento: obbligatorio('cmEvento'), cmData: obbligatorio('cmData'), cmLuogo: obbligatorio('cmLuogo'),
-    oggetto: ((pacchetto ? ['ogSconto'] : ['ogIdea', 'ogStand', 'ogPers', 'ogOrg', 'ogAltro', 'ogSconto']).some(k => nonNumerico(f[k]))
-      || (pacchetto && eventi(f).some(e => nonNumerico(e.imp)))) ? 'Uno o più importi non sono numerici.' : ''
+    oggetto: (nonNumerico(f.ogSconto) || righeOggetto(f).some(e => nonNumerico(e.imp))) ? 'Uno o più importi non sono numerici.' : ''
   };
   $$('[data-errore]').forEach(el => { el.textContent = errori[el.dataset.errore] || ''; });
   $('[data-campo="cliMail"]').classList.toggle('invalido', pieno(f.cliMail) && !emailValida(f.cliMail));
@@ -218,11 +245,10 @@ function aggiorna() {
 
 const slug = (s) => String(s || '').normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase()
   .replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '').slice(0, 40);
-const nomeFile = () => [slug(stato.f.numOfferta) || 'senza-numero', slug(stato.f.cliRag)].filter(Boolean).join('-');
+const nomeFile = () => [slug(numeroDocumento(stato.f)) || 'senza-numero', slug(stato.f.cliRag)].filter(Boolean).join('-');
 
-// Assegna il numero d'offerta se manca. Si chiama solo da "Scarica PDF": un'offerta compilata e mai
-// scaricata non consuma numeri. Una volta assegnato, il numero resta all'offerta (riscaricando il PDF
-// dopo una correzione non se ne consuma un altro). Con i dati di esempio non si assegna. Una sola richiesta alla volta.
+// Assegna il numero d'offerta se manca: all'apertura dell'anteprima (senza registro condiviso) o a
+// "Scarica PDF". Una volta assegnato, il numero resta all'offerta (anche dopo correzioni e nuovi PDF). Con i dati di esempio non si assegna. Una sola richiesta alla volta.
 let richiestaNumero = null;
 function assicuraNumero() {
   if (pieno(stato.f.numOfferta)) return Promise.resolve(true);
@@ -281,18 +307,14 @@ function aggiornaRegistro(extra) {
   aggiornaRegistroSharePoint(stato.f, extra).catch(e => { console.error(e); toast('Registro SharePoint non aggiornato: riprova più tardi'); });
 }
 
-// La bozza non assegna il numero (arriva solo con il PDF); se l'offerta ne ha già uno, aggiorna il registro.
-async function salvaBozza() {
-  aggiornaRegistro();
-  const dati = { app: 'wes-offerta', versione: 1, offerta: stato.f.numOfferta, salvataggio: new Date().toISOString(), f: stato.f };
-  const nome = 'bozza-' + nomeFile() + '.json';
-  if (await salvaFile(nome, JSON.stringify(dati, null, 2))) toast('Bozza salvata come file — ' + nome);
-}
-
+// Senza registro condiviso il numero (anno + data mmgg) non consuma nulla: si assegna già all'apertura
+// dell'anteprima, così compare nel documento e resta quello anche dopo altre modifiche e nel PDF scaricato.
+// Con SharePoint (o il registro dell'Artifact) assegnarlo crea una riga nel registro: lì si aspetta "Scarica PDF".
 function apriAnteprima() {
   stato.validato = true;
   $('#anteprima').hidden = false;
   document.body.classList.add('anteprima-aperta');
+  if (!stato.esempio && !msConfigurato() && !registroCondiviso()) assicuraNumero();
   aggiorna();
   const nErr = controlli(stato.f).filter(c => c.tono === 'error').length;
   if (nErr) toast('Anteprima aperta · ' + nErr + ' controllo/i da risolvere');
@@ -377,8 +399,10 @@ function vai(id) {
 function collegaEventi() {
   document.addEventListener('input', (e) => {
     const d = e.target.dataset || {};
-    if (d.evento !== undefined) stato.f.pkEventi[d.evento][d.prop] = e.target.value;
-    else if (d.campo) stato.f[d.campo] = e.target.value;
+    if (d.lista) {
+      if (d.prop) stato.f[d.lista][d.indice][d.prop] = e.target.value;
+      else stato.f[d.lista][d.indice] = e.target.value;   // condizioni: solo testo
+    } else if (d.campo) stato.f[d.campo] = e.target.value;
     else return;
     aggiorna();
     autosalva();
@@ -391,10 +415,11 @@ function collegaEventi() {
       aggiorna(); autosalva();
       return;
     }
-    const rimuovi = e.target.closest('[data-rimuovi-evento]');
+    const rimuovi = e.target.closest('[data-rimuovi]');
     if (rimuovi) {
-      if (stato.f.pkEventi.length > 1) stato.f.pkEventi.splice(Number(rimuovi.dataset.rimuoviEvento), 1);
-      costruisciEventi(); aggiorna(); autosalva();
+      const lista = rimuovi.dataset.rimuovi;
+      if (stato.f[lista].length > 1) stato.f[lista].splice(Number(rimuovi.dataset.indice), 1);
+      costruisciRighe(lista); aggiorna(); autosalva();
       return;
     }
     const modo = e.target.closest('[data-modo]');
@@ -417,16 +442,18 @@ function collegaEventi() {
         imposta(Object.assign(copia(stato.esempio ? VUOTO : ESEMPIO), { ogModo: modo }), !stato.esempio); autosalva();
         break;
       }
-      case 'aggiungi-evento':
-        if (stato.f.pkEventi.length < CONFIG.maxEventiPacchetto) {
-          stato.f.pkEventi.push(eventoVuoto());
-          costruisciEventi(); aggiorna(); autosalva();
-          $(`#voci-pacchetto [data-evento="${stato.f.pkEventi.length - 1}"][data-prop="desc"]`).focus();
+      case 'aggiungi-riga': {
+        const lista = azione.dataset.lista, righe = stato.f[lista];
+        if (righe.length < CONFIG[LIMITI_LISTE[lista]]) {
+          righe.push(lista === 'condizioni' ? '' : eventoVuoto());
+          costruisciRighe(lista); aggiorna(); autosalva();
+          const nuovo = $(`[data-lista="${lista}"][data-indice="${righe.length - 1}"]`);
+          if (nuovo) nuovo.focus();
         }
         break;
+      }
       case 'accedi': msAccedi(); break;
       case 'esci': msEsci(); break;
-      case 'salva-bozza': salvaBozza(); break;
       case 'anteprima': apriAnteprima(); break;
       case 'chiudi-anteprima': chiudiAnteprima(); break;
       case 'scarica-pdf': scaricaPdf(); break;

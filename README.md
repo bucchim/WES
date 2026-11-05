@@ -11,13 +11,18 @@ HTML, CSS e JavaScript semplici: nessuna installazione, nessun passaggio di comp
 ## Cosa fa
 
 - **Compilazione** con calcolo automatico di totale, sconto, totale riservato e rate di pagamento.
-- **Oggetto dell'offerta** in due modalità: *Commessa singola* (voci fisse) oppure *Pacchetto commesse*
+- **Oggetto dell'offerta** in due modalità: *Commessa singola* (righe con descrizione e corrispettivo modificabili,
+  precompilate con le voci del modello WES, aggiungibili fino a `CONFIG.maxVociOggetto`) oppure *Pacchetto commesse*
   (un evento per riga con corrispettivo, fino a `CONFIG.maxEventiPacchetto`; nel PDF: Totale pacchetto stand,
   Sconto con percentuale, Totale finale a voi riservato e i testi fissi del modello pluriennale).
 - **Controllo dell'offerta**: campi obbligatori, importi non numerici, percentuali che non fanno 100%, ecc.
-- **Bozze**: "Salva bozza" scarica un file `.json` come copia di archivio (nel modulo non c'è più "Apri bozza").
-  L'ultima offerta resta memorizzata nel browser (solo su quel PC e in quel browser) e si ritrova riaprendo la pagina.
-- **PDF**: "Anteprima PDF" → "Scarica PDF" assegna il numero d'offerta e scarica subito il file PDF
+- **Numero commessa**: campo di testo libero facoltativo; nel PDF compare solo se compilato.
+- **Condizioni particolari**: una condizione sempre presente, altre aggiungibili con "+ Aggiungi condizione"
+  (fino a `CONFIG.maxCondizioni`); nel PDF solo quelle compilate. **SAL / milestone** è facoltativo: senza
+  descrizione né percentuale non compare nel PDF e non è segnalato nel controllo.
+- **Salvataggio**: non ci sono bozze da scaricare; l'ultima offerta resta memorizzata nel browser
+  (solo su quel PC e in quel browser) e si ritrova riaprendo la pagina.
+- **PDF**: "Anteprima PDF" mostra il documento già con il numero d'offerta; "Scarica PDF" scarica subito il file PDF
   (composto nella pagina con html2canvas e jsPDF da cdnjs; se non si caricano, ripiega sulla stampa del browser).
   Il documento è in A4 con logo WES e piè di pagina con i dati societari. Le sezioni si dispongono da sole
   sui fogli (`impaginaPdf` in `js/pdf.js`): di norma 2 pagine, di più se il pacchetto ha molti eventi.
@@ -31,7 +36,7 @@ HTML, CSS e JavaScript semplici: nessuna installazione, nessun passaggio di comp
 | Calcoli e controlli | `js/calcoli.js` |
 | Impaginazione del PDF | `js/pdf.js` + sezione "Anteprima PDF" di `css/style.css` |
 | Struttura del modulo | `index.html` |
-| Comportamento (bozze, anteprima, eventi) | `js/app.js` |
+| Comportamento (righe aggiungibili, anteprima, PDF) | `js/app.js` |
 | Aspetto | `css/style.css` |
 
 ## Pubblicazione per i colleghi (Microsoft 365)
@@ -49,13 +54,14 @@ Codice in `js/microsoft.js`; si attiva compilando `CONFIG.microsoft` in `js/dati
 - Una singola sezione più lunga di un foglio intero verrebbe tagliata (non capita con i limiti attuali).
 - Font del modulo (interfaccia): Helvetica Neue dal design system WES (a licenza, non incluso; ripiego Helvetica/Arial).
 - Numero d'offerta automatico `OFF-ANNO-NNNN` (`js/numerazione.js`, impostazioni in `CONFIG.numerazione`):
-  assegnato solo al primo "Scarica PDF" (un'offerta compilata e mai scaricata non consuma numeri; non con i dati
-  di esempio); poi resta all'offerta, anche riscaricando il PDF dopo una correzione;
+  senza registro condiviso si assegna alla prima apertura dell'anteprima, con SharePoint/Artifact al primo
+  "Scarica PDF" (lì assegnarlo crea una riga nel registro); mai con i dati di esempio; poi resta all'offerta,
+  anche dopo correzioni e nuovi PDF;
   anno da "Preventivo del" al momento dell'assegnazione (altrimenti l'anno in corso);
   2026 parte da 0148, gli altri anni da 0001. Nell'Artifact il progressivo viene dal registro condiviso
   (capability `db`, collezione `offerte`, un documento per numero con numero/anno/data); con Microsoft 365 dalla lista SharePoint.
 - **Senza registro condiviso** (sito pubblicato senza SharePoint, o file aperto in locale) il numero è
-  **anno + data dello scarico del PDF in formato mmgg**: `OFF-2026-1103` per un PDF scaricato il 3 novembre.
-  L'anno resta quello di "Preventivo del" (o l'anno in corso). Due offerte scaricate lo stesso giorno, anche da
+  **anno + data della prima anteprima in formato mmgg**: `OFF-2026-1103` per un'offerta aperta in anteprima il 3 novembre.
+  L'anno resta quello di "Preventivo del" (o l'anno in corso). Due offerte create lo stesso giorno, anche da
   colleghi diversi, hanno lo stesso numero.
 - Il tipo di offerta (Commessa singola / Pacchetto commesse) resta quello scelto quando si attivano o tolgono i dati di esempio.

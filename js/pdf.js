@@ -17,7 +17,7 @@ function foglioPdf(f) {
     <div class="pdf-pagina">
       <img class="pdf-badge" src="${CARTA_INTESTATA.badge}" alt="WES — We turn attention on">
       <div class="pdf-rif">
-        <div>Offerta n. ${testo(f.numOfferta)}</div>
+        <div>Offerta n. ${testo(numeroDocumento(f))}</div>
         <div class="pdf-num"></div>
       </div>
       <div class="pdf-corpo"></div>
@@ -40,13 +40,10 @@ const tabella = (col1, col2, righe, classe = '') => `
 function blocchiPdf(f) {
   const t = totali(f), pg = pagamenti(f, t), pacchetto = isPacchetto(f);
 
-  // 1. Oggetto: voci fisse (Commessa singola) oppure un evento per riga (Pacchetto commesse)
-  const vociOggetto = pacchetto
-    ? eventi(f).map(e => riga(testo(e.desc), importo(numOppureNull(e.imp))))
-    : VOCI_OGGETTO.map(v => riga(
-        esc(v.etichetta) + (v.descrizione ? ' ' + testo(f[v.descrizione]) : ''),
-        importo(numOppureNull(f[v.campo]))
-      ));
+  // 1. Oggetto: una riga per voce (Commessa singola) o per evento (Pacchetto commesse); le righe vuote si saltano.
+  const vociOggetto = righeOggetto(f)
+    .filter(e => pieno(e.desc) || pieno(e.imp))
+    .map(e => riga(testo(e.desc), importo(numOppureNull(e.imp))));
   const etichettaSconto = pacchetto && t.scontoPct !== null ? 'Sconto (' + pctIt(t.scontoPct) + ')' : 'Sconto';
   vociOggetto.push(
     riga(pacchetto ? 'Totale pacchetto stand' : 'Totale', t.compilato ? esc(euroDoc(t.totale)) : segnaposto, 'totale'),
@@ -71,14 +68,16 @@ function blocchiPdf(f) {
     if (p === null || a === null) return segnaposto;
     return esc(p.toFixed(0) + '% pari a ' + euroDoc(a));
   };
+  // SAL / milestone è facoltativo: senza descrizione né percentuale la riga non compare.
+  const conSal = pieno(f.pgLabel2) || pieno(f.pgPct2);
   const vociPagamento = [
     riga('Alla conferma dell’ordine', scadenza(0)),
-    riga('SAL / milestone ' + testo(f.pgLabel2), scadenza(1)),
+    ...(conSal ? [riga('SAL / milestone' + (pieno(f.pgLabel2) ? ' ' + esc(f.pgLabel2.trim()) : ''), scadenza(1))] : []),
     riga('Saldo', scadenza(2))
   ];
 
   // Condizioni particolari: elenco puntato delle sole condizioni compilate
-  const cp = ['cp1', 'cp2', 'cp3'].filter(k => pieno(f[k])).map(k => `<li>${esc(f[k].trim())}</li>`);
+  const cp = condizioniCompilate(f).map(c => `<li>${esc(c.trim())}</li>`);
   const condizioni = `<ul>${cp.length ? cp.join('') : `<li>${segnaposto}</li>`}</ul>`;
 
   const linea = '<span class="linea"></span>';
@@ -97,6 +96,7 @@ function blocchiPdf(f) {
       ${dato('Referente', testo(f.cliRef))}
       ${dato('E-mail', testo(f.cliMail))}
       <h3>Commessa</h3>
+      ${pieno(f.numCommessa) ? dato('Numero commessa', esc(f.numCommessa.trim())) : ''}
       ${dato('Evento / Progetto', testo(f.cmEvento))}
       ${dato('Data', testo(f.cmData))}
       ${dato('Luogo', testo(f.cmLuogo))}
@@ -123,7 +123,7 @@ function blocchiPdf(f) {
 
     `<h2>4. Condizioni di pagamento</h2>
       ${tabella('Scadenza', 'Importo', vociPagamento, 'pagamenti')}
-      ${dato('Termini di pagamento', testo(f.pgTermini) + ' giorni SBF')}
+      ${dato('Termini di pagamento', testo(f.pgTermini) + ' giorni data fattura')}
       ${dato('Modalità', TESTI.modalitaPagamento.replace(/^Modalità:\s*/, ''))}`,
 
     `<h2>5. Condizioni particolari concordate</h2>

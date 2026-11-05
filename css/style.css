@@ -141,6 +141,7 @@ main { display: flex; flex-direction: column; gap: 22px; min-width: 0; }
 /* Parametri singoli (fee, cicli di modifica): etichetta a sinistra, campo stretto a destra; tutta la riga attiva il campo */
 .g-parametri { margin-top: 20px; }
 .g-parametri .riga { grid-template-columns: minmax(0,1fr) 220px; cursor: text; }
+.g-termini .riga { grid-template-columns: minmax(0,1fr) 260px; }
 .riga > div { padding: 9px 18px; font-size: 14px; }
 .g-servizi .riga > div:nth-child(2), .g-pagamenti .riga > div:nth-child(2) { padding: 9px 12px; }
 .riga.testa { background: #FAF9F6; border-bottom-color: var(--bordo); }
@@ -176,7 +177,11 @@ main { display: flex; flex-direction: column; gap: 22px; min-width: 0; }
 .btn:disabled { opacity: .45; cursor: default; }
 .btn.conferma { color: #8E3226; border-color: #E2B9B1; background: #FBEDEA; }
 .campo input[readonly] { background: var(--verde-chiaro); border-color: #DDE5E3; color: var(--verde-scuro); }
-#voci-pacchetto .riga { border-bottom: 1px solid #F0EEE9; }
+#voci-pacchetto .riga, #voci-oggetto .riga { border-bottom: 1px solid #F0EEE9; }
+.condizione { display: flex; align-items: flex-start; gap: 8px; }
+.condizione textarea { flex: 1; min-width: 0; }
+.condizione .rimuovi { margin-top: 6px; }
+.aggiungi-condizione { display: flex; align-items: center; gap: 12px; margin-top: 12px; }
 .aggiungi-riga { border-bottom: 1px solid var(--bordo); }
 
 /* Servizi: interruttore Importo/TBD */
@@ -318,6 +323,7 @@ main { display: flex; flex-direction: column; gap: 22px; min-width: 0; }
   .con-descrizione { flex-wrap: wrap; }
   .con-descrizione > span { white-space: normal; }
   .g-oggetto .riga, .g-parametri .riga { grid-template-columns: minmax(0,1fr) 150px; }
+  .g-termini .riga { grid-template-columns: minmax(0,1fr) 210px; }
   .g-servizi .riga { grid-template-columns: minmax(0,1fr) minmax(0,1fr); }
   .g-servizi .riga > div:first-child { grid-column: 1 / -1; padding-bottom: 0; }
   .g-servizi .riga.testa > div:nth-child(2) { display: none; }
