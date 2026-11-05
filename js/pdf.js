@@ -17,7 +17,7 @@ function foglioPdf(f) {
     <div class="pdf-pagina">
       <img class="pdf-badge" src="${CARTA_INTESTATA.badge}" alt="WES — We turn attention on">
       <div class="pdf-rif">
-        <div>Offerta n. ${testo(numeroDocumento(f))}</div>
+        <div>Offerta n. ${esc(numeroDocumento(f))}</div>
         <div class="pdf-num"></div>
       </div>
       <div class="pdf-corpo"></div>
@@ -96,7 +96,7 @@ function blocchiPdf(f) {
       ${dato('Referente', testo(f.cliRef))}
       ${dato('E-mail', testo(f.cliMail))}
       <h3>Commessa</h3>
-      ${pieno(f.numCommessa) ? dato('Numero commessa', esc(f.numCommessa.trim())) : ''}
+      ${dato('Numero commessa', testo(f.numCommessa))}
       ${dato('Evento / Progetto', testo(f.cmEvento))}
       ${dato('Data', testo(f.cmData))}
       ${dato('Luogo', testo(f.cmLuogo))}

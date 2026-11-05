@@ -25,8 +25,8 @@ const eventi = (f) => Array.isArray(f.pkEventi) ? f.pkEventi : [];
 const vociSingola = (f) => Array.isArray(f.ogVoci) ? f.ogVoci : [];
 // Righe dell'oggetto nella modalità scelta: voci (Commessa singola) oppure eventi (Pacchetto commesse).
 const righeOggetto = (f) => isPacchetto(f) ? eventi(f) : vociSingola(f);
-// Numero in testa al documento ("Offerta n."): il Numero commessa scritto dall'utente; se è vuoto, il numero automatico.
-const numeroDocumento = (f) => pieno(f.numCommessa) ? f.numCommessa.trim() : f.numOfferta;
+// Numero in testa al documento ("Offerta n."): il Numero commessa scritto dall'utente (obbligatorio); se manca, niente.
+const numeroDocumento = (f) => String(f.numCommessa || '').trim();
 const condizioniCompilate =(f) => (Array.isArray(f.condizioni) ? f.condizioni : []).filter(pieno);
 
 // Totale = somma dei corrispettivi delle righe dell'oggetto.
@@ -60,11 +60,10 @@ function controlli(f) {
   const t = totali(f), out = [];
   const obbligatori = [
     ['cliRag', 'Ragione sociale del Cliente'], ['cliRef', 'Referente del Cliente'], ['cliMail', 'E-mail del Cliente'],
-    ['cmEvento', 'Evento / Progetto'], ['cmData', 'Data'], ['cmLuogo', 'Luogo']
+    ['numCommessa', 'Numero commessa'], ['cmEvento', 'Evento / Progetto'], ['cmData', 'Data'], ['cmLuogo', 'Luogo']
   ];
   const mancanti = obbligatori.filter(r => !pieno(f[r[0]]));
   if (mancanti.length) out.push({ tono: 'error', titolo: mancanti.length + (mancanti.length === 1 ? ' campo obbligatorio mancante' : ' campi obbligatori mancanti'), nota: mancanti.map(m => m[1]).join(' · '), sezione: 'sec-0' });
-  if (!pieno(f.numOfferta)) out.push({ tono: 'info', titolo: 'Numero offerta da assegnare', nota: 'Si assegna quando apri l’anteprima del PDF e poi non cambia più; con i dati di esempio non viene assegnato.', sezione: 'sec-0' });
   if (pieno(f.cliMail) && !emailValida(f.cliMail)) out.push({ tono: 'error', titolo: 'E-mail non valida', nota: 'Controlla l’indirizzo del referente cliente.', sezione: 'sec-0' });
 
   const pacchetto = isPacchetto(f), righe = righeOggetto(f);
@@ -92,8 +91,8 @@ function controlli(f) {
 }
 
 function percentualeCompilazione(f) {
-  // SAL / milestone e numero commessa sono facoltativi e non contano.
-  const campi = ['cliRag', 'cliPiva', 'cliRef', 'cliMail', 'cmEvento', 'cmData', 'cmLuogo', 'cmPrev', 'cmVal', 'ogSconto', 'fee', 'mpCicli', 'mpCosto', 'pgPct1', 'pgPct3', 'pgTermini'];
+  // SAL / milestone è facoltativo e non conta.
+  const campi = ['cliRag', 'cliPiva', 'cliRef', 'cliMail', 'numCommessa', 'cmEvento', 'cmData', 'cmLuogo', 'cmPrev', 'cmVal', 'ogSconto', 'fee', 'mpCicli', 'mpCosto', 'pgPct1', 'pgPct3', 'pgTermini'];
   // Le righe dell'oggetto valgono 5 campi: compilate se ogni riga ha descrizione e corrispettivo.
   const righe = righeOggetto(f), righeComplete = righe.length > 0 && righe.every(e => pieno(e.desc) && pieno(e.imp));
   const totaleCampi = campi.length + 1 + 5;

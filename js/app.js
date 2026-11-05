@@ -153,8 +153,8 @@ const out = (nome, valore) => $$(`[data-out="${nome}"]`).forEach(el => { el.text
 function aggiorna() {
   const f = stato.f, t = totali(f), pg = pagamenti(f, t), lista = controlli(f);
 
-  // Numero in testa al documento: il Numero commessa, oppure quello automatico se il campo è vuoto.
-  out('numeroOfferta', pieno(numeroDocumento(f)) ? numeroDocumento(f).trim() : 'Numero da assegnare');
+  // Numero in testa al documento: il Numero commessa scritto dall'utente.
+  out('numeroOfferta', pieno(numeroDocumento(f)) ? numeroDocumento(f) : 'Numero commessa mancante');
   // Oggetto: Commessa singola / Pacchetto commesse
   const pacchetto = isPacchetto(f);
   $('#sec-1').classList.toggle('modo-pacchetto', pacchetto);
@@ -200,7 +200,7 @@ function aggiorna() {
   // Errori sui campi (gli obbligatori solo dopo la prima anteprima)
   const obbligatorio = (k) => (stato.validato && !pieno(f[k])) ? 'Campo obbligatorio.' : '';
   const errori = {
-    cliRag: obbligatorio('cliRag'), cliRef: obbligatorio('cliRef'),
+    cliRag: obbligatorio('cliRag'), cliRef: obbligatorio('cliRef'), numCommessa: obbligatorio('numCommessa'),
     cliMail: pieno(f.cliMail) && !emailValida(f.cliMail) ? 'Indirizzo e-mail non valido.' : obbligatorio('cliMail'),
     cmEvento: obbligatorio('cmEvento'), cmData: obbligatorio('cmData'), cmLuogo: obbligatorio('cmLuogo'),
     oggetto: (nonNumerico(f.ogSconto) || righeOggetto(f).some(e => nonNumerico(e.imp))) ? 'Uno o più importi non sono numerici.' : ''
