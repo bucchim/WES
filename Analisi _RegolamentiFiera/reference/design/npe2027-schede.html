@@ -1,0 +1,1224 @@
+<title>NPE2027 Schede tecniche</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@700;800&family=IBM+Plex+Mono:wght@400;500&family=Source+Sans+3:wght@400;500;600;700&display=swap">
+<style>
+/* Layout: otto schede orizzontali a tutta larghezza, una per sezione. Binario a sinistra (lettera, titolo, conteggi), tessere a destra. Ogni scheda ha la sua tinta. */
+:root {
+  --font-display: "Big Shoulders Display", "Arial Narrow", "Helvetica Neue", Arial, sans-serif;
+  --font-body: "Source Sans 3", "Segoe UI", system-ui, -apple-system, sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+
+  --bg: hsl(220 10% 94%);
+  --fg: hsl(222 20% 14%);
+  --muted: hsl(222 10% 38%);
+  --bar: hsl(220 10% 94% / .94);
+  --btn: hsl(0 0% 100%);
+  --btn-line: hsl(220 10% 78%);
+  --btn-on: hsl(222 20% 14%);
+  --btn-on-fg: hsl(220 10% 96%);
+
+  --card-l: 91%;
+  --alt-d: -4%;
+  --card-fg-l: 13%;
+  --card-mut-l: 34%;
+  --card-ac-l: 31%;
+  --tile: hsl(0 0% 100% / .6);
+  --chip: hsl(0 0% 100% / .88);
+
+  --ok: #15803d;
+  --warn: #92400e;
+  --na: #b42318;
+  --na-bg: #d92d20;
+  --na-fg: #ffffff;
+  --ok-bg: #15803d;
+  --ok-fg: #ffffff;
+  --warn-bg: #f5a524;
+  --warn-fg: #2b1a00;
+  --tile-ok: hsl(0 0% 100% / .82);
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: hsl(222 14% 9%);
+    --fg: hsl(220 14% 92%);
+    --muted: hsl(220 8% 66%);
+    --bar: hsl(222 14% 9% / .94);
+    --btn: hsl(222 12% 14%);
+    --btn-line: hsl(222 10% 28%);
+    --btn-on: hsl(220 14% 92%);
+    --btn-on-fg: hsl(222 14% 9%);
+    --card-l: 17%;
+    --alt-d: 5%;
+    --card-fg-l: 93%;
+    --card-mut-l: 72%;
+    --card-ac-l: 74%;
+    --tile: hsl(0 0% 100% / .06);
+    --chip: hsl(0 0% 100% / .1);
+    --ok: #4ade80;
+    --warn: #fbbf24;
+    --na: #fca5a5;
+    --na-bg: #f87171;
+    --na-fg: #2a0606;
+    --ok-bg: #4ade80;
+    --ok-fg: #052e16;
+    --warn-bg: #fbbf24;
+    --warn-fg: #2b1a00;
+    --tile-ok: hsl(0 0% 100% / .09);
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: hsl(222 14% 9%);
+  --fg: hsl(220 14% 92%);
+  --muted: hsl(220 8% 66%);
+  --bar: hsl(222 14% 9% / .94);
+  --btn: hsl(222 12% 14%);
+  --btn-line: hsl(222 10% 28%);
+  --btn-on: hsl(220 14% 92%);
+  --btn-on-fg: hsl(222 14% 9%);
+  --card-l: 17%;
+  --alt-d: 5%;
+  --card-fg-l: 93%;
+  --card-mut-l: 72%;
+  --card-ac-l: 74%;
+  --tile: hsl(0 0% 100% / .06);
+  --chip: hsl(0 0% 100% / .1);
+  --ok: #4ade80;
+  --warn: #fbbf24;
+  --na: #fca5a5;
+  --na-bg: #f87171;
+  --na-fg: #2a0606;
+  --ok-bg: #4ade80;
+  --ok-fg: #052e16;
+  --warn-bg: #fbbf24;
+  --warn-fg: #2b1a00;
+  --tile-ok: hsl(0 0% 100% / .09);
+  color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+body {
+  background: var(--bg);
+  color: var(--fg);
+  font-family: var(--font-body);
+  font-size: 16px;
+  line-height: 1.5;
+  padding-block: 0 56px;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  -webkit-text-size-adjust: 100%;
+}
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0 0 auto;
+  height: env(safe-area-inset-top, 0px);
+  z-index: 10;
+  background: var(--bg);
+}
+.wrap { max-width: 1240px; margin: 0 auto; }
+
+/* testata */
+.top { padding: 40px 0 26px; }
+.eyebrow { margin: 0 0 10px; font: 500 12px/1 var(--font-mono); letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+h1 {
+  margin: 0;
+  font: 800 clamp(46px, 9vw, 104px)/.9 var(--font-display);
+  letter-spacing: -.005em;
+  text-transform: uppercase;
+  text-wrap: balance;
+}
+h1 span { font-weight: 700; color: var(--muted); }
+.sub { margin: 16px 0 0; max-width: 62ch; font-size: 18px; color: var(--fg); }
+.facts { display: flex; flex-wrap: wrap; gap: 6px 22px; margin: 14px 0 0; padding: 0; list-style: none; font-size: 14px; color: var(--muted); }
+.facts li { min-width: 0; }
+
+/* barra comandi */
+.bar {
+  position: sticky;
+  top: env(safe-area-inset-top, 0px);
+  z-index: 20;
+  display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px 20px;
+  padding: 10px 0;
+  background: var(--bar);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+.nav { display: flex; flex-wrap: wrap; gap: 6px; }
+.nav-l {
+  display: grid; place-items: center;
+  min-width: 36px; height: 36px; padding: 0 7px; border-radius: 8px;
+  background: hsl(var(--h) var(--s) var(--card-l));
+  color: hsl(var(--h) calc(var(--s) + 12%) var(--card-ac-l));
+  text-decoration: none;
+  font: 800 19px/1 var(--font-display);
+  border: 1px solid hsl(var(--h) var(--s) 50% / .35);
+}
+.nav-l:hover { border-color: hsl(var(--h) calc(var(--s) + 12%) var(--card-ac-l)); }
+.filters { display: flex; flex-wrap: wrap; gap: 6px; }
+.filters button {
+  font: 600 14px/1 var(--font-body);
+  color: var(--fg); background: var(--btn);
+  border: 1px solid var(--btn-line); border-radius: 999px;
+  padding: 9px 14px; cursor: pointer;
+  display: inline-flex; align-items: center; gap: 8px;
+}
+.filters button b { font-weight: 600; color: var(--muted); font-variant-numeric: tabular-nums; }
+.filters button[aria-pressed="true"] { background: var(--btn-on); color: var(--btn-on-fg); border-color: var(--btn-on); }
+.filters button[aria-pressed="true"] b { color: inherit; opacity: .8; }
+.filters button:focus-visible, .nav-l:focus-visible, summary:focus-visible { outline: 2px solid var(--fg); outline-offset: 2px; }
+
+/* schede */
+.cards { display: flex; flex-direction: column; gap: 18px; margin-top: 14px; }
+.card {
+  --bgc: hsl(var(--h) var(--s) var(--card-l));
+  --fgc: hsl(var(--h) 24% var(--card-fg-l));
+  --mutc: hsl(var(--h) 14% var(--card-mut-l));
+  --acc: hsl(var(--h) calc(var(--s) + 12%) var(--card-ac-l));
+  display: grid;
+  grid-template-columns: minmax(210px, 260px) minmax(0, 1fr);
+  gap: 18px 34px;
+  padding: clamp(18px, 3vw, 32px);
+  border-radius: 18px;
+  background: var(--bgc);
+  color: var(--fgc);
+  scroll-margin-top: 76px;
+}
+.letter.two { font-size: clamp(84px, 11vw, 124px); }
+.rail { min-width: 0; align-self: start; display: flex; flex-direction: column; gap: 10px; }
+.letter { margin: 0; font: 800 clamp(96px, 14vw, 152px)/.8 var(--font-display); color: var(--acc); }
+.card h2 { margin: 0; font: 700 30px/1.02 var(--font-display); text-transform: uppercase; letter-spacing: .01em; text-wrap: balance; }
+.counts { margin: 6px 0 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 6px; }
+.counts li { display: flex; align-items: center; gap: 10px; }
+.counts b { font: 700 18px/1 var(--font-display); font-variant-numeric: tabular-nums; }
+.rail-note { margin: 4px 0 0; font-size: 14px; color: var(--mutc); }
+
+.body { min-width: 0; }
+.tiles { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 280px), 1fr)); gap: 10px; align-items: start; }
+.tile {
+  min-width: 0;
+  display: flex; flex-direction: column; gap: 6px;
+  padding: 14px 15px 13px;
+  border-radius: 10px;
+  background: var(--tile);
+  border: 1px solid hsl(var(--h) 24% 40% / .18);
+}
+.tile.wide { grid-column: 1 / -1; }
+.tile[data-st="ok"] { background: var(--tile-ok); border-color: color-mix(in srgb, var(--ok) 40%, transparent); }
+.tile[data-st="chk"] { background: color-mix(in srgb, var(--warn-bg) 26%, var(--tile-ok)); border: 2px solid var(--warn-bg); padding: 13px 14px 12px; }
+.tile[data-st="na"] {
+  background-color: color-mix(in srgb, var(--na-bg) 20%, var(--tile-ok));
+  border: 2px solid var(--na-bg);
+  padding: 13px 14px 12px;
+}
+.tile h3 { margin: 0; font: 700 14px/1.25 var(--font-body); letter-spacing: .01em; }
+.tile .val { margin: 0; font-size: 15px; line-height: 1.4; overflow-wrap: anywhere; }
+.tile .lab { margin: 4px 0 -2px; font: 500 11px/1 var(--font-mono); letter-spacing: .06em; text-transform: uppercase; color: var(--mutc); }
+.tile .lab:first-of-type { margin-top: 0; }
+.meta { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 6px 10px; margin-top: 2px; }
+.ref { font: 400 12px/1.3 var(--font-mono); color: var(--mutc); min-width: 0; overflow-wrap: anywhere; }
+.det { margin: 0; font-size: 13px; color: var(--mutc); }
+
+.chip {
+  display: inline-flex; align-items: center; gap: 7px; white-space: nowrap;
+  padding: 4px 11px 4px 9px; border-radius: 999px;
+  font: 700 12px/1.2 var(--font-body);
+  border: 1.5px solid transparent;
+}
+.chip::before { content: ""; width: 9px; height: 9px; flex: none; background: currentColor; }
+.chip.ok { background: var(--ok-bg); color: var(--ok-fg); }
+.chip.ok::before { border-radius: 50%; }
+.chip.chk { background: var(--warn-bg); color: var(--warn-fg); }
+.chip.chk::before { clip-path: polygon(50% 0, 100% 100%, 0 100%); width: 10px; height: 9px; }
+.chip.na { background: var(--na-bg); color: var(--na-fg); }
+.chip.na::before { background: none; border: 1.5px solid currentColor; border-radius: 50%; }
+
+/* glifo di stato, senza etichetta */
+.gl { display: inline-block; width: 10px; height: 10px; flex: none; }
+.gl.ok { background: var(--ok); border-radius: 50%; }
+.gl.chk { background: var(--warn); clip-path: polygon(50% 0, 100% 100%, 0 100%); height: 10px; }
+.gl.na { border: 1.5px solid var(--na); border-radius: 50%; }
+
+/* intestazioni di gruppo dentro la scheda */
+.grp { grid-column: 1 / -1; display: flex; align-items: center; gap: 9px; margin-top: 8px; font: 500 12px/1 var(--font-mono); letter-spacing: .07em; text-transform: uppercase; }
+.grp:first-child { margin-top: 0; }
+.grp b { font-weight: 600; }
+.grp::after { content: ""; flex: 1; border-top: 2px solid currentColor; opacity: .45; }
+.grp.ok { color: var(--ok); }
+.grp.chk { color: var(--warn); }
+.grp.na { color: var(--na); }
+
+/* legenda in testata */
+.legend { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 250px), 1fr)); gap: 10px 22px; margin: 22px 0 0; padding: 14px 0 0; list-style: none; border-top: 1px solid var(--btn-line); font-size: 14px; color: var(--muted); }
+.legend li { display: grid; grid-template-columns: 10px minmax(0, 1fr); gap: 4px 10px; align-items: baseline; }
+.legend b { color: var(--fg); font-weight: 700; }
+.legend span.t { grid-column: 2; }
+
+details { margin-top: 2px; }
+summary { cursor: pointer; font: 500 12px/1.4 var(--font-mono); color: var(--mutc); letter-spacing: .02em; list-style: none; width: fit-content; padding: 2px 0; }
+summary::-webkit-details-marker { display: none; }
+summary::before { content: "+"; display: inline-block; width: 1.2em; }
+details[open] summary::before { content: "\2212"; }
+summary:hover { color: var(--fgc); }
+.q { margin-top: 6px; padding-top: 8px; border-top: 1px solid hsl(var(--h) 24% 40% / .22); display: flex; flex-direction: column; gap: 8px; }
+.q p { margin: 0; font: 400 12.5px/1.5 var(--font-mono); color: var(--fgc); overflow-wrap: anywhere; }
+
+.note { margin: 12px 0 0; padding: 12px 14px; border-radius: 10px; font-size: 14.5px; background: var(--tile); border: 1px solid color-mix(in srgb, var(--warn) 60%, transparent); }
+.note[data-st="na"] { border-color: color-mix(in srgb, var(--na-bg) 65%, transparent); }
+.note b { display: block; margin-bottom: 2px; font: 500 11px/1.4 var(--font-mono); letter-spacing: .06em; text-transform: uppercase; color: var(--mutc); }
+
+.pills { display: flex; flex-wrap: wrap; gap: 6px; margin: 2px 0 0; padding: 0; list-style: none; }
+.pills li { padding: 5px 10px; border-radius: 999px; font-size: 13px; background: var(--chip); border: 1px solid color-mix(in srgb, var(--na-bg) 55%, transparent); }
+
+.foot { margin: 26px 0 0; max-width: 78ch; font-size: 13.5px; color: var(--muted); }
+.empty { margin: 22px 0 0; padding: 16px; border: 1px dashed var(--btn-line); border-radius: 12px; color: var(--muted); }
+
+@media (max-width: 900px) {
+  .card { grid-template-columns: minmax(0, 1fr); gap: 14px; }
+  .rail { display: grid; grid-template-columns: auto minmax(0, 1fr); column-gap: 18px; row-gap: 6px; align-items: end; }
+  .letter { grid-row: 1 / span 2; font-size: 92px; }
+  .letter.two { font-size: 76px; }
+  .card h2 { font-size: 26px; align-self: end; }
+  .counts { grid-column: 2; flex-direction: row; flex-wrap: wrap; gap: 6px 12px; margin: 0; }
+  .rail-note { grid-column: 2; }
+}
+@media (max-width: 700px) {
+  .bar { position: static; }
+  .top { padding-top: 28px; }
+}
+@media (min-width: 901px) {
+  .rail { position: sticky; top: calc(env(safe-area-inset-top, 0px) + 74px); }
+}
+@media (prefers-reduced-motion: no-preference) {
+  .nav-l, .filters button { transition: border-color .15s, background-color .15s; }
+}
+</style>
+
+<div class="wrap">
+  <header class="top">
+    <p class="eyebrow">Progetto EVOLUTION · uso interno</p>
+    <h1>NPE2027 <span>The Plastics Show</span></h1>
+    <p class="sub">Prescrizioni tecniche che vincolano la progettazione dello stand, una scheda per sezione.</p>
+    <ul class="facts">
+      <li>Orlando, Orange County Convention Center</li>
+      <li>3-7 maggio 2027</li>
+      <li>Unità del regolamento: ft, sf, in, lb, PSF</li>
+    </ul>
+    <ul class="legend" aria-label="Legenda degli stati">
+      <li><span class="gl ok"></span><span><b>Confermato.</b> La citazione contiene il dato alla lettera.</span></li>
+      <li><span class="gl chk"></span><span><b>Da verificare.</b> Passaggio ambiguo, condizionato o da comporre con altri.</span></li>
+      <li><span class="gl na"></span><span><b>Non specificato.</b> Le fonti non trattano il parametro.</span></li>
+    </ul>
+  </header>
+
+  <div class="bar" role="navigation" aria-label="Sezioni e filtri">
+    <nav class="nav" aria-label="Vai alla sezione">
+      <a class="nav-l" href="#sez-a" data-sec="A" style="--h:214;--s:46%" aria-label="Sezione A: Altezze per tipo di stand"><span>A</span></a>
+      <a class="nav-l" href="#sez-b" data-sec="B" style="--h:18;--s:58%" aria-label="Sezione B: Sospensioni e soppalchi"><span>B</span></a>
+      <a class="nav-l" href="#sez-c" data-sec="C" style="--h:150;--s:36%" aria-label="Sezione C: Chiusure perimetrali"><span>C</span></a>
+      <a class="nav-l" href="#sez-d" data-sec="D" style="--h:268;--s:40%" aria-label="Sezione D: Appendimenti e alimentazione dall'alto"><span>D</span></a>
+      <a class="nav-l" href="#sez-e" data-sec="E" style="--h:338;--s:42%" aria-label="Sezione E: Cielinature, coperture e controsoffitti"><span>E</span></a>
+      <a class="nav-l" href="#sez-f" data-sec="F" style="--h:88;--s:36%" aria-label="Sezione F: Sicurezza e antincendio"><span>F</span></a>
+      <a class="nav-l" href="#sez-g" data-sec="G" style="--h:300;--s:34%" aria-label="Sezione G: Forma, finiture e operatività"><span>G</span></a>
+      <a class="nav-l" href="#sez-h" data-sec="H" style="--h:186;--s:40%" aria-label="Sezione H: Adempimenti e scadenze"><span>H</span></a>
+      <a class="nav-l" href="#sez-i" data-sec="I" style="--h:240;--s:38%" aria-label="Sezione I: Montaggio e smontaggio"><span>I</span></a>
+      <a class="nav-l" href="#sez-j" data-sec="J" style="--h:30;--s:24%" aria-label="Sezione J: Accessi e mezzi"><span>J</span></a>
+      <a class="nav-l" href="#sez-v" data-sec="V" style="--h:222;--s:8%" aria-label="Punti da verificare"><span>!</span></a>
+    </nav>
+    <div class="filters" role="group" aria-label="Filtra per stato">
+      <button type="button" data-filter="all" aria-pressed="true" id="f-all">Tutte <b>87</b></button>
+      <button type="button" data-filter="ok" aria-pressed="false" id="f-ok"><span class="gl ok"></span>Confermato <b>60</b></button>
+      <button type="button" data-filter="chk" aria-pressed="false" id="f-chk"><span class="gl chk"></span>Da verificare <b>14</b></button>
+      <button type="button" data-filter="na" aria-pressed="false" id="f-na"><span class="gl na"></span>Non specificato <b>13</b></button>
+    </div>
+  </div>
+
+  <main class="cards" id="cards">
+    <section class="card" id="sez-a" data-sec="A" style="--h:214;--s:46%" aria-labelledby="sez-a-t">
+  <header class="rail">
+    <p class="letter" aria-hidden="true">A</p>
+    <h2 id="sez-a-t">Altezze per tipo di stand</h2>
+    <ul class="counts" aria-label="Stato delle voci">
+      <li><span class="chip ok">Confermato</span><b>9</b></li>
+      <li><span class="chip chk">Da verificare</span><b>2</b></li>
+      <li><span class="chip na">Non specificato</span><b>0</b></li>
+    </ul>
+  </header>
+  <div class="body">
+    <div class="tiles">
+      <div class="grp ok" data-st="ok"><span class="gl ok"></span><b>Confermato</b><span>9</span></div>
+<article class="tile" data-st="ok">
+  <h3>Altezza max, booth inline e corner</h3>
+  <p class="val">8 ft, solo nei 5 ft posteriori</p>
+  <div class="meta"><span class="ref">App. A, p.1</span><span class="chip ok">Confermato</span></div>
+  
+  <details><summary>Citazione testuale</summary><div class="q"><p>Maximum height of 8ft. ; permitted only in the rear five feet of the booth space.</p></div></details>
+</article>
+<article class="tile" data-st="ok">
+  <h3>Altezza max, inline, parte verso la corsia</h3>
+  <p class="val">4 ft</p>
+  <div class="meta"><span class="ref">App. A, p.1</span><span class="chip ok">Confermato</span></div>
+  
+  <details><summary>Citazione testuale</summary><div class="q"><p>4ft. height restriction imposed on all materials in the remaining space forward to the aisle.</p></div></details>
+</article>
+<article class="tile" data-st="ok">
+  <h3>Inline: tre o più booth combinati</h3>
+  <p class="val">Il limite di 4 ft vale solo per la porzione entro 10 ft da un booth adiacente</p>
+  <div class="meta"><span class="ref">App. A, p.1</span><span class="chip ok">Confermato</span></div>
+  
+  <details><summary>Citazione testuale</summary><div class="q"><p>When three or more Linear Booths are used in combination as a single exhibit space, the 4ft. height limitation is applied only to that portion of exhibit space which is within 10ft. of an adjoining booth.</p></div></details>
+</article>
+<article class="tile" data-st="ok">
+  <h3>Extended header inline (20 ft o più)</h3>
+  <p class="val">Altezza 8 ft; larghezza max 20% della lunghezza; profondità max 9 ft dal fondo</p>
+  <div class="meta"><span class="ref">App. A, p.2</span><span class="chip ok">Confermato</span></div>
+  
+  <details><summary>Citazione testuale</summary><div class="q"><p>Maximum height: 8ft.</p><p>Maximum width: 20% of the length of the booth</p><p>Maximum depth: 9ft. from the back wall</p></div></details>
+</article>
+<article class="tile" data-st="ok">
+  <h3>Altezza max, island</h3>
+  <p class="val">20 ft, escluso hanging signage</p>
+  <div class="meta"><span class="ref">App. A, p.2</span><span class="chip ok">Confermato</span></div>
+  
+  <details><summary>Citazione testuale</summary><div class="q"><p>The entire cubic content of the space may be used up to the maximum allowable height of 20ft, display and signage, excluding hanging signage.</p></div></details>
+</article>
+<article class="tile" data-st="ok">
+  <h3>Altezza max, split island/peninsula: display</h3>
+  <p class="val">16 ft</p>
+  <div class="meta"><span class="ref">App. A, p.2</span><span class="chip ok">Confermato</span></div>
+  
+  <details><summary>Citazione testuale</summary><div class="q"><p>Display Pieces: Maximum height allowance is 16ft., excluding hanging signage.</p></div></details>
+</article>
+<article class="tile" data-st="ok">
+  <h3>Split island: parete di fondo verso le corsie</h3>
+  <p class="val">4 ft entro 5 ft da ogni corsia</p>
+  <div class="meta"><span class="ref">App. A, p.2</span><span class="chip ok">Confermato</span></div>
+  
+  <details><summary>Citazione testuale</summary><div class="q"><p>Back Wall: Restriction to 4ft. high within 5ft.of each aisle, permitting adequate line of sight for the adjoining booth.</p></div></details>
+</article>
+<article class="tile" data-st="ok">
+  <h3>Macchinari e attrezzature</h3>
+  <p class="val">Nessun limite oltre l'altezza dei padiglioni</p>
+  <div class="meta"><span class="ref">Reg. 6.6, p.16</span><span class="chip ok">Confermato</span></div>
+  
+  <details><summary>Citazione testuale</summary><div class="q"><p>No height limitation (other than ceiling height limitations of the exposition halls) shall apply to machinery or equipment placed in position comparable to actual utilization for industrial purposes.</p></div></details>
+</article>
+<article class="tile" data-st="ok">
+  <h3>Altezza dei soffitti dei padiglioni</h3>
+  <p class="val">West Hall A, B, D: 40 ft; West Hall C: 33 ft; West Hall E: 30 ft; South/North Hall: 40 ft (fino alla trave)</p>
+  <div class="meta"><span class="ref">Reg. 6.18, p.20</span><span class="chip ok">Confermato</span></div>
+  
+  <details><summary>Citazione testuale</summary><div class="q"><p>Ceiling Heights: West Hall A, B, D 40ft to beam West Hall C 33ft to beam West Hall E 30ft to beam South/North Hall 40ft to beam</p></div></details>
+</article>
+<div class="grp chk" data-st="chk"><span class="gl chk"></span><b>Da verificare</b><span>2</span></div>
+<article class="tile" data-st="chk">
+  <h3>Altezza max parete di fondo, perimeter inline</h3>
+  <p class="val">12 ft</p>
+  <div class="meta"><span class="ref">App. A, p.1</span><span class="chip chk">Da verificare</span></div>
+  <p class="det">condizionato</p>
+  <details><summary>Citazione testuale</summary><div class="q"><p>The maximum back wall height permitted is 12ft. where facility allows.</p></div></details>
+</article>
+<article class="tile" data-st="chk">
+  <h3>Split island: segnaletica</h3>
+  <p class="val">26 ft, ridotta se il soffitto lo richiede</p>
+  <div class="meta"><span class="ref">App. A, p.2</span><span class="chip chk">Da verificare</span></div>
+  <p class="det">condizionato</p>
+  <details><summary>Citazione testuale</summary><div class="q"><p>All signage must be installed to a maximum of 26ft. (location ceiling height may reduce this).</p></div></details>
+</article>
+    </div>
+    
+  </div>
+</section>
+    <section class="card" id="sez-b" data-sec="B" style="--h:18;--s:58%" aria-labelledby="sez-b-t">
+  <header class="rail">
+    <p class="letter" aria-hidden="true">B</p>
+    <h2 id="sez-b-t">Sospensioni e soppalchi</h2>
+    <ul class="counts" aria-label="Stato delle voci">
+      <li><span class="chip ok">Confermato</span><b>3</b></li>
+      <li><span class="chip chk">Da verificare</span><b>2</b></li>
+      <li><span class="chip na">Non specificato</span><b>2</b></li>
+    </ul>
+  </header>
+  <div class="body">
+    <div class="tiles">
+      <div class="grp ok" data-st="ok"><span class="gl ok"></span><b>Confermato</b><span>3</span></div>
+<article class="tile" data-st="ok">
+  <h3>Soppalchi: ammissibilità</h3>
+  <p class="val">Ammessi solo in booth di 800 sf o più</p>
+  <div class="meta"><span class="ref">App. A, p.4</span><span class="chip ok">Confermato</span></div>
+  
+  <details><summary>Citazione testuale</summary><div class="q"><p>Only booths equal to or greater than 800sf. may utilize a multi-level.</p></div></details>
+</article>
+<article class="tile" data-st="ok">
+  <h3>Soppalchi: superficie max</h3>
+  <p class="val">Max 1.000 sf per singola area di piano superiore</p>
+  <div class="meta"><span class="ref">App. A, p.4</span><span class="chip ok">Confermato</span></div>
+  
+  <details><summary>Citazione testuale</summary><div class="q"><p>Individual areas of upper decks must be limited to dimensions that do not exceed 1,000sf.</p></div></details>
+</article>
+<article class="tile" data-st="ok">
+  <h3>Soppalchi: autorizzazione</h3>
+  <p class="val">Approvazione preventiva obbligatoria, anche da OCCC</p>
+  <div class="meta"><span class="ref">Reg. 6.1, p.15</span><span class="chip ok">Confermato</span></div>
+  
+  <details><summary>Citazione testuale</summary><div class="q"><p>Multi-level and covered booths must also be approved by the OCCC.</p></div></details>
+</article>
+<div class="grp chk" data-st="chk"><span class="gl chk"></span><b>Da verificare</b><span>2</span></div>
+<article class="tile" data-st="chk">
+  <h3>Altezza max elementi sospesi (Regolamento)</h3>
+  <p class="val">Insegne appese: base minima 18 ft, sommità max 26 ft. Le travi possono superare i 26 ft</p>
+  <div class="meta"><span class="ref">Reg. 6.18, p.20</span><span class="chip chk">Da verificare</span></div>
+  <p class="det">conflitto con App. A, vedi nota</p>
+  <details><summary>Citazione testuale</summary><div class="q"><p>Bottoms of hanging signs must be a minimum of 18ft from the ground and no more than 26ft from the ground to the top of the sign.</p><p>Overhead trusses may exceed the 26ft height limit.</p></div></details>
+</article>
+<article class="tile" data-st="chk">
+  <h3>Altezza max elementi sospesi (Appendice A)</h3>
+  <p class="val">20 ft per gli elementi appesi, travi sopra i 20 ft</p>
+  <div class="meta"><span class="ref">App. A, p.3</span><span class="chip chk">Da verificare</span></div>
+  <p class="det">conflitto con Reg., vedi nota</p>
+  <details><summary>Citazione testuale</summary><div class="q"><p>Displays may have hanging elements to a maximum of 20ft.</p><p>All overhead trusses must be installed above the height limit of 20ft.</p></div></details>
+</article>
+<div class="grp na" data-st="na"><span class="gl na"></span><b>Non specificato</b><span>2</span></div>
+<article class="tile" data-st="na">
+  <h3>Soppalchi: altezza max</h3>
+  
+  <div class="meta"><span></span><span class="chip na">Non specificato</span></div>
+  
+  
+</article>
+<article class="tile" data-st="na">
+  <h3>Soppalchi: % rispetto all'area dello stand</h3>
+  
+  <div class="meta"><span></span><span class="chip na">Non specificato</span></div>
+  
+  
+</article>
+    </div>
+    <p class="note" data-st="chk"><b>Nota</b>Sugli elementi sospesi le due fonti non sono conciliabili: il Regolamento fissa la sommità delle insegne a 26 ft con base minima a 18 ft, l'Appendice A indica 20 ft come limite per gli elementi appesi e per le travi. Entrambe riguardano island e split island.</p>
+  </div>
+</section>
+    <section class="card" id="sez-c" data-sec="C" style="--h:150;--s:36%" aria-labelledby="sez-c-t">
+  <header class="rail">
+    <p class="letter" aria-hidden="true">C</p>
+    <h2 id="sez-c-t">Chiusure perimetrali</h2>
+    <ul class="counts" aria-label="Stato delle voci">
+      <li><span class="chip ok">Confermato</span><b>4</b></li>
+      <li><span class="chip chk">Da verificare</span><b>0</b></li>
+      <li><span class="chip na">Non specificato</span><b>1</b></li>
+    </ul>
+  </header>
+  <div class="body">
+    <div class="tiles">
+      <div class="grp ok" data-st="ok"><span class="gl ok"></span><b>Confermato</b><span>4</span></div>
+<article class="tile" data-st="ok">
+  <h3>Limite verso stand confinanti: corner inline</h3>
+  <p class="val">La partizione laterale esposta non può essere rimossa</p>
+  <div class="meta"><span class="ref">App. A, p.1</span><span class="chip ok">Confermato</span></div>
+  
+  <details><summary>Citazione testuale</summary><div class="q"><p>All guidelines for Linear Booths apply and the exposed side partition may not be removed.</p></div></details>
+</article>
+<article class="tile" data-st="ok">
+  <h3>Limite verso stand confinanti: linee di vista</h3>
+  <p class="val">Disposizione che non ostruisca le linee di vista dei vicini</p>
+  <div class="meta"><span class="ref">App. A, p.1</span><span class="chip ok">Confermato</span></div>
+  
+  <details><summary>Citazione testuale</summary><div class="q"><p>Regardless of the space size, display materials should be arranged so as not to obstruct the sight lines of neighboring exhibitors.</p></div></details>
+</article>
+<article class="tile" data-st="ok">
+  <h3>Split island: retro della parete comune</h3>
+  <p class="val">Finito, senza loghi</p>
+  <div class="meta"><span class="ref">App. A, p.2</span><span class="chip ok">Confermato</span></div>
+  
+  <details><summary>Citazione testuale</summary><div class="q"><p>The back of the common wall must be finished and cannot display any graphics of company logos.</p></div></details>
+</article>
+<article class="tile" data-st="ok">
+  <h3>Arretramento dalla corsia</h3>
+  <p class="val">1 ft</p>
+  <div class="meta"><span class="ref">Reg. 6.3, p.16</span><span class="chip ok">Confermato</span></div>
+  
+  <details><summary>Citazione testuale</summary><div class="q"><p>All displays, technology, machinery, engagements and furniture are required to have a 1-ft setback from the aisle.</p></div></details>
+</article>
+<div class="grp na" data-st="na"><span class="gl na"></span><b>Non specificato</b><span>1</span></div>
+<article class="tile" data-st="na">
+  <h3>Percentuale max di chiusura del perimetro</h3>
+  
+  <div class="meta"><span></span><span class="chip na">Non specificato</span></div>
+  
+  
+</article>
+    </div>
+    
+  </div>
+</section>
+    <section class="card" id="sez-d" data-sec="D" style="--h:268;--s:40%" aria-labelledby="sez-d-t">
+  <header class="rail">
+    <p class="letter" aria-hidden="true">D</p>
+    <h2 id="sez-d-t">Appendimenti e alimentazione dall'alto</h2>
+    <ul class="counts" aria-label="Stato delle voci">
+      <li><span class="chip ok">Confermato</span><b>3</b></li>
+      <li><span class="chip chk">Da verificare</span><b>2</b></li>
+      <li><span class="chip na">Non specificato</span><b>3</b></li>
+    </ul>
+  </header>
+  <div class="body">
+    <div class="tiles">
+      <div class="grp ok" data-st="ok"><span class="gl ok"></span><b>Confermato</b><span>3</span></div>
+<article class="tile" data-st="ok">
+  <h3>Inline: appendimenti</h3>
+  <p class="val">Non ammessi, salvo Show Management</p>
+  <div class="meta"><span class="ref">App. A, p.1</span><span class="chip ok">Confermato</span></div>
+  
+  <details><summary>Citazione testuale</summary><div class="q"><p>These booth configurations do not allow for hanging, overhead signs, except for Show Management use.</p></div></details>
+</article>
+<article class="tile" data-st="ok">
+  <h3>Autorizzazione</h3>
+  <p class="val">Approvazione preventiva entro il 5 marzo 2027</p>
+  <div class="meta"><span class="ref">Reg. 6.18, p.20</span><span class="chip ok">Confermato</span></div>
+  
+  <details><summary>Citazione testuale</summary><div class="q"><p>Prior approval is required by March 5, 2027, for all hanging signs or elements.</p></div></details>
+</article>
+<article class="tile" data-st="ok">
+  <h3>Distanze</h3>
+  <p class="val">Arretramento di 10 ft dai booth adiacenti; 2 ft di apertura verticale tra struttura a terra ed elementi sospesi</p>
+  <div class="meta"><span class="ref">Reg. 6.18, p.20; App. A, p.3</span><span class="chip ok">Confermato</span></div>
+  
+  <details><summary>Citazione testuale</summary><div class="q"><p>Hanging signs, trusses, and graphics must be set back 10ft from adjacent booths and be hung directly over an exhibitor's contracted space only.</p><p>This 2ft. vertical opening applies to the entire booth footprint.</p></div></details>
+</article>
+<div class="grp chk" data-st="chk"><span class="gl chk"></span><b>Da verificare</b><span>2</span></div>
+<article class="tile" data-st="chk">
+  <h3>Possibilità di appendere</h3>
+  <p class="val">Insegne aziendali per island e split island di 400 sf o più in South e West Hall; escluse le inline</p>
+  <div class="meta"><span class="ref">Reg. 6.18, p.20</span><span class="chip chk">Da verificare</span></div>
+  <p class="det">copre le insegne, non carichi generici</p>
+  <details><summary>Citazione testuale</summary><div class="q"><p>Show Management permits ceiling-hung corporate identification for exhibiting companies occupying island or split island space of 400sf or more in the South and West Halls, except for inline booths and in a limited, low-ceiling areas in the West Hall, provided the guidelines listed below are followed.</p></div></details>
+</article>
+<article class="tile" data-st="chk">
+  <h3>Altezza max di appendimento</h3>
+  <p class="val">26 ft (Regolamento) contro 20 ft (Appendice A), vedi sezione B</p>
+  <div class="meta"><span class="ref">Reg. 6.18; App. A, p.3</span><span class="chip chk">Da verificare</span></div>
+  
+  <p class="det">Vedi sezione B.</p>
+</article>
+<div class="grp na" data-st="na"><span class="gl na"></span><b>Non specificato</b><span>3</span></div>
+<article class="tile" data-st="na">
+  <h3>Portata max per punto (kg)</h3>
+  
+  <div class="meta"><span></span><span class="chip na">Non specificato</span></div>
+  
+  
+</article>
+<article class="tile" data-st="na">
+  <h3>Limite di carico complessivo</h3>
+  
+  <div class="meta"><span></span><span class="chip na">Non specificato</span></div>
+  
+  
+</article>
+<article class="tile" data-st="na">
+  <h3>Alimentazione elettrica dall'alto</h3>
+  
+  <div class="meta"><span></span><span class="chip na">Non specificato</span></div>
+  
+  
+</article>
+    </div>
+    <p class="note" data-st="na"><b>Nota</b>Il Regolamento tratta solo l'alimentazione in generale (art. 6.12, p.18): &quot;The OCCC is the exclusive provider of electric service at NPE.&quot; Non dice nulla sull'alimentazione aerea.</p>
+  </div>
+</section>
+    <section class="card" id="sez-e" data-sec="E" style="--h:338;--s:42%" aria-labelledby="sez-e-t">
+  <header class="rail">
+    <p class="letter" aria-hidden="true">E</p>
+    <h2 id="sez-e-t">Cielinature, coperture e controsoffitti</h2>
+    <ul class="counts" aria-label="Stato delle voci">
+      <li><span class="chip ok">Confermato</span><b>6</b></li>
+      <li><span class="chip chk">Da verificare</span><b>1</b></li>
+      <li><span class="chip na">Non specificato</span><b>3</b></li>
+    </ul>
+  </header>
+  <div class="body">
+    <div class="tiles">
+      <div class="grp ok" data-st="ok"><span class="gl ok"></span><b>Confermato</b><span>6</span></div>
+<article class="tile" data-st="ok">
+  <h3>Rilevatore di fumo ed estintore (strutture coperte)</h3>
+  <p class="val">Rilevatore a batteria in ogni struttura coperta, qualunque sia la superficie; almeno un estintore portatile a polvere 2-A, 10-BC</p>
+  <div class="meta"><span class="ref">App. A, p.3</span><span class="chip ok">Confermato</span></div>
+  
+  <details><summary>Citazione testuale</summary><div class="q"><p>Exhibitor must install a single station and battery-operated smoke detector on the interior of each covered exhibit or structure regardless of the square footage.</p><p>Exhibitor must provide at least one 2-A, 10-BC portable, dry chemical fire extinguisher.</p></div></details>
+</article>
+<article class="tile" data-st="ok">
+  <h3>Materiali ammessi</h3>
+  <p class="val">Incombustibili o a combustibilità limitata (ignifughi)</p>
+  <div class="meta"><span class="ref">App. A, p.3</span><span class="chip ok">Confermato</span></div>
+  
+  <details><summary>Citazione testuale</summary><div class="q"><p>All materials used in the construction of covered exhibits and all decorative materials within the exhibit must be noncombustible or limited combustible (flame-retardant) materials.</p></div></details>
+</article>
+<article class="tile" data-st="ok">
+  <h3>Coperture di 300 sf coperti o più</h3>
+  <p class="val">Progetto da approvare in anticipo da Show Management, OCCC e Fire Rescue; disegni firmati da architetto o ingegnere registrato</p>
+  <div class="meta"><span class="ref">App. A, p.3</span><span class="chip ok">Confermato</span></div>
+  
+  <details><summary>Citazione testuale</summary><div class="q"><p>Guidelines for Covered Exhibits with Equal to or Larger than 300 Covered Square Feet must adhere to these additional rules:</p><p>Scaling, signature and date by a registered architect or engineer.</p></div></details>
+</article>
+<article class="tile" data-st="ok">
+  <h3>Canopy (booth lineari e perimetrali): base dal pavimento</h3>
+  <p class="val">Min 7 ft dal pavimento</p>
+  <div class="meta"><span class="ref">App. A, p.3</span><span class="chip ok">Confermato</span></div>
+  
+  <details><summary>Citazione testuale</summary><div class="q"><p>Canopies for Linear or Perimeter Booths should comply with Line-of-Sight and the following requirements.</p><p>Bottom of the canopy should not be lower than 7ft. from the floor.</p></div></details>
+</article>
+<article class="tile" data-st="ok">
+  <h3>Canopy (booth lineari e perimetrali): distanza dalle corsie e supporti</h3>
+  <p class="val">Lati a oltre 5 ft da ogni corsia; supporti larghi al massimo 3 in</p>
+  <div class="meta"><span class="ref">App. A, p.3</span><span class="chip ok">Confermato</span></div>
+  
+  <details><summary>Citazione testuale</summary><div class="q"><p>The sides of canopy should not be within 5ft. of any aisle.</p><p>Canopy supports should be no wider than 3in.</p></div></details>
+</article>
+<article class="tile" data-st="ok">
+  <h3>Livello superiore dei soppalchi</h3>
+  <p class="val">Nessuna copertura ammessa</p>
+  <div class="meta"><span class="ref">App. A, p.4</span><span class="chip ok">Confermato</span></div>
+  
+  <details><summary>Citazione testuale</summary><div class="q"><p>The upper level may not have a &quot;cover&quot; of any kind (e.g., roof, ceiling, tenting, lattice, fabric, and plastic).</p></div></details>
+</article>
+<div class="grp chk" data-st="chk"><span class="gl chk"></span><b>Da verificare</b><span>1</span></div>
+<article class="tile" data-st="chk">
+  <h3>Classe di reazione al fuoco</h3>
+  <p class="val">Nessuna classe indicata; certificazione del trattamento ignifugo da presentare su richiesta e da tenere disponibile in fiera se richiesta</p>
+  <div class="meta"><span class="ref">App. A, p.3</span><span class="chip chk">Da verificare</span></div>
+  <p class="det">condizionato</p>
+  <details><summary>Citazione testuale</summary><div class="q"><p>If requested in advance, certification of flame-retardant treatment, along with samples of said materials, must be submitted to the Orange County Fire Rescue Services Department.</p><p>It is required that certifications of flame-retardant treatments be available at show site, if requested by Show Management.</p></div></details>
+</article>
+<div class="grp na" data-st="na"><span class="gl na"></span><b>Non specificato</b><span>3</span></div>
+<article class="tile" data-st="na">
+  <h3>Superficie max copribile in modo pieno</h3>
+  
+  <div class="meta"><span></span><span class="chip na">Non specificato</span></div>
+  
+  
+</article>
+<article class="tile" data-st="na">
+  <h3>Porzioni a rete o tessuto traspirante</h3>
+  
+  <div class="meta"><span></span><span class="chip na">Non specificato</span></div>
+  
+  
+</article>
+<article class="tile" data-st="na">
+  <h3>Soglia m² per sprinkler/antincendio</h3>
+  <p class="val">La soglia di 300 sf coperti riguarda solo l'approvazione del progetto.</p>
+  <div class="meta"><span></span><span class="chip na">Non specificato</span></div>
+  
+  
+</article>
+    </div>
+    
+  </div>
+</section>
+    <section class="card" id="sez-f" data-sec="F" style="--h:88;--s:36%" aria-labelledby="sez-f-t">
+  <header class="rail">
+    <p class="letter" aria-hidden="true">F</p>
+    <h2 id="sez-f-t">Sicurezza e antincendio</h2>
+    <ul class="counts" aria-label="Stato delle voci">
+      <li><span class="chip ok">Confermato</span><b>11</b></li>
+      <li><span class="chip chk">Da verificare</span><b>0</b></li>
+      <li><span class="chip na">Non specificato</span><b>3</b></li>
+    </ul>
+  </header>
+  <div class="body">
+    <div class="tiles">
+      <div class="grp ok" data-st="ok"><span class="gl ok"></span><b>Confermato</b><span>11</span></div>
+<article class="tile" data-st="ok">
+  <h3>Portata del pavimento</h3>
+  <p class="val">400 PSF; 300 PSF in un'area designata della West Hall A</p>
+  <div class="meta"><span class="ref">Reg. 6.7, p.17</span><span class="chip ok">Confermato</span></div>
+  
+  <details><summary>Citazione testuale</summary><div class="q"><p>The floor load capacity is 400 pounds per square foot (PSF) in the South and North exhibit halls and 400PSF in the West halls except in a designated area within West Hall A where the floor load is 300PSF.</p></div></details>
+</article>
+<article class="tile" data-st="ok">
+  <h3>Ancoraggi al suolo</h3>
+  <p class="val">Ammessi solo con approvazione preventiva OCCC; max 4 fori/punti; nessun ancoraggio in West Hall A; foratura eseguita da personale OCCC</p>
+  <div class="meta"><span class="ref">Reg. 6.21, p.21</span><span class="chip ok">Confermato</span></div>
+  
+  <details><summary>Citazione testuale</summary><div class="q"><p>Anchoring is permitted but MUST be approved by the OCCC in advance and must comply with OCCC facility specifications and guidelines. OCCC staff must do all in booth anchoring/drilling.</p><p>A maximum of 4 holes/points – Available in West Exhibit Halls B-E &amp; entire South Hall. NO anchoring is permitted in West Hall A.</p></div></details>
+</article>
+<article class="tile" data-st="ok">
+  <h3>Impianti elettrici</h3>
+  <p class="val">Conformi a NFPA 70 e al codice elettrico di Orlando; cavi a pavimento protetti</p>
+  <div class="meta"><span class="ref">Reg. 6.12, p.18</span><span class="chip ok">Confermato</span></div>
+  
+  <details><summary>Citazione testuale</summary><div class="q"><p>All wiring for displays or display fixtures must conform to the National Fire Protection Association NFPA 70 and Electrical Standard for Industrial Machinery or superseding standards and the Orlando Electrical Code.</p><p>Wiring laid across floors shall be guarded by wood, metal, or other acceptable covers.</p></div></details>
+</article>
+<article class="tile" data-st="ok">
+  <h3>Scale dei piani occupati</h3>
+  <p class="val">Larghezza min 3 ft, corrimano su almeno un lato, rettilinee o &quot;squadrate&quot;; scale a chiocciola vietate</p>
+  <div class="meta"><span class="ref">App. A, p.4</span><span class="chip ok">Confermato</span></div>
+  
+  <details><summary>Citazione testuale</summary><div class="q"><p>All stairs must be a minimum of three feet in width, equipped with a handrail on at least one side and constitute a &quot;straight run&quot; or be &quot;squared off.&quot; Spiral stairs or winders are not permitted.</p></div></details>
+</article>
+<article class="tile" data-st="ok">
+  <h3>Scale, numero e soglia</h3>
+  <p class="val">Piano occupato sotto i 300 sf: una scala; sopra i 300 sf: due scale distanti tra loro</p>
+  <div class="meta"><span class="ref">App. A, p.4</span><span class="chip ok">Confermato</span></div>
+  
+  <details><summary>Citazione testuale</summary><div class="q"><p>If the second level is to be occupied and less than 300sf. one set of stairs is permitted.</p><p>If the second level is to be occupied and, greater than 300sf. two stairways are required, remote from each other and all of the above rules apply.</p></div></details>
+</article>
+<article class="tile" data-st="ok">
+  <h3>Avviso di capienza</h3>
+  <p class="val">Cartello alla base della scala con occupazione o carico max</p>
+  <div class="meta"><span class="ref">App. A, p.4</span><span class="chip ok">Confermato</span></div>
+  
+  <details><summary>Citazione testuale</summary><div class="q"><p>Exhibits with an enclosed room or occupied second story must post notice at the bottom of the stairway, indicating maximum permitted occupancy (or total permitted weight load of the second level).</p></div></details>
+</article>
+<article class="tile" data-st="ok">
+  <h3>Corridoio antincendio tra soppalchi</h3>
+  <p class="val">Se i piani superiori superano insieme 1.000 sf: corridoio libero di almeno 10 ft su tutti e quattro i lati di ogni area di 1.000 sf, senza esposizioni, arredi o altri materiali</p>
+  <div class="meta"><span class="ref">App. A, p.4</span><span class="chip ok">Confermato</span></div>
+  
+  <details><summary>Citazione testuale</summary><div class="q"><p>If the combined total of upper decks is greater than 1,000 sf. , a clear fire break (unobstructed aisle), of not less than 10ft. must be provided on all four sides of each 1,000sf. area.</p><p>To avoid transfer of fire to another area, the firebreak (unobstructed aisle) shall not contain displays, furniture, or other materials.</p></div></details>
+</article>
+<article class="tile" data-st="ok">
+  <h3>Rilevatore ed estintore sui piani superiori</h3>
+  <p class="val">Rilevatore a batteria ed estintore portatile su ogni piano superiore</p>
+  <div class="meta"><span class="ref">App. A, p.4</span><span class="chip ok">Confermato</span></div>
+  
+  <details><summary>Citazione testuale</summary><div class="q"><p>Exhibitor must install a battery-operated smoke detector and portable fire extinguisher on each upper-level deck.</p></div></details>
+</article>
+<article class="tile" data-st="ok">
+  <h3>Apparecchiature antincendio</h3>
+  <p class="val">Non nascoste né ostruite</p>
+  <div class="meta"><span class="ref">Reg. 6.15, p.19</span><span class="chip ok">Confermato</span></div>
+  
+  <details><summary>Citazione testuale</summary><div class="q"><p>Firefighting and emergency equipment may not be hidden or obstructed, including fire extinguishers, strobes, fire hose cabinets and standpipes.</p></div></details>
+</article>
+<article class="tile" data-st="ok">
+  <h3>Protezione dei macchinari</h3>
+  <p class="val">Recinzioni o schermi adeguati contro il contatto</p>
+  <div class="meta"><span class="ref">Reg. 6.3, p.16</span><span class="chip ok">Confermato</span></div>
+  
+  <details><summary>Citazione testuale</summary><div class="q"><p>Adequate fencing and/or shielding of all operating machinery displays shall be installed to prevent attendees from coming into contact with the operating machinery and/or its movement by reaching over, under or around such protection.</p></div></details>
+</article>
+<article class="tile" data-st="ok">
+  <h3>Accessibilità</h3>
+  <p class="val">Allestimento accessibile a persone con disabilità (ADA)</p>
+  <div class="meta"><span class="ref">Reg. 11.3, p.31</span><span class="chip ok">Confermato</span></div>
+  
+  <details><summary>Citazione testuale</summary><div class="q"><p>The ADA requires that the exhibitor's display must be accessible to people with disabilities, and exhibitors acknowledge that it is solely responsible for assuring its display complies with the ADA.</p></div></details>
+</article>
+<div class="grp na" data-st="na"><span class="gl na"></span><b>Non specificato</b><span>3</span></div>
+<article class="tile" data-st="na">
+  <h3>Oblò o finestratura sulle porte</h3>
+  
+  <div class="meta"><span></span><span class="chip na">Non specificato</span></div>
+  
+  
+</article>
+<article class="tile" data-st="na">
+  <h3>Angoli arrotondati sulle pedane</h3>
+  
+  <div class="meta"><span></span><span class="chip na">Non specificato</span></div>
+  
+  
+</article>
+<article class="tile" data-st="na">
+  <h3>Pedane: altezza max e rampa</h3>
+  
+  <div class="meta"><span></span><span class="chip na">Non specificato</span></div>
+  
+  
+</article>
+    </div>
+    
+  </div>
+</section>
+    <section class="card" id="sez-g" data-sec="G" style="--h:300;--s:34%" aria-labelledby="sez-g-t">
+  <header class="rail">
+    <p class="letter" aria-hidden="true">G</p>
+    <h2 id="sez-g-t">Forma, finiture e operatività</h2>
+    <ul class="counts" aria-label="Stato delle voci">
+      <li><span class="chip ok">Confermato</span><b>9</b></li>
+      <li><span class="chip chk">Da verificare</span><b>0</b></li>
+      <li><span class="chip na">Non specificato</span><b>0</b></li>
+    </ul>
+  </header>
+  <div class="body">
+    <div class="tiles">
+      <div class="grp ok" data-st="ok"><span class="gl ok"></span><b>Confermato</b><span>9</span></div>
+<article class="tile" data-st="ok">
+  <h3>Forma dello spazio</h3>
+  <p class="val">Solo spazi quadrati o rettangolari</p>
+  <div class="meta"><span class="ref">Reg. 5.6, p.13</span><span class="chip ok">Confermato</span></div>
+  
+  <details><summary>Citazione testuale</summary><div class="q"><p>No space will be assigned to an L-shaped booth configuration.</p></div></details>
+</article>
+<article class="tile" data-st="ok">
+  <h3>Arretramento di 1 ft</h3>
+  <p class="val">Per esposizioni, attrezzature, macchinari, insegne e gran parte degli arredi; esenti i monitor TV (Reg.) e il banco reception che non espone tali elementi (App. A)</p>
+  <div class="meta"><span class="ref">Reg. 6.6, p.16; App. A, p.5</span><span class="chip ok">Confermato</span></div>
+  
+  <details><summary>Citazione testuale</summary><div class="q"><p>All demonstration equipment that includes machinery, machine monitors/screens (HMI's), keypads, rotating extensions, demonstration, and operators' position must be located inside the rented booth space with a 1ft (.304m) set back from the aisle for safety purposes.</p><p>TV monitors are exempt from the 1ft (.304m) setback rule.</p><p>There must be a 1ft. (0.3m) setback for your booth items. This includes displays, equipment, machinery, signs, most furniture, etc. A reception counter that doesn't include or display these items is allowed to be at the booth edge.</p></div></details>
+</article>
+<article class="tile" data-st="ok">
+  <h3>Pavimentazione</h3>
+  <p class="val">Moquette o altro materiale, non il cemento esistente</p>
+  <div class="meta"><span class="ref">Reg. 6.16, p.19</span><span class="chip ok">Confermato</span></div>
+  
+  <details><summary>Citazione testuale</summary><div class="q"><p>All booths must have flooring in the form of carpet or other material that is not the pre-existing convention concrete floor.</p></div></details>
+</article>
+<article class="tile" data-st="ok">
+  <h3>Finitura delle superfici</h3>
+  <p class="val">Pareti e divisori finiti, non &quot;unsightly&quot;, da ogni direzione</p>
+  <div class="meta"><span class="ref">Reg. 6.16, p.19</span><span class="chip ok">Confermato</span></div>
+  
+  <details><summary>Citazione testuale</summary><div class="q"><p>Exhibitors building back wall or side dividers for their displays agree that the surfaces of such are finished in a manner that are not unsightly, from any direction on the show floor.</p></div></details>
+</article>
+<article class="tile" data-st="ok">
+  <h3>Insegne al neon</h3>
+  <p class="val">Vietate</p>
+  <div class="meta"><span class="ref">Reg. 6.17, p.20</span><span class="chip ok">Confermato</span></div>
+  
+  <details><summary>Citazione testuale</summary><div class="q"><p>Signs involving the use of neon or similar gases are prohibited.</p></div></details>
+</article>
+<article class="tile" data-st="ok">
+  <h3>Contenimento nello spazio assegnato</h3>
+  <p class="val">Decor, arredi ed esposizioni entro il booth</p>
+  <div class="meta"><span class="ref">App. A, p.5</span><span class="chip ok">Confermato</span></div>
+  
+  <details><summary>Citazione testuale</summary><div class="q"><p>To assist in reducing aisle crowding, all booth decor, furniture and displays must be enclosed in the booth space.</p></div></details>
+</article>
+<article class="tile" data-st="ok">
+  <h3>Rumore</h3>
+  <p class="val">85 dB(A) misurati in corsia o presso il vicino</p>
+  <div class="meta"><span class="ref">Reg. 9.1, p.26</span><span class="chip ok">Confermato</span></div>
+  
+  <details><summary>Citazione testuale</summary><div class="q"><p>Exhibitors operating sound reproducing, or sound amplifying equipment are required to operate in such a manner that a maximum 85 decibel reading on the &quot;A&quot; scale of a sound level meter may be read at the aisle(s) space adjacent to their booth or measured at a neighboring booth in an area bordering that of the sound equipment user.</p></div></details>
+</article>
+<article class="tile" data-st="ok">
+  <h3>Elementi aerei</h3>
+  <p class="val">Palloni, dispositivi ad aria e droni da approvare, entro il proprio spazio</p>
+  <div class="meta"><span class="ref">Reg. 6.22, p.21</span><span class="chip ok">Confermato</span></div>
+  
+  <details><summary>Citazione testuale</summary><div class="q"><p>Any exhibitor intending to utilize balloons, air devices and/or drones are required to obtain approval from Show Management and the OCCC in advance.</p></div></details>
+</article>
+<article class="tile" data-st="ok">
+  <h3>Arredi di sale riunioni espositive</h3>
+  <p class="val">Decorazione e segnaletica entro 3 ft dalla sala e dalle porte</p>
+  <div class="meta"><span class="ref">App. A, p.4</span><span class="chip ok">Confermato</span></div>
+  
+  <details><summary>Citazione testuale</summary><div class="q"><p>Decoration and signage may be placed outside the room within 3ft. of the room, within 3ft. of each room entrance door, providing it doesn't obstruct a neighboring exhibitor door or fire access.</p></div></details>
+</article>
+    </div>
+    
+  </div>
+</section>
+    <section class="card" id="sez-h" data-sec="H" style="--h:186;--s:40%" aria-labelledby="sez-h-t">
+  <header class="rail">
+    <p class="letter" aria-hidden="true">H</p>
+    <h2 id="sez-h-t">Adempimenti e scadenze</h2>
+    <ul class="counts" aria-label="Stato delle voci">
+      <li><span class="chip ok">Confermato</span><b>5</b></li>
+      <li><span class="chip chk">Da verificare</span><b>0</b></li>
+      <li><span class="chip na">Non specificato</span><b>0</b></li>
+    </ul>
+  </header>
+  <div class="body">
+    <div class="tiles">
+      <div class="grp ok" data-st="ok"><span class="gl ok"></span><b>Confermato</b><span>5</span></div>
+<article class="tile" data-st="ok">
+  <h3>Presentazione progetto, booth di 400 sf o più</h3>
+  <p class="val">Obbligatoria entro il 5 marzo 2027, con tutti gli elementi sospesi</p>
+  <div class="meta"><span class="ref">Reg. 6.1, p.15</span><span class="chip ok">Confermato</span></div>
+  
+  <details><summary>Citazione testuale</summary><div class="q"><p>Please note that all exhibitors in booths 400sf and over must submit their complete Booth Approval form, including booth drawings, in advance for approval by March 5, 2027. Drawings must include all hanging elements (ex: signage, truss lighting, etc.).</p></div></details>
+</article>
+<article class="tile" data-st="ok">
+  <h3>Soglia: elementi sospesi</h3>
+  <p class="val">Approvazione preventiva entro il 5 marzo 2027, con elevazioni</p>
+  <div class="meta"><span class="ref">Reg. 6.18, p.20</span><span class="chip ok">Confermato</span></div>
+  
+  <details><summary>Citazione testuale</summary><div class="q"><p>Prior approval is required by March 5, 2027, for all hanging signs or elements.</p></div></details>
+</article>
+<article class="tile" data-st="ok">
+  <h3>Soglia: soppalchi e coperture</h3>
+  <p class="val">Soppalchi e coperture: approvazione anche da OCCC (Reg.). Soppalchi e coperture da 300 sf coperti: revisione preventiva di Show Management, OCCC Event Management e Fire Rescue (App. A)</p>
+  <div class="meta"><span class="ref">Reg. 6.1, p.15; App. A, pp.3-4</span><span class="chip ok">Confermato</span></div>
+  
+  <details><summary>Citazione testuale</summary><div class="q"><p>Multi-level and covered booths must also be approved by the OCCC.</p><p>Booth designs must be reviewed and approved, in advance, by NPE Show Management, OCCC Event Management, and the Orange County Fire Rescue Services Department.</p></div></details>
+</article>
+<article class="tile" data-st="ok">
+  <h3>Penale per ritardo</h3>
+  <p class="val">Penalità di montaggio e multe fino a 100 $ al giorno a discrezione di Show Management</p>
+  <div class="meta"><span class="ref">Reg. 6.1, p.15</span><span class="chip ok">Confermato</span></div>
+  
+  <details><summary>Citazione testuale</summary><div class="q"><p>Failure to meet this deadline may result in a move-in penalty and fines up to $100 per day to cover the cost of expedited review at Show Management discretion.</p></div></details>
+</article>
+<article class="tile" data-st="ok">
+  <h3>Altre scadenze collegate</h3>
+  <p class="val">Prova assicurativa (COI) entro il 29 gennaio 2027; registrazione degli appaltatori esterni (EAC) entro il 5 marzo 2027; richieste di modifica della data target entro il 1 marzo 2027</p>
+  <div class="meta"><span class="ref">Reg. 10.2, p.30; 11.6, p.31; 8.2, p.24</span><span class="chip ok">Confermato</span></div>
+  
+  <details><summary>Citazione testuale</summary><div class="q"><p>Exhibitor agrees to carry and submit proof of insurance via submission form in the ERC - Exhibitor Resource Center no later than January 29, 2027.</p><p>must be registered as an Exhibitor Appointed Contractor (EAC) by March 5, 2027</p><p>Any request for target date changes should be received by March 1, 2027.</p></div></details>
+</article>
+    </div>
+    
+  </div>
+</section>
+    <section class="card" id="sez-i" data-sec="I" style="--h:240;--s:38%" aria-labelledby="sez-i-t">
+  <header class="rail">
+    <p class="letter" aria-hidden="true">I</p>
+    <h2 id="sez-i-t">Montaggio e smontaggio</h2>
+    <ul class="counts" aria-label="Stato delle voci">
+      <li><span class="chip ok">Confermato</span><b>3</b></li>
+      <li><span class="chip chk">Da verificare</span><b>5</b></li>
+      <li><span class="chip na">Non specificato</span><b>1</b></li>
+    </ul>
+  </header>
+  <div class="body">
+    <div class="tiles">
+      <div class="grp ok" data-st="ok"><span class="gl ok"></span><b>Confermato</b><span>3</span></div>
+<article class="tile" data-st="ok">
+  <h3>Allestimento: zone LIFO</h3>
+  <p class="val">Non prima di venerdì 30 aprile 2027, ore 8:00 ET</p>
+  <div class="meta"><span class="ref">Reg. 6.9, p.17</span><span class="chip ok">Confermato</span></div>
+  <p class="det">solo zone LIFO</p>
+  <details><summary>Citazione testuale</summary><div class="q"><p>Exhibitors in LIFO zones may not begin move-in before Friday, April 30, 2027, at 8:00 a.m. ET.</p></div></details>
+</article>
+<article class="tile" data-st="ok">
+  <h3>Disallestimento: inizio</h3>
+  <p class="val">Non prima della chiusura ufficiale, venerdì 7 maggio 2027, ore 15:00</p>
+  <div class="meta"><span class="ref">Reg. 9.7, p.28</span><span class="chip ok">Confermato</span></div>
+  
+  <details><summary>Citazione testuale</summary><div class="q"><p>Exhibitors are not permitted to dismantle or remove their exhibits prior to the official show closing at 3:00 p.m. on Friday, May 7, 2027.</p></div></details>
+</article>
+<article class="tile" data-st="ok">
+  <h3>Disallestimento: termine sgombero, zone LIFO</h3>
+  <p class="val">Inizio immediato, completamento entro la mezzanotte dello stesso giorno</p>
+  <div class="meta"><span class="ref">Reg. 6.9, p.17</span><span class="chip ok">Confermato</span></div>
+  <p class="det">solo zone LIFO</p>
+  <details><summary>Citazione testuale</summary><div class="q"><p>Exhibitors in LIFO zones must begin dismantling immediately after the show closes on Friday, May 7, 2027, at 3:00 p.m. ET, and complete move-out by midnight that day.</p></div></details>
+</article>
+<div class="grp chk" data-st="chk"><span class="gl chk"></span><b>Da verificare</b><span>5</span></div>
+<article class="tile" data-st="chk">
+  <h3>Allestimento: giornate e fasce orarie</h3>
+  <p class="val">Assegnate per singolo booth, nel Target Floor Plan non fornito</p>
+  <div class="meta"><span class="ref">Reg. 8.1, p.24</span><span class="chip chk">Da verificare</span></div>
+  
+  <details><summary>Citazione testuale</summary><div class="q"><p>Please refer to the Target Floor Plan in the ERC - Exhibitor Resource Center for your assigned move-in and move-out dates and times.</p></div></details>
+</article>
+<article class="tile" data-st="chk">
+  <h3>Allestimento: termine di completamento</h3>
+  <p class="val">Spazi non occupati alle 16:00 ET di domenica 2 maggio 2027 possono essere riutilizzati; la fonte non lo presenta come termine di completamento dello stand</p>
+  <div class="meta"><span class="ref">Reg. 5.12, p.15</span><span class="chip chk">Da verificare</span></div>
+  
+  <details><summary>Citazione testuale</summary><div class="q"><p>Show Management reserves the right to use any exhibit space that remains unoccupied at 4:00 p.m. ET on Sunday, May 2, 2027.</p></div></details>
+</article>
+<article class="tile" data-st="chk">
+  <h3>Allestimento: dark day</h3>
+  <p class="val">Lavoro in booth consentito; fase e date non chiarite nel testo</p>
+  <div class="meta"><span class="ref">Reg. 8.1, p.24</span><span class="chip chk">Da verificare</span></div>
+  
+  <details><summary>Citazione testuale</summary><div class="q"><p>*Dark Day: Exhibitors are allowed to work within their booth spaces. Freeman and other services will only be available if ordered in advance.</p></div></details>
+</article>
+<article class="tile" data-st="chk">
+  <h3>Disallestimento: termine sgombero, altri booth</h3>
+  <p class="val">Rinvio al periodo di move-out stabilito da Show Management</p>
+  <div class="meta"><span class="ref">Reg. 8.5, p.25</span><span class="chip chk">Da verificare</span></div>
+  
+  <details><summary>Citazione testuale</summary><div class="q"><p>...before the conclusion of the move-out period as specified by Show Management.</p></div></details>
+</article>
+<article class="tile" data-st="chk">
+  <h3>Disallestimento: penali per ritardo</h3>
+  <p class="val">Costi di stoccaggio, movimentazione e smaltimento; importi non indicati</p>
+  <div class="meta"><span class="ref">Reg. 8.5, p.25</span><span class="chip chk">Da verificare</span></div>
+  
+  <details><summary>Citazione testuale</summary><div class="q"><p>Exhibitor is liable for all storage, handling and refuse charges resulting from failure to properly remove all exhibit material from booth space and OCCC before the conclusion of the move-out period as specified by Show Management.</p></div></details>
+</article>
+<div class="grp na" data-st="na"><span class="gl na"></span><b>Non specificato</b><span>1</span></div>
+<article class="tile" data-st="na">
+  <h3>Allestimento: proroghe e lavoro notturno</h3>
+  
+  <div class="meta"><span></span><span class="chip na">Non specificato</span></div>
+  
+  
+</article>
+    </div>
+    
+  </div>
+</section>
+    <section class="card" id="sez-j" data-sec="J" style="--h:30;--s:24%" aria-labelledby="sez-j-t">
+  <header class="rail">
+    <p class="letter" aria-hidden="true">J</p>
+    <h2 id="sez-j-t">Accessi e mezzi</h2>
+    <ul class="counts" aria-label="Stato delle voci">
+      <li><span class="chip ok">Confermato</span><b>7</b></li>
+      <li><span class="chip chk">Da verificare</span><b>2</b></li>
+      <li><span class="chip na">Non specificato</span><b>0</b></li>
+    </ul>
+  </header>
+  <div class="body">
+    <div class="tiles">
+      <div class="grp ok" data-st="ok"><span class="gl ok"></span><b>Confermato</b><span>7</span></div>
+<article class="tile" data-st="ok">
+  <h3>Accesso espositori: ingresso e uscita</h3>
+  <p class="val">Fino a due ore prima dell'apertura e due ore dopo la chiusura</p>
+  <div class="meta"><span class="ref">Reg. 11.2, p.30</span><span class="chip ok">Confermato</span></div>
+  
+  <details><summary>Citazione testuale</summary><div class="q"><p>On show days, booth personnel will be permitted to enter the exhibit hall up to two hours before the scheduled opening time and will be permitted to remain in the exhibit hall two hours after show closing.</p></div></details>
+</article>
+<article class="tile" data-st="ok">
+  <h3>Orari della manifestazione</h3>
+  <p class="val">Lun-gio 9:00-17:00; ven 9:00-15:00</p>
+  <div class="meta"><span class="ref">Reg. 11.1, p.30</span><span class="chip ok">Confermato</span></div>
+  
+  <details><summary>Citazione testuale</summary><div class="q"><p>Monday, May 3 9:00 a.m. – 5:00 p.m. (analoghe righe per martedì, mercoledì e giovedì); Friday, May 7 9:00 a.m. – 3:00 p.m.</p></div></details>
+</article>
+<article class="tile" data-st="ok">
+  <h3>Accrediti</h3>
+  <p class="val">Registrazione obbligatoria; badge espositore gratuiti, 1 ogni 100 sf, minimo 7</p>
+  <div class="meta"><span class="ref">Reg. 11.2, p.30; 5.1, p.9</span><span class="chip ok">Confermato</span></div>
+  
+  <details><summary>Citazione testuale</summary><div class="q"><p>All people on the exhibit floor must, at all times, have proper registration credentials as outlined by Show Management.</p><p>Complimentary booth personnel badges (1 for each 100sf of space, minimum of 7).</p></div></details>
+</article>
+<article class="tile" data-st="ok">
+  <h3>Minori durante montaggio e smontaggio</h3>
+  <p class="val">Vietato l'ingresso sotto i 16 anni</p>
+  <div class="meta"><span class="ref">Reg. 11.4, p.31</span><span class="chip ok">Confermato</span></div>
+  
+  <details><summary>Citazione testuale</summary><div class="q"><p>No person under the age of 16 will be admitted in the exhibit halls during the installation and dismantling periods.</p></div></details>
+</article>
+<article class="tile" data-st="ok">
+  <h3>Mezzi: carico fuori finestra</h3>
+  <p class="val">Costi aggiuntivi</p>
+  <div class="meta"><span class="ref">Reg. 8.2, p.24</span><span class="chip ok">Confermato</span></div>
+  
+  <details><summary>Citazione testuale</summary><div class="q"><p>Off-target freight will incur additional charges over and above the NPE Bundle Package pricing.</p></div></details>
+</article>
+<article class="tile" data-st="ok">
+  <h3>Mezzi: corsie No Freight</h3>
+  <p class="val">Alcune corsie sono designate &quot;No Freight&quot;; in montaggio e smontaggio non vi si possono collocare merci né materiali espositivi</p>
+  <div class="meta"><span class="ref">Reg. 6.8, p.17</span><span class="chip ok">Confermato</span></div>
+  
+  <details><summary>Citazione testuale</summary><div class="q"><p>certain aisles (highlighted in red) have been designated as No Freight aisles. Exhibitors are not permitted to place any freight or display materials in the aisles during move-in or move-out.</p></div></details>
+</article>
+<article class="tile" data-st="ok">
+  <h3>Mezzi: veicoli e check-in al marshalling yard</h3>
+  <p class="val">Colli a mano alle porte merci con veicolo privato (auto, SUV, minivan); box truck e semirimorchi richiedono il check-in al marshalling yard, più altri mezzi indicati dal general contractor</p>
+  <div class="meta"><span class="ref">Reg. 8.6, pp.25-26</span><span class="chip ok">Confermato</span></div>
+  
+  <details><summary>Citazione testuale</summary><div class="q"><p>If using the designated freight doors, exhibitors can utilize a personal vehicle for drop off.</p><p>The following vehicles are not considered hand carry vehicles and therefore require marshalling yard check-in procedures.</p></div></details>
+</article>
+<div class="grp chk" data-st="chk"><span class="gl chk"></span><b>Da verificare</b><span>2</span></div>
+<article class="tile" data-st="chk">
+  <h3>Mezzi: finestre di scarico e prenotazione</h3>
+  <p class="val">Date e orari assegnati da Freeman per booth; arrivo al Marshaling Yard nella finestra assegnata</p>
+  <div class="meta"><span class="ref">Reg. 8.2, p.24</span><span class="chip chk">Da verificare</span></div>
+  <p class="det">orari nel Target Floor Plan</p>
+  <details><summary>Citazione testuale</summary><div class="q"><p>All shipments must arrive on the assigned target date and time for check-in at the Freeman Marshaling Yard.</p></div></details>
+</article>
+<article class="tile" data-st="chk">
+  <h3>Mezzi: varchi merci dedicati</h3>
+  <p class="val">Il regolamento cita &quot;designated freight areas&quot; per i colli a mano, senza localizzarli</p>
+  <div class="meta"><span class="ref">Reg. 8.6, p.25</span><span class="chip chk">Da verificare</span></div>
+  <p class="det">ubicazione nel Target Floor Plan</p>
+  <details><summary>Citazione testuale</summary><div class="q"><p>Exhibitors are allowed to bring in small, hand carried items either through the front concourse or designated freight areas.</p></div></details>
+</article>
+    </div>
+    
+  </div>
+</section>
+    <section class="card" id="sez-v" data-sec="V" style="--h:222;--s:8%" aria-labelledby="sez-v-t">
+  <header class="rail">
+    <p class="letter" aria-hidden="true">!</p>
+    <h2 id="sez-v-t">Punti da verificare</h2>
+    <p class="rail-note">Causa di ogni dubbio e modo per chiuderlo. Il primo punto incide sulle quote del progetto.</p>
+  </header>
+  <div class="body">
+    <div class="tiles">
+      <div class="grp chk" data-st="chk"><span class="gl chk"></span><b>Da verificare</b><span>8</span></div>
+      <article class="tile" data-st="chk">
+        <h3>Altezza degli elementi sospesi</h3>
+        <p class="lab">Causa</p><p class="val">Conflitto tra fonti: il Regolamento 6.18 indica base minima 18 ft e sommità max 26 ft, con travi oltre i 26 ft; l'Appendice A (p.3) indica 20 ft per gli elementi appesi e travi sopra i 20 ft.</p>
+        <p class="lab">Come risolverlo</p><p class="val">Chiedere per iscritto a Show Management (exhibit@npe.org) quale delle due fonti prevale per island e split island. Non fissare le quote degli elementi sospesi prima della risposta.</p>
+        <div class="meta"><span></span><span class="chip chk">Da verificare</span></div>
+      </article>
+<article class="tile" data-st="chk">
+        <h3>Parete di fondo del perimeter inline a 12 ft</h3>
+        <p class="lab">Causa</p><p class="val">Valore condizionato da &quot;where facility allows&quot;.</p>
+        <p class="lab">Come risolverlo</p><p class="val">Verificare con Show Management se la posizione assegnata consente i 12 ft.</p>
+        <div class="meta"><span></span><span class="chip chk">Da verificare</span></div>
+      </article>
+<article class="tile" data-st="chk">
+        <h3>Segnaletica dello split island a 26 ft</h3>
+        <p class="lab">Causa</p><p class="val">Valore condizionato dall'altezza del soffitto della sede.</p>
+        <p class="lab">Come risolverlo</p><p class="val">Confrontare con le altezze dei soffitti per padiglione (Sezione A) una volta nota la posizione.</p>
+        <div class="meta"><span></span><span class="chip chk">Da verificare</span></div>
+      </article>
+<article class="tile" data-st="chk">
+        <h3>Appendimenti diversi dalle insegne</h3>
+        <p class="lab">Causa</p><p class="val">L'articolo 6.18 copre le insegne aziendali; il Regolamento cita anche &quot;truss lighting&quot; nei disegni (6.1) ma non fissa regole su carichi appesi generici.</p>
+        <p class="lab">Come risolverlo</p><p class="val">Chiedere a Show Management se sono ammessi carichi sospesi diversi dalle insegne e con quali limiti di portata.</p>
+        <div class="meta"><span></span><span class="chip chk">Da verificare</span></div>
+      </article>
+<article class="tile" data-st="chk">
+        <h3>Classe di reazione al fuoco dei materiali</h3>
+        <p class="lab">Causa</p><p class="val">Nessuna classe indicata; la certificazione del trattamento ignifugo è richiesta solo su richiesta.</p>
+        <p class="lab">Come risolverlo</p><p class="val">Chiedere a Show Management o a Orange County Fire Rescue quale certificazione sia accettata per materiali certificati secondo norme europee.</p>
+        <div class="meta"><span></span><span class="chip chk">Da verificare</span></div>
+      </article>
+<article class="tile" data-st="chk">
+        <h3>Allestimento: giornate, fasce orarie, termine di completamento, dark day</h3>
+        <p class="lab">Causa</p><p class="val">Orari assegnati per singolo booth nel Target Floor Plan, non fornito.</p>
+        <p class="lab">Come risolverlo</p><p class="val">Richiedere il Target Floor Plan e le procedure di Move In/Move Out nell'Exhibitor Resource Center, disponibili dopo l'assegnazione degli spazi.</p>
+        <div class="meta"><span></span><span class="chip chk">Da verificare</span></div>
+      </article>
+<article class="tile" data-st="chk">
+        <h3>Disallestimento: termine di sgombero e penali per i booth fuori dalle zone LIFO</h3>
+        <p class="lab">Causa</p><p class="val">Il testo rinvia al periodo di move-out stabilito da Show Management, senza date né importi.</p>
+        <p class="lab">Come risolverlo</p><p class="val">Verificare nel Target Floor Plan e nelle procedure Freeman.</p>
+        <div class="meta"><span></span><span class="chip chk">Da verificare</span></div>
+      </article>
+<article class="tile" data-st="chk">
+        <h3>Accesso mezzi: finestre di scarico</h3>
+        <p class="lab">Causa</p><p class="val">Date e orari assegnati da Freeman nel Target Floor Plan.</p>
+        <p class="lab">Come risolverlo</p><p class="val">Verificare nel Target Floor Plan e nel Marshaling Yard check-in.</p>
+        <div class="meta"><span></span><span class="chip chk">Da verificare</span></div>
+      </article>
+      <div class="grp na" data-st="na"><span class="gl na"></span><b>Non specificato</b><span>9</span></div>
+      <article class="tile wide" data-st="na">
+        <h3>Parametri non specificati nelle fonti</h3>
+        <p class="val">Da chiedere a Show Management (exhibit@npe.org) o da cercare nell'Exhibitor Resource Center.</p>
+        <ul class="pills"><li>percentuale max di chiusura del perimetro</li><li>portata per punto di appendimento e carico complessivo</li><li>alimentazione elettrica dall'alto</li><li>superficie copribile in modo pieno e porzioni a rete o tessuto</li><li>soglia di superficie per sprinkler</li><li>oblò sulle porte</li><li>angoli arrotondati, altezza e rampa delle pedane</li><li>altezza massima e percentuale dei soppalchi</li><li>proroghe e lavoro notturno in allestimento</li></ul>
+        <div class="meta"><span></span><span class="chip na">Non specificato</span></div>
+      </article>
+    </div>
+  </div>
+</section>
+  </main>
+
+  <p class="foot">Fonti: NPE2027 Show Rules &amp; Regulations e Appendice A (Booth Types, Dimensions, Display Measurement Rules). Ogni valore rimanda alla frase originale, apribile da Citazione testuale. Il Target Floor Plan e i documenti dell'Exhibitor Resource Center non sono tra le fonti.</p>
+</div>
+
+<script>
+(function () {
+  var buttons = Array.prototype.slice.call(document.querySelectorAll('[data-filter]'));
+  var tiles = Array.prototype.slice.call(document.querySelectorAll('.tile, .grp'));
+  var notes = Array.prototype.slice.call(document.querySelectorAll('.note'));
+  var cards = Array.prototype.slice.call(document.querySelectorAll('.card'));
+  var navs = Array.prototype.slice.call(document.querySelectorAll('.nav-l'));
+  function apply(f) {
+    tiles.forEach(function (t) { t.hidden = f !== 'all' && t.getAttribute('data-st') !== f; });
+    notes.forEach(function (n) { n.hidden = f !== 'all' && n.getAttribute('data-st') !== f; });
+    cards.forEach(function (c) {
+      c.hidden = c.querySelector('.tile:not([hidden])') === null;
+    });
+    navs.forEach(function (n) {
+      var sec = n.getAttribute('data-sec');
+      n.hidden = !cards.some(function (c) { return c.getAttribute('data-sec') === sec && !c.hidden; });
+    });
+    buttons.forEach(function (b) { b.setAttribute('aria-pressed', String(b.getAttribute('data-filter') === f)); });
+  }
+  buttons.forEach(function (b) {
+    b.addEventListener('click', function () { apply(b.getAttribute('data-filter')); });
+  });
+})();
+</script>

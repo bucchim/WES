@@ -1,0 +1,2252 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<!-- Marchio nella scheda del browser: SVG incorporato come data URI, non un file
+     esterno, così il modulo resta un file unico e l'icona compare anche aprendolo
+     da disco. La W è disegnata come tracciato e non come testo: non dipende dai
+     caratteri installati e resta nitida a 16 pixel. -->
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%231a7272'/%3E%3Cpath d='M6 9.5L11 23L16 14L21 23L26 9.5' fill='none' stroke='%23ffffff' stroke-width='3.4' stroke-linejoin='miter' stroke-linecap='butt'/%3E%3C/svg%3E">
+<title>WES — Brief di commessa (Fiere)</title>
+<style>
+  :root{
+    /* Brand */
+    --teal:#1a7272;
+    --teal-hover:#237a7a;
+    --teal-active:#155a5a;
+    --teal-ring:rgba(26,114,114,0.20);
+    --teal-filled-line:rgba(26,114,114,0.45);
+    --teal-filled-bg:rgba(26,114,114,0.07);
+    /* Arancione: #d96f45 come da modello per gli elementi non testuali;
+       variante scura per testo e badge, dove #d96f45 su bianco resta a 3.33:1 */
+    --orange:#d96f45;
+    --orange-ink:#bd5730;
+    /* Inchiostro e superfici */
+    --ink:#08090b;
+    --ink-soft:rgba(8,9,11,0.55);
+    --ink-faint:rgba(8,9,11,0.50);
+    --ink-muted:rgba(8,9,11,0.62);
+    --ink-ghost:rgba(8,9,11,0.40);
+    --placeholder:rgba(8,9,11,0.58);
+    --paper:#FFFFFF;
+    --page:#f2f5f4;
+    /* Linee */
+    --line-panel:rgba(8,9,11,0.10);
+    --line-field:rgba(8,9,11,0.18);
+    --line-divider:rgba(8,9,11,0.12);
+    --line-ghost-btn:rgba(8,9,11,0.30);
+    /* Stati (questi tre valori sono letti anche dal JS del gate) */
+    --go:#4db87a;
+    --wait:#1a7272;
+    --stop:#c1554f;
+    --radius:0;
+  }
+  *{box-sizing:border-box;}
+
+  body{
+    margin:0;
+    padding-top:64px;
+    background-color:var(--page);
+    background-image:
+      radial-gradient(ellipse at 88% 6%, rgba(26,114,114,0.16) 0%, transparent 55%),
+      radial-gradient(ellipse at 3% 90%, rgba(26,114,114,0.10) 0%, transparent 50%);
+    background-attachment:fixed;
+    color:var(--ink-muted);
+    font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;
+    font-size:13px;
+    font-weight:400;
+    line-height:1.6;
+    letter-spacing:.04em;
+    text-transform:none;
+    -webkit-font-smoothing:antialiased;
+  }
+  .shell{max-width:1600px;margin:0;padding:0 40px 96px 24px;}
+
+  /* payoff di chiusura, in coda alla colonna di contenuto */
+  .shell::after{
+    content:'Worldwide Exhibition System';
+    display:block;
+    margin-top:64px;
+    padding-top:24px;
+    border-top:1px solid var(--line-panel);
+    font-size:11px;
+    font-weight:700;
+    letter-spacing:.15em;
+    text-transform:uppercase;
+    color:var(--teal);
+  }
+
+  header.doc-head{
+    padding:64px 0 32px;
+    margin-bottom:0;
+    border-bottom:1px solid var(--line-field);
+  }
+  .eyebrow{
+    font-size:11px;
+    font-weight:700;
+    line-height:1.2;
+    letter-spacing:.22em;
+    text-transform:uppercase;
+    color:var(--teal);
+    margin-bottom:24px;
+  }
+  h1{
+    margin:0;
+    font-size:40px;
+    font-weight:700;
+    line-height:1.10;
+    letter-spacing:.02em;
+    text-transform:uppercase;
+    color:var(--ink);
+  }
+  h1 .accent{color:var(--teal);}
+  .subtitle{
+    margin-top:16px;
+    max-width:620px;
+    font-size:13px;
+    font-weight:400;
+    letter-spacing:.08em;
+    color:var(--ink-faint);
+    text-wrap:pretty;
+  }
+
+  /* ── Header fisso: marchio + gate di completezza ───────────── */
+  .gate{
+    position:fixed;
+    top:0;left:0;right:0;
+    z-index:20;
+    display:flex;
+    align-items:center;
+    gap:16px;
+    height:64px;
+    margin:0;
+    padding:0 max(40px, calc(100% - 1560px)) 0 24px;
+    background:rgba(255,255,255,0.88);
+    backdrop-filter:blur(12px);
+    -webkit-backdrop-filter:blur(12px);
+    border:none;
+    border-bottom:1px solid var(--line-panel);
+    border-radius:var(--radius);
+    box-shadow:none;
+  }
+  .gate::before{
+    order:1;
+    content:'W';
+    flex-shrink:0;
+    width:28px;height:28px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    background:var(--teal);
+    color:var(--paper);
+    font-size:13px;
+    font-weight:700;
+    letter-spacing:.04em;
+  }
+  .gate::after{
+    order:2;
+    content:'WES';
+    flex-shrink:0;
+    margin-left:-4px;
+    font-size:13px;
+    font-weight:700;
+    letter-spacing:.18em;
+    text-transform:uppercase;
+    color:var(--ink);
+  }
+  .gate-label{
+    order:3;
+    margin-left:auto;
+    font-size:10px;
+    font-weight:700;
+    letter-spacing:.14em;
+    text-transform:uppercase;
+    color:var(--ink-faint);
+    white-space:nowrap;
+  }
+  .gate-track{
+    order:4;
+    flex:none;
+    width:110px;
+    height:6px;
+    background:var(--line-panel);
+    border-radius:var(--radius);
+    overflow:hidden;
+    position:relative;
+  }
+  .gate-fill{
+    height:100%;
+    width:0%;
+    background:var(--stop);
+    transition:width 350ms ease, background 200ms ease;
+  }
+  .gate-status{
+    order:5;
+    min-width:0;
+    text-align:left;
+    font-size:11px;
+    font-weight:700;
+    letter-spacing:.10em;
+    color:var(--ink);
+    white-space:nowrap;
+  }
+
+  /* ── Sezioni ───────────────────────────────────────────────── */
+  section.block{padding:56px 0 0;margin-bottom:0;}
+  section.block:first-of-type{padding-top:48px;}
+  .block-head{
+    display:flex;
+    flex-wrap:wrap;
+    align-items:baseline;
+    gap:8px 16px;
+    padding-bottom:12px;
+    margin-bottom:24px;
+    border-bottom:1px solid var(--line-divider);
+  }
+  .block-num{
+    font-size:11px;
+    font-weight:700;
+    letter-spacing:.14em;
+    color:var(--teal);
+  }
+  h2{
+    margin:0;
+    font-size:22px;
+    font-weight:700;
+    line-height:1.15;
+    letter-spacing:.02em;
+    text-transform:uppercase;
+    color:var(--ink);
+  }
+  .tag{
+    align-self:center;
+    font-size:10px;
+    font-weight:700;
+    letter-spacing:.14em;
+    text-transform:uppercase;
+    padding:4px 10px;
+    border-radius:var(--radius);
+    color:var(--paper);
+  }
+  .tag.must{background:var(--teal);}
+  .tag.nice{background:var(--orange-ink);}
+
+  /* ── Campi ─────────────────────────────────────────────────── */
+  .field-grid{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:20px 32px;
+  }
+  .field{display:flex;flex-direction:column;gap:8px;}
+  .field.full{grid-column:1 / -1;}
+  label{
+    display:block;
+    font-size:11px;
+    font-weight:700;
+    line-height:1.3;
+    letter-spacing:.10em;
+    text-transform:uppercase;
+    color:var(--ink-soft);
+  }
+  label .req{color:var(--stop);margin-left:3px;}
+  input, textarea, select{
+    width:100%;
+    font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;
+    font-size:13px;
+    font-weight:400;
+    letter-spacing:.04em;
+    color:var(--ink);
+    padding:11px 14px;
+    border:1px solid var(--line-field);
+    border-radius:var(--radius);
+    background-color:var(--paper);
+    box-shadow:none;
+    transition:border-color 200ms ease, background-color 200ms ease, box-shadow 200ms ease;
+  }
+  textarea{min-height:68px;line-height:1.6;resize:vertical;}
+  /* Ricalco statico del valore di un campo, usato solo in stampa */
+  .print-value{display:none;}
+  select{
+    appearance:none;
+    -webkit-appearance:none;
+    padding-right:34px;
+    background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='7' viewBox='0 0 10 7'><path d='M1 1l4 4 4-4' fill='none' stroke='%231a7272' stroke-width='1.4'/></svg>");
+    background-repeat:no-repeat;
+    background-position:right 13px center;
+    cursor:pointer;
+  }
+  option{background:var(--paper);color:var(--ink);}
+  input::placeholder, textarea::placeholder{color:var(--placeholder);}
+  input:focus, textarea:focus, select:focus{
+    outline:none;
+    border-color:var(--teal);
+    box-shadow:0 0 0 2px var(--teal-ring);
+  }
+  /* stato "campo compilato" */
+  input.filled:not([type="checkbox"]), textarea.filled, select.filled{
+    border-color:var(--teal-filled-line);
+    background-color:var(--teal-filled-bg);
+  }
+  /* date: grigio dei placeholder da vuote, nere una volta compilate */
+  input[type="date"]{
+    font-size:13px;
+    letter-spacing:.04em;
+    color:var(--placeholder);
+  }
+  input[type="date"].filled{color:var(--ink);}
+  input[type="date"]::-webkit-datetime-edit{color:inherit;font-size:13px;letter-spacing:.04em;}
+  input[type="date"]::-webkit-calendar-picker-indicator{opacity:.5;cursor:pointer;}
+  input[type="file"]{
+    padding:9px 12px;
+    font-size:11px;
+    letter-spacing:.08em;
+    color:var(--ink-muted);
+  }
+  input[type="file"]::file-selector-button{
+    background:transparent;
+    border:1px solid var(--line-ghost-btn);
+    border-radius:var(--radius);
+    color:var(--ink);
+    padding:6px 14px;
+    margin-right:14px;
+    font-family:inherit;
+    font-size:11px;
+    font-weight:700;
+    letter-spacing:.10em;
+    text-transform:uppercase;
+    cursor:pointer;
+    transition:border-color 200ms ease, background 200ms ease;
+  }
+  input[type="file"]::file-selector-button:hover{
+    border-color:rgba(8,9,11,0.70);
+    background:rgba(8,9,11,0.04);
+  }
+  .file-hint{
+    display:block;
+    max-width:760px;
+    margin-top:0;
+    font-size:11px;
+    letter-spacing:.06em;
+    color:var(--ink-faint);
+    text-wrap:pretty;
+  }
+
+
+  /* ── Campi di spunta (conferme di raccolta materiali) ──────── */
+  .check-confirm{
+    display:flex;
+    align-items:flex-start;
+    gap:11px;
+    padding:12px 14px;
+    border:1px solid var(--line-field);
+    border-radius:var(--radius);
+    background:var(--paper);
+    cursor:pointer;
+    text-transform:none;
+    letter-spacing:normal;
+    transition:border-color 200ms ease, background-color 200ms ease;
+  }
+  .check-confirm:hover{border-color:rgba(8,9,11,0.34);}
+  .check-confirm.filled{
+    border-color:var(--teal-filled-line);
+    background-color:var(--teal-filled-bg);
+  }
+  .check-confirm input[type="checkbox"]{
+    width:16px;
+    height:16px;
+    flex:0 0 auto;
+    margin:1px 0 0;
+    padding:0;
+    accent-color:var(--teal);
+    cursor:pointer;
+  }
+  .check-confirm input[type="checkbox"]:focus-visible{
+    outline:2px solid var(--teal);
+    outline-offset:2px;
+  }
+  .check-confirm-txt{
+    font-size:12px;
+    font-weight:400;
+    line-height:1.5;
+    letter-spacing:.04em;
+    text-transform:none;
+    color:var(--ink);
+  }
+  /* ── Pannelli ──────────────────────────────────────────────── */
+  .note-block,
+  .team-block,
+  .stand-elements,
+  .checklist{
+    background:var(--paper);
+    border:1px solid var(--line-panel);
+    border-radius:var(--radius);
+    box-shadow:none;
+  }
+  .note-block{padding:24px 28px;}
+
+  .team-block{
+    padding:24px 28px 28px;
+    margin-top:32px;
+  }
+  .team-block-label{
+    font-size:10px;
+    font-weight:700;
+    letter-spacing:.16em;
+    text-transform:uppercase;
+    color:var(--teal);
+    margin-bottom:20px;
+  }
+  .team-grid{grid-template-columns:repeat(3,1fr);gap:20px 24px;}
+
+  /* ── Elementi richiesti per lo stand ───────────────────────── */
+  .stand-elements{padding:24px 28px;gap:0;}
+  .stand-elements > label{color:var(--ink);margin-bottom:8px;}
+  .stand-element{
+    padding:16px 0;
+    border-bottom:1px solid var(--line-panel);
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+  }
+  .stand-element:first-of-type{padding-top:0;}
+  .stand-element:last-child{border-bottom:none;padding-bottom:0;}
+  .stand-element-head{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:20px;
+  }
+  .stand-element-name{
+    font-size:11px;
+    font-weight:700;
+    letter-spacing:.10em;
+    text-transform:uppercase;
+    color:var(--ink-soft);
+  }
+  .stand-element-head select{
+    width:160px;
+    flex-shrink:0;
+  }
+  .stand-element input[type="text"]{font-size:13px;}
+
+  /* ── Decisione di progetto ─────────────────────────────────── */
+  section.block.decision-panel{
+    margin-top:56px;
+    padding:32px;
+    background:var(--paper);
+    border:1px solid var(--teal);
+    border-radius:var(--radius);
+    box-shadow:none;
+    transition:border-color 200ms ease;
+  }
+  .decision-panel .block-head{
+    border-bottom:none;
+    padding-bottom:0;
+    margin-bottom:8px;
+  }
+  .decision-panel h2{font-size:22px;}
+  .decision-sub{
+    font-size:11px;
+    letter-spacing:.02em;
+    color:var(--ink-faint);
+    margin:0 0 24px;
+  }
+  .decision-panel select{
+    max-width:420px;
+    font-size:14px;
+    font-weight:700;
+    letter-spacing:.10em;
+    padding:14px 16px;
+  }
+  section.block.decision-panel.go{border-color:var(--go);background:var(--paper);}
+  section.block.decision-panel.stop{border-color:var(--stop);background:var(--paper);}
+
+  /* ── Checklist finale ──────────────────────────────────────── */
+  .checklist{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:0;
+    padding:0;
+  }
+  .checklist-col{padding:24px 28px;}
+  .checklist-col + .checklist-col{
+    border-left:1px solid var(--line-panel);
+    padding-left:28px;
+  }
+  .checklist-col-title{
+    margin:0 0 12px;
+    padding-bottom:10px;
+    border-bottom:1px solid var(--line-divider);
+    font-size:10px;
+    font-weight:700;
+    letter-spacing:.16em;
+    text-transform:uppercase;
+  }
+  .checklist-col-title.must{color:var(--teal);}
+  .checklist-col-title.nice{color:var(--orange-ink);}
+  .check-row{
+    display:flex;
+    align-items:center;
+    gap:12px;
+    padding:9px 0;
+    font-size:11px;
+    font-weight:400;
+    letter-spacing:.08em;
+    text-transform:uppercase;
+  }
+  .check-row + .check-row{border-top:1px solid rgba(8,9,11,0.06);}
+  /* casella di spunta: vuota finché il campo non è compilato,
+     piena con segno di spunta quando lo diventa */
+  .dot{
+    position:relative;
+    width:16px;height:16px;
+    flex-shrink:0;
+    border:1px solid rgba(8,9,11,0.25);
+    border-radius:var(--radius);
+    background-color:var(--paper);
+    transition:background-color 200ms ease, border-color 200ms ease;
+  }
+  .dot::after{
+    content:'';
+    position:absolute;
+    left:5px;top:2px;
+    width:4px;height:8px;
+    border:solid var(--paper);
+    border-width:0 2px 2px 0;
+    transform:rotate(45deg) scale(0.4);
+    opacity:0;
+    transition:transform 150ms ease, opacity 150ms ease;
+  }
+  .dot.ok{background-color:var(--teal);border-color:var(--teal);}
+  .dot.ok::after{transform:rotate(45deg) scale(1);opacity:1;}
+  .checklist-col + .checklist-col .dot.ok{background-color:var(--orange);border-color:var(--orange);}
+  .check-row span.label-txt{color:var(--ink-faint);transition:color 200ms ease;}
+  .check-row.ok span.label-txt{color:rgba(8,9,11,0.85);font-weight:700;}
+
+  /* ── Barra azioni ──────────────────────────────────────────── */
+  .actions{
+    display:flex;
+    flex-wrap:wrap;
+    align-items:center;
+    gap:12px;
+    margin-top:40px;
+    padding-top:32px;
+    border-top:1px solid var(--line-divider);
+  }
+  button{
+    font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;
+    font-size:12px;
+    font-weight:700;
+    letter-spacing:.10em;
+    text-transform:uppercase;
+    padding:13px 26px;
+    border:none;
+    border-radius:var(--radius);
+    background:var(--teal);
+    color:var(--paper);
+    cursor:pointer;
+    transition:background 200ms ease, color 200ms ease, border-color 200ms ease;
+  }
+  button:hover{background:var(--teal-hover);}
+  button:active{background:var(--teal-active);}
+  #btnCopy{
+    background:transparent;
+    color:var(--ink);
+    border:1px solid var(--line-ghost-btn);
+    padding:12px 25px;
+  }
+  #btnCopy:hover{
+    background:rgba(8,9,11,0.04);
+    border-color:rgba(8,9,11,0.70);
+  }
+  #btnCopy:active{background:rgba(8,9,11,0.08);}
+  #btnReset,
+  button.secondary{
+    background:transparent;
+    color:var(--ink-faint);
+    border:1px solid rgba(8,9,11,0.15);
+    padding:12px 25px;
+  }
+  #btnReset:hover,
+  button.secondary:hover{
+    background:transparent;
+    color:var(--stop);
+    border-color:rgba(193,85,79,0.50);
+  }
+  #btnReset:active,
+  button.secondary:active{background:transparent;color:var(--stop);}
+  button:focus-visible{
+    outline:2px solid var(--teal);
+    outline-offset:2px;
+  }
+  .toast{
+    font-size:11px;
+    font-weight:700;
+    letter-spacing:.10em;
+    color:var(--go);
+    align-self:center;
+    opacity:0;
+    transition:opacity 300ms ease;
+  }
+  .toast.show{opacity:1;}
+  .toast.error{color:var(--stop);}
+  .autosave-status{
+    font-size:10px;
+    letter-spacing:.10em;
+    color:var(--ink-ghost);
+    align-self:center;
+    margin-left:auto;
+  }
+
+  .sr-only{
+    position:absolute;
+    width:1px;height:1px;
+    padding:0;margin:-1px;
+    overflow:hidden;
+    clip:rect(0,0,0,0);
+    white-space:nowrap;
+    border:0;
+  }
+
+  @media(max-width:900px){
+    .team-grid{grid-template-columns:1fr;}
+  }
+  @media(max-width:640px){
+    .shell{padding:0 24px 64px;}
+    .field-grid{grid-template-columns:1fr;}
+    h1{font-size:28px;}
+    .gate{gap:10px;padding:0 20px 0 16px;}
+    .stand-element-head{flex-direction:column;align-items:stretch;gap:8px;}
+    .stand-element-head select{width:100%;}
+    .checklist{grid-template-columns:1fr;}
+    .checklist-col + .checklist-col{
+      border-left:none;
+      border-top:1px solid var(--line-panel);
+      padding-left:28px;
+    }
+  }
+
+  /* header: cede per gradi, l'ultimo a restare è il testo di stato */
+  @media(max-width:760px){
+    .gate-label{display:none;}
+    .gate-track{margin-left:auto;}
+  }
+  @media(max-width:560px){
+    .gate::after{display:none;}
+  }
+  @media(max-width:460px){
+    .gate-track{display:none;}
+    .gate-status{margin-left:auto;}
+  }
+
+  /* ── Stampa ────────────────────────────────────────────────── */
+  @page{margin:14mm;}
+  @media print{
+    html, body{
+      background:#ffffff !important;
+      background-image:none !important;
+      padding-top:0 !important;
+    }
+    .shell{max-width:none;padding:0;}
+    .shell::after{margin-top:32px;}
+    .gate, .actions{display:none !important;}
+    input, textarea, select{
+      border-color:#c4c8c7 !important;
+      background-color:#ffffff !important;
+      box-shadow:none !important;
+    }
+    select{background-image:none !important;}
+    /* Un campo di una riga, in stampa, taglia il testo che eccede la sua
+       larghezza: quel testo non finisce nemmeno nel PDF, si perde. Ogni campo
+       compilato viene quindi ricalcato in un blocco statico che va a capo. */
+    input.print-sostituito, textarea.print-sostituito{display:none !important;}
+    .print-value{
+      display:block;
+      width:100%;
+      white-space:pre-wrap;
+      overflow-wrap:anywhere;
+      font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;
+      font-size:13px;
+      letter-spacing:.04em;
+      line-height:1.6;
+      color:#08090b;
+      padding:11px 14px;
+      border:1px solid #c4c8c7;
+      border-radius:var(--radius);
+      background:#ffffff;
+    }
+    .note-block, .team-block, .stand-elements, .checklist,
+    section.block.decision-panel{
+      box-shadow:none !important;
+      border-color:#dcdfde !important;
+    }
+    header.doc-head, section.block{break-inside:avoid;page-break-inside:avoid;}
+    .check-confirm input[type="checkbox"]{display:none !important;}
+    .check-confirm::before{content:'\2610';font-size:15px;line-height:1.2;color:#08090b;}
+    .check-confirm.filled::before{content:'\2611';}
+  }
+</style>
+</head>
+<body>
+<div class="shell">
+
+  <header class="doc-head">
+    <div class="eyebrow">Worldwide Exhibition System</div>
+    <h1>Brief di commessa <span class="accent">(Fiere)</span></h1>
+    <div class="subtitle">Modello per la raccolta delle informazioni necessarie alla progettazione</div>
+  </header>
+
+  <div class="gate">
+    <div class="gate-label" id="gateLabel">Elementi obbligatori</div>
+    <div class="gate-track" role="progressbar" aria-labelledby="gateLabel" aria-valuemin="0" aria-valuemax="7" aria-valuenow="0"><div class="gate-fill" id="gateFill"></div></div>
+    <div class="gate-status" id="gateStatus" aria-live="polite" aria-atomic="true">0 di 7 — Progettazione non avviabile</div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════════════════════
+       INIZIO BLOCCO AI — Precompilazione da documento cliente
+       Tutto ciò che serve alla funzione (stile, markup e logica) sta fra
+       questo commento e quello di chiusura: per disattivarla basta cancellare
+       le righe comprese fra i due marcatori, il resto del widget non cambia.
+       Richiede il servizio backend-ai/ pubblicato su Render; se il servizio
+       non risponde il pannello segnala l'errore e il modulo resta usabile
+       normalmente a mano.
+       ═══════════════════════════════════════════════════════════════════════ -->
+  <style>
+    #pannelloAI{
+      margin-top:40px;
+      padding:24px 28px;
+      border:1px dashed var(--teal-filled-line);
+      background:var(--teal-filled-bg);
+    }
+    #pannelloAI.trascina{border-style:solid;border-color:var(--teal);background:rgba(26,114,114,0.12);}
+    .ai-titolo{
+      font-size:11px;
+      font-weight:700;
+      letter-spacing:.16em;
+      text-transform:uppercase;
+      color:var(--teal);
+      margin-bottom:8px;
+    }
+    .ai-descrizione{
+      font-size:12px;
+      letter-spacing:.04em;
+      color:var(--ink-faint);
+      max-width:760px;
+      margin-bottom:20px;
+      text-wrap:pretty;
+    }
+    .ai-riga{display:flex;flex-wrap:wrap;align-items:center;gap:14px;}
+    .ai-riga input[type="file"]{flex:1 1 320px;min-width:0;background:var(--paper);}
+    #btnAnalizza{flex:none;}
+    #btnAnalizza[disabled]{opacity:.55;cursor:default;}
+    .ai-stato{
+      flex:1 1 100%;
+      font-size:11px;
+      font-weight:700;
+      letter-spacing:.10em;
+      color:var(--ink-faint);
+      min-height:16px;
+    }
+    .ai-stato.errore{color:var(--stop);}
+    .ai-stato.ok{color:var(--go);}
+
+    /* campo precompilato dall'AI: da rileggere prima di considerarlo buono.
+       Il caso :focus è scritto a parte perché il contrassegno non deve
+       sostituire l'anello di focus, ma sommarsi a esso. */
+    input.da-ai, textarea.da-ai, select.da-ai{box-shadow:inset 3px 0 0 var(--orange);}
+    input.da-ai:focus, textarea.da-ai:focus, select.da-ai:focus{
+      box-shadow:0 0 0 2px var(--teal-ring), inset 3px 0 0 var(--orange);
+    }
+
+    /* ── Riepilogo ────────────────────────────────────────────────────── */
+    .ai-velo{
+      position:fixed;
+      inset:0;
+      z-index:50;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding:24px;
+      background:rgba(8,9,11,0.55);
+    }
+    .ai-velo[hidden]{display:none;}
+    .ai-dialogo{
+      width:100%;
+      max-width:760px;
+      max-height:86vh;
+      overflow-y:auto;
+      background:var(--paper);
+      border-top:4px solid var(--teal);
+      padding:32px 36px 28px;
+      box-shadow:0 18px 48px rgba(8,9,11,0.28);
+    }
+    .ai-dialogo h3{
+      margin:0 0 6px;
+      font-size:20px;
+      font-weight:700;
+      line-height:1.15;
+      letter-spacing:.02em;
+      text-transform:uppercase;
+      color:var(--ink);
+    }
+    .ai-sintesi{
+      font-size:12px;
+      letter-spacing:.04em;
+      color:var(--ink-faint);
+      margin-bottom:24px;
+      text-wrap:pretty;
+    }
+    .ai-gruppo{margin-bottom:24px;}
+    .ai-gruppo-titolo{
+      font-size:11px;
+      font-weight:700;
+      letter-spacing:.14em;
+      text-transform:uppercase;
+      padding-bottom:8px;
+      margin-bottom:12px;
+      border-bottom:1px solid var(--line-divider);
+    }
+    .ai-gruppo-titolo.manca{color:var(--stop);}
+    .ai-gruppo-titolo.fatto{color:var(--teal);}
+    .ai-gruppo-titolo.verifica{color:var(--orange-ink);}
+    .ai-voce{
+      display:flex;
+      align-items:flex-start;
+      gap:10px;
+      padding:5px 0;
+      font-size:12px;
+      letter-spacing:.04em;
+      color:var(--ink-muted);
+    }
+    .ai-pallino{
+      flex:none;
+      width:7px;
+      height:7px;
+      margin-top:6px;
+      border-radius:50%;
+      background:var(--line-field);
+    }
+    .ai-pallino.manca{background:var(--stop);}
+    .ai-pallino.fatto{background:var(--go);}
+    .ai-pallino.verifica{background:var(--orange);}
+    .ai-voce .ai-dettaglio{display:block;color:var(--ink-ghost);font-size:11px;}
+    .ai-vuoto{font-size:12px;color:var(--ink-ghost);letter-spacing:.04em;}
+    /* su elenchi lunghi il dialogo scorre: i pulsanti restano agganciati in
+       fondo, così non serve arrivare in fondo allo scroll per chiudere */
+    .ai-azioni{
+      position:sticky;
+      bottom:-28px;
+      display:flex;
+      flex-wrap:wrap;
+      gap:12px;
+      margin-top:28px;
+      padding:20px 0 28px;
+      background:var(--paper);
+      border-top:1px solid var(--line-divider);
+    }
+    @media(max-width:640px){
+      #pannelloAI{padding:20px;}
+      .ai-dialogo{padding:24px 20px 20px;}
+    }
+    @media print{
+      #pannelloAI, .ai-velo{display:none !important;}
+      input.da-ai, textarea.da-ai, select.da-ai{box-shadow:none !important;}
+    }
+  </style>
+
+  <div id="pannelloAI" role="region" aria-labelledby="aiTitolo">
+    <div class="ai-titolo" id="aiTitolo">Precompilazione da documento cliente</div>
+    <div class="ai-descrizione">
+      Se il cliente ha già mandato un brief in Word o PDF, caricalo qui: i campi riconosciuti vengono
+      compilati in automatico e un riepilogo indica che cosa manca ancora fra le informazioni obbligatorie.
+      È un punto di partenza, non una compilazione definitiva — i campi precompilati restano segnati in
+      arancione finché non li rileggi.
+    </div>
+    <div class="ai-riga">
+      <label for="f-ai-documento" class="sr-only">Documento di brief del cliente</label>
+      <input type="file" id="f-ai-documento" accept=".pdf,.docx,.txt,.md,.csv,.png,.jpg,.jpeg,.webp">
+      <button type="button" id="btnAnalizza" disabled>Analizza documento</button>
+      <div class="ai-stato" id="aiStato" role="status" aria-live="polite"></div>
+    </div>
+  </div>
+
+  <div class="ai-velo" id="aiVelo" hidden>
+    <div class="ai-dialogo" role="dialog" aria-modal="true" aria-labelledby="aiDialogoTitolo" tabindex="-1" id="aiDialogo">
+      <h3 id="aiDialogoTitolo">Esito della precompilazione</h3>
+      <div class="ai-sintesi" id="aiSintesi"></div>
+      <div id="aiCorpo"></div>
+      <div class="ai-azioni">
+        <button type="button" id="btnChiudiRiepilogo">Ho capito, continuo</button>
+        <button type="button" class="secondary" id="btnAnnullaAI">Annulla precompilazione</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+  (function(){
+    'use strict';
+
+    // URL del servizio pubblicato su Render. Si può sovrascrivere al volo da
+    // console (utile per provare una copia locale) con:
+    //   localStorage.setItem('wes-ai-endpoint', 'http://localhost:3000')
+    const ENDPOINT_PREDEFINITO = 'https://widget-brief-ai.onrender.com';
+    const CHIAVE_CODICE = 'wes-ai-codice';
+    const ATTESA_MASSIMA = 180000;
+
+    // Campi che il documento del cliente non può contenere: assegnazioni
+    // interne WES, decisione di progetto, data di compilazione del brief e
+    // conferme di raccolta materiali (le spunta chi raccoglie il brief).
+    const CAMPI_ESCLUSI = new Set([
+      'f-account', 'f-progettista', 'f-pm', 'f-decisione', 'f-databrief', 'f-ai-documento',
+      'f-brand-check', 'f-doc-fiera-check'
+    ]);
+
+    const endpoint = () =>
+      (localStorage.getItem('wes-ai-endpoint') || ENDPOINT_PREDEFINITO).replace(/\/+$/, '');
+
+    // ── Lettura della struttura del modulo ─────────────────────────────────
+    // I campi non sono elencati qui: si leggono dal DOM ogni volta. Così un
+    // campo aggiunto domani all'HTML entra nell'estrazione da solo, senza
+    // dover ricordarsi di aggiornare anche il servizio.
+    function etichettaDi(el){
+      const esplicita = el.id && document.querySelector('label[for="' + CSS.escape(el.id) + '"]');
+      const vicina = !esplicita && el.closest('.field') && el.closest('.field').querySelector('label');
+      const lbl = esplicita || vicina;
+      return lbl ? lbl.textContent.replace('*', '').replace(/\s+/g, ' ').trim() : '';
+    }
+
+    function costruisciManifest(){
+      const campi = [];
+      document.querySelectorAll('.shell input, .shell textarea, .shell select').forEach(function(el){
+        // Le caselle di spunta sono escluse per tipo, oltre che per id: sono
+        // conferme interne ("materiale raccolto e archiviato"), cioè fatti che
+        // il documento del cliente non può contenere. Farlo per tipo copre
+        // anche le conferme che verranno aggiunte in futuro senza doversi
+        // ricordare di elencarle in CAMPI_ESCLUSI.
+        if(!el.id || el.type === 'file' || el.type === 'checkbox') return;
+        if(CAMPI_ESCLUSI.has(el.id)) return;
+        if(el.closest('#pannelloAI')) return;
+
+        const etichetta = etichettaDi(el);
+        if(!etichetta) return;
+
+        const sezione = el.closest('section.block');
+        const contenitoreGruppo = el.closest('.stand-elements, .team-block');
+        const etichettaGruppo = contenitoreGruppo
+          ? contenitoreGruppo.querySelector(':scope > label, :scope > .team-block-label')
+          : null;
+
+        let tipo = 'text';
+        let opzioni = [];
+        if(el.tagName === 'SELECT'){
+          tipo = 'select';
+          opzioni = Array.from(el.options).map(function(o){ return o.value; }).filter(Boolean);
+        } else if(el.tagName === 'TEXTAREA'){
+          tipo = 'textarea';
+        } else if(el.type === 'date'){
+          tipo = 'date';
+        }
+
+        campi.push({
+          id: el.id,
+          etichetta: etichetta,
+          tipo: tipo,
+          suggerimento: el.placeholder || '',
+          sezione: sezione && sezione.querySelector('h2') ? sezione.querySelector('h2').textContent.trim() : '',
+          gruppo: etichettaGruppo ? etichettaGruppo.textContent.replace('*', '').trim() : '',
+          obbligatorio: el.matches('[data-req="1"]') ||
+                        (el.tagName === 'SELECT' && !!el.closest('[data-req="1"]')),
+          opzioni: opzioni
+        });
+      });
+      return campi;
+    }
+
+    // ── Stato dei campi obbligatori ────────────────────────────────────────
+    function mancantiObbligatori(){
+      const mancanti = [];
+      document.querySelectorAll('[data-req="1"]').forEach(function(el){
+        if(el.dataset.reqGroup === 'stand'){
+          const senzaRisposta = Array.from(el.querySelectorAll('select'))
+            .filter(function(s){ return s.value === ''; })
+            .map(function(s){ return etichettaDi(s); });
+          if(senzaRisposta.length){
+            mancanti.push({
+              etichetta: el.querySelector(':scope > label').textContent.replace('*', '').trim(),
+              dettaglio: 'Senza risposta: ' + senzaRisposta.join(', ')
+            });
+          }
+          return;
+        }
+        const compilato = el.type === 'checkbox'
+          ? el.checked
+          : el.type === 'file'
+            ? !!(el.files && el.files.length)
+            : !!(el.value && el.value.trim());
+        if(!compilato){
+          mancanti.push({
+            etichetta: etichettaDi(el),
+            dettaglio: el.type === 'file' ? 'Da caricare a mano: i file non si estraggono dal documento.'
+                     : el.type === 'checkbox' ? 'Da spuntare a mano: conferma la raccolta dei materiali.'
+                     : ''
+          });
+        }
+      });
+      return mancanti;
+    }
+
+    // ── Applicazione dei valori estratti ───────────────────────────────────
+    let istantanea = null;        // stato precedente, per poter annullare
+    let inApplicazione = false;   // vedi il listener che toglie il contrassegno
+
+    function applica(valori, dedotti){
+      const insiemeDedotti = new Set(dedotti || []);
+      const esito = { compilati: [], daVerificare: [], conservati: [], ignorati: 0 };
+
+      istantanea = new Map();
+      inApplicazione = true;
+
+      Object.keys(valori || {}).forEach(function(id){
+        const el = document.getElementById(id);
+        if(!el || CAMPI_ESCLUSI.has(id)) return;
+
+        // Una casella di spunta vale "on" anche da non spuntata: senza questa
+        // guardia il controllo "già compilato dal commerciale" qui sotto
+        // scatterebbe sempre, e la casella comparirebbe nel riepilogo fra i
+        // campi lasciati invariati pur essendo vuota.
+        if(el.type === 'checkbox') return;
+
+        const grezzo = valori[id];
+        if(grezzo === null || grezzo === undefined || grezzo === 'non_indicato') return;
+        const valore = String(grezzo).trim();
+        if(!valore) return;
+
+        // Quello che il commerciale ha già scritto non si tocca mai.
+        if(el.value && el.value.trim()){
+          esito.conservati.push(etichettaDi(el));
+          return;
+        }
+
+        if(el.tagName === 'SELECT'){
+          const opzione = Array.from(el.options).find(function(o){ return o.value === valore; });
+          if(!opzione){ esito.ignorati++; return; }
+        } else if(el.type === 'date' && !/^\d{4}-\d{2}-\d{2}$/.test(valore)){
+          esito.ignorati++;
+          return;
+        }
+
+        istantanea.set(id, el.value);
+        el.value = valore;
+        el.classList.add('da-ai');
+        el.dispatchEvent(new Event('input', { bubbles: true }));
+        el.dispatchEvent(new Event('change', { bubbles: true }));
+
+        const voce = { etichetta: etichettaDi(el), valore: valore };
+        if(insiemeDedotti.has(id)) esito.daVerificare.push(voce);
+        else esito.compilati.push(voce);
+      });
+
+      inApplicazione = false;
+      return esito;
+    }
+
+    function annullaApplicazione(){
+      if(!istantanea) return;
+      istantanea.forEach(function(precedente, id){
+        const el = document.getElementById(id);
+        if(!el) return;
+        el.value = precedente;
+        el.classList.remove('da-ai');
+        el.dispatchEvent(new Event('input', { bubbles: true }));
+        el.dispatchEvent(new Event('change', { bubbles: true }));
+      });
+      istantanea = null;
+    }
+
+    // ── Riepilogo ──────────────────────────────────────────────────────────
+    const velo = document.getElementById('aiVelo');
+    const dialogo = document.getElementById('aiDialogo');
+    const corpo = document.getElementById('aiCorpo');
+    let focusPrecedente = null;
+
+    function gruppo(titolo, classe, voci, testoSeVuoto){
+      const box = document.createElement('div');
+      box.className = 'ai-gruppo';
+
+      const intestazione = document.createElement('div');
+      intestazione.className = 'ai-gruppo-titolo ' + classe;
+      intestazione.textContent = titolo + (voci.length ? ' (' + voci.length + ')' : '');
+      box.appendChild(intestazione);
+
+      if(!voci.length){
+        const vuoto = document.createElement('div');
+        vuoto.className = 'ai-vuoto';
+        vuoto.textContent = testoSeVuoto;
+        box.appendChild(vuoto);
+        return box;
+      }
+
+      voci.forEach(function(v){
+        const riga = document.createElement('div');
+        riga.className = 'ai-voce';
+
+        const pallino = document.createElement('span');
+        pallino.className = 'ai-pallino ' + classe;
+        pallino.setAttribute('aria-hidden', 'true');
+        riga.appendChild(pallino);
+
+        const testo = document.createElement('span');
+        testo.textContent = v.etichetta;
+        if(v.dettaglio || v.valore){
+          const dettaglio = document.createElement('span');
+          dettaglio.className = 'ai-dettaglio';
+          dettaglio.textContent = v.dettaglio || v.valore;
+          testo.appendChild(dettaglio);
+        }
+        riga.appendChild(testo);
+        box.appendChild(riga);
+      });
+      return box;
+    }
+
+    function mostraRiepilogo(esito, sintesi){
+      const mancanti = mancantiObbligatori();
+      document.getElementById('aiSintesi').textContent = sintesi || '';
+      corpo.innerHTML = '';
+
+      corpo.appendChild(gruppo(
+        'Informazioni obbligatorie ancora da raccogliere', 'manca', mancanti,
+        'Nessuna: tutti i campi obbligatori risultano compilati.'
+      ));
+      corpo.appendChild(gruppo(
+        'Da verificare — valori dedotti, non scritti nel documento', 'verifica', esito.daVerificare,
+        'Nessuno: tutto ciò che è stato compilato era scritto esplicitamente.'
+      ));
+      corpo.appendChild(gruppo(
+        'Compilati dal documento', 'fatto', esito.compilati,
+        'Nessun campo riconosciuto nel documento.'
+      ));
+
+      if(esito.conservati.length){
+        corpo.appendChild(gruppo(
+          'Lasciati invariati perché già compilati da te', 'fatto',
+          esito.conservati.map(function(e){ return { etichetta: e }; }), ''
+        ));
+      }
+
+      focusPrecedente = document.activeElement;
+      velo.hidden = false;
+      dialogo.focus();
+    }
+
+    function chiudiRiepilogo(){
+      velo.hidden = true;
+      if(focusPrecedente && focusPrecedente.focus) focusPrecedente.focus();
+    }
+
+    document.getElementById('btnChiudiRiepilogo').addEventListener('click', chiudiRiepilogo);
+    document.getElementById('btnAnnullaAI').addEventListener('click', function(){
+      annullaApplicazione();
+      chiudiRiepilogo();
+      stato('Precompilazione annullata, i campi sono tornati come prima.', '');
+    });
+    velo.addEventListener('click', function(e){ if(e.target === velo) chiudiRiepilogo(); });
+    document.addEventListener('keydown', function(e){
+      if(e.key === 'Escape' && !velo.hidden) chiudiRiepilogo();
+    });
+
+    // ── Pannello ───────────────────────────────────────────────────────────
+    const campoFile = document.getElementById('f-ai-documento');
+    const bottone = document.getElementById('btnAnalizza');
+    const rigaStato = document.getElementById('aiStato');
+    const pannello = document.getElementById('pannelloAI');
+    let inCorso = false;
+
+    function stato(messaggio, classe){
+      rigaStato.textContent = messaggio;
+      rigaStato.className = 'ai-stato' + (classe ? ' ' + classe : '');
+    }
+
+    function aggiornaBottone(){
+      bottone.disabled = inCorso || !campoFile.files || campoFile.files.length === 0;
+    }
+
+    // Sul piano gratuito di Render l'istanza si sospende dopo un po' di
+    // inattività: la si sveglia appena l'utente sceglie il file, così quando
+    // clicca "Analizza" il servizio è già in piedi.
+    let svegliato = false;
+    function svegliaServizio(){
+      if(svegliato) return;
+      svegliato = true;
+      fetch(endpoint() + '/health', { method: 'GET' }).catch(function(){});
+    }
+
+    campoFile.addEventListener('change', function(){
+      aggiornaBottone();
+      if(campoFile.files && campoFile.files.length){
+        svegliaServizio();
+        stato('', '');
+      }
+    });
+
+    ['dragenter', 'dragover'].forEach(function(evento){
+      pannello.addEventListener(evento, function(e){
+        e.preventDefault();
+        pannello.classList.add('trascina');
+      });
+    });
+    ['dragleave', 'drop'].forEach(function(evento){
+      pannello.addEventListener(evento, function(e){
+        e.preventDefault();
+        if(evento === 'dragleave' && pannello.contains(e.relatedTarget)) return;
+        pannello.classList.remove('trascina');
+      });
+    });
+    pannello.addEventListener('drop', function(e){
+      const file = e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files[0];
+      if(!file) return;
+      const trasferimento = new DataTransfer();
+      trasferimento.items.add(file);
+      campoFile.files = trasferimento.files;
+      campoFile.dispatchEvent(new Event('change', { bubbles: true }));
+    });
+
+    function leggiBase64(file){
+      return new Promise(function(risolvi, rifiuta){
+        const lettore = new FileReader();
+        lettore.onerror = function(){ rifiuta(new Error('Non sono riuscito a leggere il file.')); };
+        lettore.onload = function(){
+          const risultato = String(lettore.result);
+          risolvi(risultato.slice(risultato.indexOf(',') + 1));
+        };
+        lettore.readAsDataURL(file);
+      });
+    }
+
+    async function chiama(corpoRichiesta){
+      const controllo = new AbortController();
+      const scadenza = setTimeout(function(){ controllo.abort(); }, ATTESA_MASSIMA);
+      try{
+        const intestazioni = { 'Content-Type': 'application/json' };
+        const codice = localStorage.getItem(CHIAVE_CODICE);
+        if(codice) intestazioni['X-Codice-Accesso'] = codice;
+
+        const risposta = await fetch(endpoint() + '/api/estrai', {
+          method: 'POST',
+          headers: intestazioni,
+          body: JSON.stringify(corpoRichiesta),
+          signal: controllo.signal
+        });
+
+        let dati = {};
+        try{ dati = await risposta.json(); } catch(e){ /* risposta non JSON */ }
+        return { ok: risposta.ok, stato: risposta.status, dati: dati };
+      } finally {
+        clearTimeout(scadenza);
+      }
+    }
+
+    bottone.addEventListener('click', async function(){
+      const file = campoFile.files && campoFile.files[0];
+      if(!file || inCorso) return;
+
+      inCorso = true;
+      aggiornaBottone();
+
+      const avvio = Date.now();
+      const battito = setInterval(function(){
+        const secondi = Math.round((Date.now() - avvio) / 1000);
+        stato(secondi < 15
+          ? 'Analisi del documento in corso… ' + secondi + 's'
+          : 'Analisi in corso… ' + secondi + 's — se è la prima richiesta della giornata il servizio si sta riavviando, può volerci un minuto.',
+          '');
+      }, 1000);
+      stato('Analisi del documento in corso…', '');
+
+      try{
+        const base64 = await leggiBase64(file);
+        const corpoRichiesta = { nomeFile: file.name, base64: base64, manifest: costruisciManifest() };
+
+        let esitoChiamata = await chiama(corpoRichiesta);
+
+        // Primo utilizzo su questa postazione: il servizio chiede il codice
+        // concordato, che poi resta memorizzato nel browser.
+        if(esitoChiamata.stato === 401 && esitoChiamata.dati && esitoChiamata.dati.codice === 'accesso'){
+          const inserito = prompt('Codice di accesso al servizio di precompilazione:');
+          if(!inserito){
+            stato('Analisi annullata: serve il codice di accesso.', 'errore');
+            return;
+          }
+          localStorage.setItem(CHIAVE_CODICE, inserito.trim());
+          esitoChiamata = await chiama(corpoRichiesta);
+          if(esitoChiamata.stato === 401) localStorage.removeItem(CHIAVE_CODICE);
+        }
+
+        if(!esitoChiamata.ok){
+          stato((esitoChiamata.dati && esitoChiamata.dati.errore) ||
+                'Il servizio ha risposto con un errore (' + esitoChiamata.stato + ').', 'errore');
+          return;
+        }
+
+        const risultato = esitoChiamata.dati;
+        const esito = applica(risultato.campi, risultato.dedotti);
+        const totale = esito.compilati.length + esito.daVerificare.length;
+        stato(totale
+          ? totale + (totale === 1 ? ' campo compilato dal documento.' : ' campi compilati dal documento.')
+          : 'Nessun campo riconosciuto in questo documento.', totale ? 'ok' : '');
+        mostraRiepilogo(esito, risultato.sintesi);
+
+      } catch(err){
+        stato(err && err.name === 'AbortError'
+          ? 'Il servizio non ha risposto entro tre minuti. Riprova, oppure compila a mano.'
+          : 'Non sono riuscito a contattare il servizio di precompilazione. Controlla la connessione: il resto del modulo funziona comunque.',
+          'errore');
+      } finally {
+        clearInterval(battito);
+        inCorso = false;
+        aggiornaBottone();
+      }
+    });
+
+    // Il contrassegno arancione sparisce non appena il campo viene rivisto.
+    // Gli eventi che applica() emette per aggiornare il gate non contano come
+    // rilettura: senza questa guardia il contrassegno sparirebbe subito dopo
+    // essere stato messo.
+    document.addEventListener('input', function(e){
+      if(inApplicazione) return;
+      if(e.target.classList && e.target.classList.contains('da-ai')) e.target.classList.remove('da-ai');
+    }, true);
+
+    // "Svuota campi" azzera i valori senza emettere eventi: dopo il suo
+    // gestore si ripuliscono i contrassegni rimasti sui campi ormai vuoti.
+    function agganciaReset(){
+      const bottoneReset = document.getElementById('btnReset');
+      if(!bottoneReset) return;
+      bottoneReset.addEventListener('click', function(){
+        setTimeout(function(){
+          document.querySelectorAll('.da-ai').forEach(function(el){
+            if(!el.value || !el.value.trim()) el.classList.remove('da-ai');
+          });
+          if(!document.querySelector('.da-ai')) istantanea = null;
+        }, 0);
+      });
+    }
+
+    if(document.readyState === 'loading'){
+      document.addEventListener('DOMContentLoaded', agganciaReset);
+    } else {
+      agganciaReset();
+    }
+
+    aggiornaBottone();
+  })();
+  </script>
+  <!-- ═══ FINE BLOCCO AI — Precompilazione da documento cliente ═══════════ -->
+
+  <section class="block">
+    <div class="block-head">
+      <span class="block-num">01</span>
+      <h2>Anagrafica commessa</h2>
+    </div>
+    <div class="field-grid">
+      <div class="field"><label for="f-cliente">Cliente</label><input id="f-cliente" type="text" placeholder="es. Vetraria Moretti S.r.l." data-track="anagrafica"></div>
+      <div class="field"><label for="f-data-inizio">Data di inizio</label><input id="f-data-inizio" type="date" data-track="anagrafica"></div>
+      <div class="field"><label for="f-referente">Referente cliente</label><input id="f-referente" type="text" placeholder="es. Laura Conti" data-track="anagrafica"></div>
+      <div class="field"><label for="f-data-fine">Data di fine</label><input id="f-data-fine" type="date" data-track="anagrafica"></div>
+      <div class="field"><label for="f-fiera">Fiera ed edizione</label><input id="f-fiera" type="text" placeholder="es. SPS Italia 2026" data-track="anagrafica"></div>
+      <div class="field"><label for="f-databrief">Data raccolta brief</label><input id="f-databrief" type="date" data-track="anagrafica"></div>
+      <div class="field"><label for="f-metratura">Posizione e metratura stand</label><input id="f-metratura" type="text" placeholder="es. Hall C, Stand 42 A, 48 mq, due lati aperti" data-track="anagrafica"></div>
+      <div class="field"><label for="f-data-proposta">Data concordata per la presentazione delle proposta</label><input id="f-data-proposta" type="date" data-track="anagrafica"></div>
+    </div>
+
+    <div class="team-block">
+      <div class="team-block-label">Team WES assegnato</div>
+      <div class="field-grid team-grid">
+        <div class="field"><label for="f-account">Account WES</label>
+          <select id="f-account" data-track="anagrafica">
+            <option value="">Non ancora assegnato</option>
+            <option>Alberto Battenti</option>
+            <option>Alessandra Rivolta</option>
+            <option>Alessandro Sacha Rattichieri</option>
+            <option>Cristiano Ciscato</option>
+            <option>Georgia Bacic</option>
+            <option>Gian Luca Marcenaro</option>
+            <option>Giorgio Barbareschi</option>
+            <option>Luca Gregoli</option>
+            <option>Michele Omodeo</option>
+            <option>Sara Corigliano</option>
+            <option>Stefano Grandi</option>
+          </select>
+        </div>
+        <div class="field"><label for="f-progettista">Progettista WES</label>
+          <select id="f-progettista" data-track="anagrafica">
+            <option value="">Non ancora assegnato</option>
+            <option>Alessandro Multari</option>
+            <option>Chiara Visconti</option>
+            <option>Daniele Lucini</option>
+            <option>Katia Gallina</option>
+            <option>Nicolas Brauchi</option>
+            <option>Wendy Mendola</option>
+          </select>
+        </div>
+        <div class="field"><label for="f-pm">PM WES</label>
+          <select id="f-pm" data-track="anagrafica">
+            <option value="">Non ancora assegnato</option>
+            <option>Alberto Battenti</option>
+            <option>Alessandra Rivolta</option>
+            <option>Cristiano Ciscato</option>
+            <option>Georgia Bacic</option>
+            <option>Gian Luca Marcenaro</option>
+            <option>Michele Omodeo</option>
+          </select>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="block">
+    <div class="block-head">
+      <span class="block-num">02</span>
+      <h2>Informazioni obbligatorie</h2>
+      <span class="tag must">Must have</span>
+    </div>
+    <div class="field-grid">
+      <div class="field">
+        <label for="f-budget">Budget indicativo <span class="req" aria-hidden="true">*</span></label>
+        <input id="f-budget" type="text" placeholder="es. 25.000 € - 30.000 €" data-req="1" data-track="must" required aria-required="true">
+      </div>
+      <div class="field">
+        <label for="f-personale">Personale interno in fiera <span class="req" aria-hidden="true">*</span></label>
+        <input id="f-personale" type="text" placeholder="Numero anche a fascia, es. 4–6" data-req="1" data-track="must" required aria-required="true">
+      </div>
+      <div class="field full stand-elements" id="f-elementi-group" data-req="1" data-req-group="stand" data-track="must">
+        <label>Elementi richiesti per lo stand <span class="req" aria-hidden="true">*</span></label>
+
+        <div class="stand-element">
+          <div class="stand-element-head">
+            <label for="f-stand-appendimento" class="stand-element-name">Appendimento</label>
+            <select id="f-stand-appendimento" required aria-required="true">
+              <option value="">— seleziona —</option>
+              <option>Sì</option>
+              <option>No</option>
+            </select>
+          </div>
+          <label for="f-stand-appendimento-note" class="sr-only">Nota su Appendimento</label>
+          <input type="text" id="f-stand-appendimento-note" placeholder="Richieste particolari?">
+        </div>
+
+        <div class="stand-element">
+          <div class="stand-element-head">
+            <label for="f-stand-desk-reception" class="stand-element-name">Desk reception</label>
+            <select id="f-stand-desk-reception" required aria-required="true">
+              <option value="">— seleziona —</option>
+              <option>Sì</option>
+              <option>No</option>
+            </select>
+          </div>
+          <label for="f-stand-desk-reception-note" class="sr-only">Nota su Desk reception</label>
+          <input type="text" id="f-stand-desk-reception-note" placeholder="Richieste particolari?">
+        </div>
+
+        <div class="stand-element">
+          <div class="stand-element-head">
+            <label for="f-stand-meeting-room" class="stand-element-name">Meeting room (stanza chiusa per riunioni)</label>
+            <select id="f-stand-meeting-room" required aria-required="true">
+              <option value="">— seleziona —</option>
+              <option>Sì</option>
+              <option>No</option>
+            </select>
+          </div>
+          <label for="f-stand-meeting-room-note" class="sr-only">Nota su Meeting room</label>
+          <input type="text" id="f-stand-meeting-room-note" placeholder="Quantità? Per quante persone? Con monitor?">
+        </div>
+
+        <div class="stand-element">
+          <div class="stand-element-head">
+            <label for="f-stand-lounge" class="stand-element-name">Lounge (spazio di accoglienza per clienti con poltroncine/poltrone o divanetti)</label>
+            <select id="f-stand-lounge" required aria-required="true">
+              <option value="">— seleziona —</option>
+              <option>Sì</option>
+              <option>No</option>
+            </select>
+          </div>
+          <label for="f-stand-lounge-note" class="sr-only">Nota su Lounge</label>
+          <input type="text" id="f-stand-lounge-note" placeholder="Per quante persone? Con monitor? Privata, Aperta o Semiprivata?">
+        </div>
+
+        <div class="stand-element">
+          <div class="stand-element-head">
+            <label for="f-stand-sedute-aperte" class="stand-element-name">Sedute in area aperta (per incontri informali o a uso bar)</label>
+            <select id="f-stand-sedute-aperte" required aria-required="true">
+              <option value="">— seleziona —</option>
+              <option>Sì</option>
+              <option>No</option>
+            </select>
+          </div>
+          <label for="f-stand-sedute-aperte-note" class="sr-only">Nota su Sedute in area aperta</label>
+          <input type="text" id="f-stand-sedute-aperte-note" placeholder="Per quante persone? Preferenza sulle sedute (sedie o sgabelli alti)?">
+        </div>
+
+        <div class="stand-element">
+          <div class="stand-element-head">
+            <label for="f-stand-bancone-bar" class="stand-element-name">Bancone bar</label>
+            <select id="f-stand-bancone-bar" required aria-required="true">
+              <option value="">— seleziona —</option>
+              <option>Sì</option>
+              <option>No</option>
+            </select>
+          </div>
+          <label for="f-stand-bancone-bar-note" class="sr-only">Nota su Bancone bar</label>
+          <input type="text" id="f-stand-bancone-bar-note" placeholder="Per quante persone di servizio? Con sedute sul fronte? Richieste particolari?">
+        </div>
+
+        <div class="stand-element">
+          <div class="stand-element-head">
+            <label for="f-stand-cucina" class="stand-element-name">Cucina separata dal magazzino/guardaroba</label>
+            <select id="f-stand-cucina" required aria-required="true">
+              <option value="">— seleziona —</option>
+              <option>Sì</option>
+              <option>No</option>
+            </select>
+          </div>
+          <label for="f-stand-cucina-note" class="sr-only">Nota su Cucina</label>
+          <input type="text" id="f-stand-cucina-note" placeholder="Per quante persone di servizio? Con quale dotazione (lavandino, elettrodomestici, etc.)?">
+        </div>
+
+        <div class="stand-element">
+          <div class="stand-element-head">
+            <label for="f-stand-esposizione" class="stand-element-name">Esposizione prodotti o modelli</label>
+            <select id="f-stand-esposizione" required aria-required="true">
+              <option value="">— seleziona —</option>
+              <option>Sì</option>
+              <option>No</option>
+            </select>
+          </div>
+          <label for="f-stand-esposizione-note" class="sr-only">Nota su Esposizione prodotti o modelli</label>
+          <input type="text" id="f-stand-esposizione-note" placeholder="Quali e quanti prodotti? Misure e pesi? Tipologia ed esposizione (a parete, a terra, etc.)?">
+        </div>
+
+        <div class="stand-element">
+          <div class="stand-element-head">
+            <label for="f-stand-multimediali" class="stand-element-name">Elementi multimediali</label>
+            <select id="f-stand-multimediali" required aria-required="true">
+              <option value="">— seleziona —</option>
+              <option>Sì</option>
+              <option>No</option>
+            </select>
+          </div>
+          <label for="f-stand-multimediali-note" class="sr-only">Nota su Elementi multimediali</label>
+          <input type="text" id="f-stand-multimediali-note" placeholder="Ledwall, schermi standard, monitor touchscreen, tablet, pc, smartphone? Impianto audio e microfoni?">
+        </div>
+
+        <div class="stand-element">
+          <div class="stand-element-head">
+            <label for="f-stand-altri-spazi" class="stand-element-name">Altri spazi da inserire nello stand non menzionati sopra</label>
+            <select id="f-stand-altri-spazi" required aria-required="true">
+              <option value="">— seleziona —</option>
+              <option>Sì</option>
+              <option>No</option>
+            </select>
+          </div>
+          <label for="f-stand-altri-spazi-note" class="sr-only">Nota su Altri spazi da inserire nello stand non menzionati sopra</label>
+          <input type="text" id="f-stand-altri-spazi-note" placeholder="Richieste particolari?">
+        </div>
+
+        <div class="stand-element">
+          <div class="stand-element-head">
+            <label for="f-stand-grafica-wes" class="stand-element-name">Grafica a sviluppo WES</label>
+            <select id="f-stand-grafica-wes" required aria-required="true">
+              <option value="">— seleziona —</option>
+              <option>Sì</option>
+              <option>No</option>
+            </select>
+          </div>
+          <label for="f-stand-grafica-wes-note" class="sr-only">Nota su Grafica a sviluppo WES</label>
+          <input type="text" id="f-stand-grafica-wes-note" placeholder="I file esecutivi per la stampa delle grafiche dovranno essere sviluppati da WES o saranno forniti dal cliente?">
+        </div>
+      </div>
+      <div class="field full">
+        <label for="f-servizi">Servizi accessori <span class="req" aria-hidden="true">*</span></label>
+        <textarea id="f-servizi" placeholder="Catering, hostess, altri servizi" data-req="1" data-track="must" required aria-required="true"></textarea>
+      </div>
+      <div class="field full">
+        <label for="f-obiettivi">Obiettivi e funzione dello stand <span class="req" aria-hidden="true">*</span></label>
+        <textarea id="f-obiettivi" placeholder="Cosa deve accadere nello stand (es. eventi, presentazioni, conferenze stampa, etc.)?" data-req="1" data-track="must" required aria-required="true"></textarea>
+      </div>
+      <div class="field full">
+        <label id="lbl-brand-check">Brand identity <span class="req" aria-hidden="true">*</span></label>
+        <div class="file-hint">Materiali forniti dal cliente: loghi, palette colori, presentazione aziendale, stand precedenti, foto da usare in grafica, moodboard, etc.</div>
+        <label class="check-confirm">
+          <input type="checkbox" id="f-brand-check" data-req="1" data-track="must" required aria-required="true" aria-labelledby="lbl-brand-check txt-brand-check">
+          <span class="check-confirm-txt" id="txt-brand-check">Materiali di brand identity raccolti dal cliente e archiviati nella cartella di progetto</span>
+        </label>
+      </div>
+      <div class="field full">
+        <label id="lbl-doc-fiera-check">Documentazione fieristica <span class="req" aria-hidden="true">*</span></label>
+        <div class="file-hint">Piantina dello stand ed eventuali documenti già a disposizione del cliente: regolamento ente fiera, regolamento espositori, credenziali di accesso al portale.</div>
+        <label class="check-confirm">
+          <input type="checkbox" id="f-doc-fiera-check" data-req="1" data-track="must" required aria-required="true" aria-labelledby="lbl-doc-fiera-check txt-doc-fiera-check">
+          <span class="check-confirm-txt" id="txt-doc-fiera-check">Documentazione fieristica raccolta dal cliente e archiviata nella cartella di progetto</span>
+        </label>
+      </div>
+    </div>
+  </section>
+
+  <section class="block">
+    <div class="block-head">
+      <span class="block-num">03</span>
+      <h2>Approfondimenti desiderati</h2>
+      <span class="tag nice">Nice to have</span>
+    </div>
+    <div class="field-grid">
+      <div class="field full"><label for="f-concorrenti">Concorrenti di riferimento in fiera</label><textarea id="f-concorrenti" placeholder="es. Fintech Solutions, DataCore Group" data-track="nice"></textarea></div>
+      <div class="field full"><label for="f-comunicazione">Obiettivi di comunicazione</label><textarea id="f-comunicazione" placeholder="es. Lancio di un nuovo prodotto, anniversario aziendale, ingresso in un nuovo mercato" data-track="nice"></textarea></div>
+      <div class="field full"><label for="f-esperienze-precedenti">Esperienze precedenti</label><textarea id="f-esperienze-precedenti" placeholder="In caso il cliente abbia già partecipato a questa fiera, ci sono elementi dello stand che vuole mantenere o cambiare rispetto alle passate edizioni?" data-track="nice"></textarea></div>
+      <div class="field full">
+        <label for="f-stile">Indirizzo di stile e design, riferimenti visivi</label>
+        <textarea id="f-stile" placeholder="es. Minimal, materiali naturali, illuminazione calda" data-track="nice"></textarea>
+      </div>
+    </div>
+  </section>
+
+  <section class="block">
+    <div class="block-head">
+      <span class="block-num">04</span>
+      <h2>Note raccolte dal cliente</h2>
+    </div>
+    <div class="note-block">
+      <div class="field full">
+        <label for="f-note">Informazioni non scritte, preferenze o vincoli emersi nella conversazione</label>
+        <textarea id="f-note" style="min-height:90px" placeholder="Quanto non rientra nei campi strutturati ma è rilevante per la progettazione" data-track="note"></textarea>
+      </div>
+    </div>
+  </section>
+
+  <section class="block">
+    <div class="block-head">
+      <span class="block-num">05</span>
+      <h2>Checklist finale</h2>
+    </div>
+    <div class="checklist">
+      <div class="checklist-col">
+        <h3 class="checklist-col-title must">Must have</h3>
+        <div id="checklistMust"></div>
+      </div>
+      <div class="checklist-col">
+        <h3 class="checklist-col-title nice">Nice to have</h3>
+        <div id="checklistNice"></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="block decision-panel">
+    <div class="block-head">
+      <span class="block-num">06</span>
+      <h2>Decisione di progetto</h2>
+    </div>
+    <div class="decision-sub">Decisione finale del Team WES sulla base delle informazioni raccolte e valutate.</div>
+    <div class="field full">
+      <label for="f-decisione" class="sr-only">Decisione di progetto</label>
+      <select id="f-decisione">
+        <option value="">Da valutare</option>
+        <option>Go — commessa confermata</option>
+        <option>No-go — opportunità chiusa</option>
+      </select>
+    </div>
+  </section>
+
+  <div class="actions">
+    <button id="btnCopy">Copia sintesi testuale</button>
+    <button id="btnPrint">Stampa / PDF</button>
+    <button id="btnWord">Scarica Word</button>
+    <button class="secondary" id="btnReset">Svuota campi</button>
+    <span class="toast" id="toast">Copiato negli appunti</span>
+    <span class="autosave-status" id="autosaveStatus"></span>
+  </div>
+
+</div>
+
+<script>
+const mustFields = Array.from(document.querySelectorAll('[data-req="1"]'));
+const niceFields = Array.from(document.querySelectorAll('[data-track="nice"]'));
+const gateFill = document.getElementById('gateFill');
+const gateStatus = document.getElementById('gateStatus');
+const checklistMust = document.getElementById('checklistMust');
+const checklistNice = document.getElementById('checklistNice');
+const decisionPanel = document.querySelector('.decision-panel');
+const decisionSelect = document.getElementById('f-decisione');
+
+// collegamento diretto campo <-> riga checklist tramite indice numerico,
+// invece di far combaciare il testo delle etichette (più fragile)
+document.querySelector('.gate-track').setAttribute('aria-valuemax', mustFields.length);
+mustFields.forEach((f, i) => { f.dataset.reqIndex = i; });
+niceFields.forEach((f, i) => { f.dataset.niceIndex = i; });
+
+function buildChecklistColumn(fields, container, indexAttr){
+  container.innerHTML = '';
+  fields.forEach((f, i) => {
+    const lbl = f.closest('.field').querySelector('label').textContent.replace('*','').trim();
+    const row = document.createElement('div');
+    row.className = 'check-row';
+    row.dataset[indexAttr] = i;
+    row.innerHTML = `<div class="dot" aria-hidden="true"></div><span class="label-txt">${lbl}</span><span class="sr-only status-txt">— da compilare</span>`;
+    container.appendChild(row);
+  });
+}
+buildChecklistColumn(mustFields, checklistMust, 'reqIndex');
+buildChecklistColumn(niceFields, checklistNice, 'niceIndex');
+
+function isFilled(el){
+  if(el.type === 'checkbox') return el.checked;
+  if(el.dataset.reqGroup === 'stand'){
+    return Array.from(el.querySelectorAll('select')).every(s => s.value !== '');
+  }
+  if(el.type === 'file') return el.files && el.files.length > 0;
+  return !!(el.value && el.value.trim().length > 0);
+}
+
+function refreshColumn(fields, container, dataAttr){
+  fields.forEach((f, i) => {
+    const ok = isFilled(f);
+    const row = container.querySelector(`.check-row[data-${dataAttr}="${i}"]`);
+    f.classList.toggle('filled', ok);
+    if(row){
+      row.querySelector('.dot').classList.toggle('ok', ok);
+      row.classList.toggle('ok', ok);
+      row.querySelector('.status-txt').textContent = ok ? '— compilato' : '— da compilare';
+    }
+  });
+}
+
+function markFilled(){
+  const done = el => el.type === 'checkbox'
+    ? el.checked
+    : el.type === 'file'
+      ? !!(el.files && el.files.length > 0)
+      : !!(el.value && el.value.trim().length > 0);
+  document.querySelectorAll('[data-track], #f-elementi-group select').forEach(el=>{
+    if(!/^(INPUT|TEXTAREA|SELECT)$/.test(el.tagName)) return;
+    el.classList.toggle('filled', done(el));
+  });
+  // sulle caselle di spunta l'evidenza va sul riquadro, non sul quadratino
+  document.querySelectorAll('.check-confirm').forEach(box=>{
+    const cb = box.querySelector('input[type="checkbox"]');
+    box.classList.toggle('filled', !!(cb && cb.checked));
+  });
+}
+
+function refresh(){
+  markFilled();
+  refreshColumn(mustFields, checklistMust, 'req-index');
+  refreshColumn(niceFields, checklistNice, 'nice-index');
+
+  const filledCount = mustFields.filter(isFilled).length;
+  const total = mustFields.length;
+  const pct = Math.round((filledCount/total)*100);
+  gateFill.style.width = pct + '%';
+  document.querySelector('.gate-track').setAttribute('aria-valuenow', filledCount);
+
+  let color, statusText;
+  if(filledCount === total){
+    color = 'var(--go)'; statusText = `${filledCount} di ${total} — avviabile`;
+  } else if(filledCount >= Math.ceil(total*0.5)){
+    color = 'var(--wait)'; statusText = `${filledCount} di ${total} — parziale`;
+  } else {
+    color = 'var(--stop)'; statusText = `${filledCount} di ${total} — Progettazione non avviabile`;
+  }
+  gateFill.style.background = color;
+  gateStatus.textContent = statusText;
+  gateStatus.style.color = 'var(--ink)';
+}
+
+function updateDecisionPanel(){
+  decisionPanel.classList.remove('go', 'stop');
+  if(decisionSelect.value.startsWith('Go')) decisionPanel.classList.add('go');
+  else if(decisionSelect.value.startsWith('No-go')) decisionPanel.classList.add('stop');
+}
+
+// event delegation sul documento: più robusto di attaccare un listener
+// a ogni singolo campo, ed evita problemi di timing sugli elementi dinamici
+document.addEventListener('input', (e) => {
+  if(e.target.matches('input, textarea, select')) refresh();
+}, true);
+document.addEventListener('change', (e) => {
+  if(e.target.matches('input, textarea, select')) refresh();
+  if(e.target === decisionSelect) updateDecisionPanel();
+}, true);
+
+refresh();
+updateDecisionPanel();
+
+// salvataggio automatico locale (localStorage), per non perdere il lavoro
+// in caso di chiusura accidentale, crash o interruzione
+const AUTOSAVE_KEY = 'wes-brief-draft-v1';
+const autosaveStatus = document.getElementById('autosaveStatus');
+
+function collectDraftData(){
+  const data = {};
+  document.querySelectorAll('input, textarea, select').forEach(el=>{
+    if(el.type === 'file' || !el.id) return;
+    data[el.id] = el.type === 'checkbox' ? el.checked : el.value;
+  });
+  return data;
+}
+
+function saveDraft(){
+  try{
+    localStorage.setItem(AUTOSAVE_KEY, JSON.stringify({ savedAt: Date.now(), data: collectDraftData() }));
+    if(autosaveStatus){
+      const t = new Date().toLocaleTimeString('it-IT', {hour:'2-digit', minute:'2-digit'});
+      autosaveStatus.textContent = `Bozza salvata automaticamente alle ${t}`;
+    }
+  } catch(e){ /* storage non disponibile: il salvataggio automatico è solo un extra, si prosegue senza */ }
+}
+
+function clearDraft(){
+  try{ localStorage.removeItem(AUTOSAVE_KEY); } catch(e){}
+  if(autosaveStatus) autosaveStatus.textContent = '';
+}
+
+function restoreDraftIfPresent(){
+  let raw;
+  try{ raw = localStorage.getItem(AUTOSAVE_KEY); } catch(e){ return; }
+  if(!raw) return;
+  let parsed;
+  try{ parsed = JSON.parse(raw); } catch(e){ return; }
+  if(!parsed || !parsed.data) return;
+  const hasContent = Object.values(parsed.data).some(v => v === true || (v && v.trim && v.trim().length > 0));
+  if(!hasContent) return;
+  const when = new Date(parsed.savedAt).toLocaleString('it-IT');
+  if(!confirm(`È stata trovata una bozza salvata automaticamente del ${when}. Vuoi ripristinarla?`)) return;
+  Object.entries(parsed.data).forEach(([id, value])=>{
+    const el = document.getElementById(id);
+    if(!el) return;
+    if(el.type === 'checkbox') el.checked = !!value;
+    else el.value = value;
+  });
+  refresh();
+  updateDecisionPanel();
+}
+
+restoreDraftIfPresent();
+setInterval(saveDraft, 20000);
+window.addEventListener('beforeunload', saveDraft);
+
+document.getElementById('btnReset').addEventListener('click', ()=>{
+  if(!confirm('Vuoi svuotare tutti i campi? L\'operazione non è reversibile.')) return;
+  document.querySelectorAll('input, textarea, select').forEach(el=>{
+    if(el.tagName === 'SELECT') el.selectedIndex = 0;
+    else if(el.type === 'checkbox') el.checked = false;
+    else el.value = '';
+  });
+  refresh();
+  updateDecisionPanel();
+  clearDraft();
+});
+
+document.getElementById('btnPrint').addEventListener('click', ()=> window.print());
+
+// In stampa i campi del modulo non si comportano come testo di un documento:
+// un input di una riga taglia tutto ciò che eccede la sua larghezza e una
+// textarea taglia tutto ciò che eccede la sua altezza. Il testo tagliato non
+// finisce nel PDF: sparisce, e nessuno se ne accorge finché non serve.
+// Prima di stampare, ogni campo compilato viene quindi ricalcato in un blocco
+// statico che va a capo e cresce quanto serve; a stampa conclusa i ricalchi
+// vengono rimossi e il modulo torna esattamente com'era.
+function preparaValoriPerStampa(){
+  ripulisciValoriDiStampa();
+  document.querySelectorAll('input[type="text"], textarea').forEach(campo=>{
+    if(!campo.value.trim()) return;
+    const blocco = document.createElement('div');
+    blocco.className = 'print-value';
+    blocco.textContent = campo.value;
+    campo.classList.add('print-sostituito');
+    campo.insertAdjacentElement('afterend', blocco);
+  });
+}
+
+function ripulisciValoriDiStampa(){
+  document.querySelectorAll('.print-value').forEach(b=> b.remove());
+  document.querySelectorAll('.print-sostituito').forEach(c=> c.classList.remove('print-sostituito'));
+}
+
+window.addEventListener('beforeprint', preparaValoriPerStampa);
+window.addEventListener('afterprint', ripulisciValoriDiStampa);
+
+// ── Struttura del brief ───────────────────────────────────────────────────
+// Un solo elenco di sezioni alimenta sia la sintesi testuale sia il documento
+// Word: se un campo cambia etichetta va corretto qui e basta.
+const SEZIONI_BRIEF = [
+  ['Anagrafica commessa', ['Cliente','Fiera ed edizione','Data di inizio','Data di fine','Posizione e metratura stand','Referente cliente','Account WES','Data raccolta brief','Data concordata per la presentazione delle proposta','Progettista WES','PM WES']],
+  ['Informazioni obbligatorie (must have)', ['Obiettivi e funzione dello stand','Brand identity','Documentazione fieristica','Personale interno in fiera','Budget indicativo','Elementi richiesti per lo stand','Servizi accessori']],
+  ['Approfondimenti desiderati (nice to have)', ['Concorrenti di riferimento in fiera','Obiettivi di comunicazione','Esperienze precedenti','Indirizzo di stile e design, riferimenti visivi']],
+  ['Note raccolte dal cliente', ['Informazioni non scritte, preferenze o vincoli emersi nella conversazione']],
+  ['Decisione di progetto', ['Decisione di progetto']]
+];
+
+const ELENCO_ELEMENTI_STAND = 'Elementi richiesti per lo stand';
+
+function valoreDelCampo(etichetta){
+  const field = Array.from(document.querySelectorAll('.field')).find(f=>{
+    const l = f.querySelector('label');
+    return l && l.textContent.replace('*','').trim() === etichetta;
+  });
+  if(!field) return '';
+  const input = field.querySelector('input,textarea,select');
+  if(!input) return '';
+  if(input.type === 'checkbox') return input.checked ? 'Sì — raccolta confermata' : 'No — da richiedere al cliente';
+  return input.value.trim();
+}
+
+function elementiStand(){
+  return Array.from(document.querySelectorAll('.stand-element')).map(riga=>({
+    nome: riga.querySelector('.stand-element-name').textContent.trim(),
+    valore: riga.querySelector('select').value || '—',
+    nota: riga.querySelector('input[type="text"]').value.trim()
+  }));
+}
+
+function nomeCliente(){
+  return valoreDelCampo('Cliente') || 'Senza cliente';
+}
+
+// ── Sintesi testuale negli appunti ────────────────────────────────────────
+document.getElementById('btnCopy').addEventListener('click', ()=>{
+  let out = 'BRIEF DI COMMESSA WES (FIERE)\n';
+  SEZIONI_BRIEF.forEach(([titolo, etichette])=>{
+    out += `\n${titolo.toUpperCase()}\n`;
+    etichette.forEach(etichetta=>{
+      if(etichetta === ELENCO_ELEMENTI_STAND){
+        out += `${ELENCO_ELEMENTI_STAND}:\n`;
+        elementiStand().forEach(e=>{
+          out += `- ${e.nome}: ${e.valore}${e.nota ? ' — ' + e.nota : ''}\n`;
+        });
+        return;
+      }
+      out += `${etichetta}: ${valoreDelCampo(etichetta) || '—'}\n`;
+    });
+  });
+  copiaNegliAppunti(out);
+});
+
+// ── Documento Word ────────────────────────────────────────────────────────
+// Il PDF di stampa è una fotografia del modulo: fedele, ma non modificabile e
+// vincolata alla larghezza dei campi. Il .docx è invece testo di un documento
+// vero — non può troncare nulla e chi riceve il brief lo può completare.
+//
+// Un .docx è uno ZIP di file XML: viene scritto qui a mano, con il metodo
+// "store" (nessuna compressione), per non legare a una libreria esterna un
+// widget che deve restare un unico file HTML apribile anche da disco.
+// La scorciatoia diffusa — un .doc che in realtà è HTML — è stata scartata:
+// Word la apre mostrando l'avviso «il formato del file non corrisponde
+// all'estensione», e chi il brief lo riceve e basta non deve vedere avvisi.
+
+function xmlEsc(testo){
+  return String(testo)
+    .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;').replace(/'/g, '&apos;')
+    // I caratteri di controllo non sono ammessi in XML e farebbero
+    // considerare il file danneggiato da Word
+    .replace(/[\x00-\x08\x0B\x0C\x0E-\x1F]/g, '');
+}
+
+const FONT_DOCX = '<w:rFonts w:ascii="Arial" w:hAnsi="Arial" w:cs="Arial"/>';
+
+// Gli a capo dentro un valore diventano interruzioni di riga Word
+function corseDocx(testo, proprieta){
+  const rPr = `<w:rPr>${FONT_DOCX}${proprieta || ''}</w:rPr>`;
+  return String(testo).split('\n').map((riga, i)=>
+    `<w:r>${rPr}${i ? '<w:br/>' : ''}<w:t xml:space="preserve">${xmlEsc(riga)}</w:t></w:r>`
+  ).join('');
+}
+
+function paragrafoDocx(testo, opzioni){
+  const o = opzioni || {};
+  return `<w:p><w:pPr>${o.ppr || ''}</w:pPr>${corseDocx(testo, o.rpr)}</w:p>`;
+}
+
+const MARGINI_CELLA =
+  '<w:tcMar><w:top w:w="70" w:type="dxa"/><w:bottom w:w="70" w:type="dxa"/>' +
+  '<w:left w:w="110" w:type="dxa"/><w:right w:w="110" w:type="dxa"/></w:tcMar>';
+
+// w:tcW in percentuale si esprime in cinquantesimi di punto percentuale
+function cellaDocx(testo, opzioni){
+  const o = opzioni || {};
+  return '<w:tc><w:tcPr>' +
+    `<w:tcW w:w="${o.larghezza}" w:type="pct"/>` +
+    (o.sfondo ? `<w:shd w:val="clear" w:color="auto" w:fill="${o.sfondo}"/>` : '') +
+    MARGINI_CELLA +
+    '</w:tcPr>' +
+    paragrafoDocx(testo, { rpr: o.rpr }) +
+    '</w:tc>';
+}
+
+const BORDI_TABELLA = '<w:tblBorders>' +
+  ['top','left','bottom','right','insideH','insideV']
+    .map(b => `<w:${b} w:val="single" w:sz="4" w:space="0" w:color="DCDFDE"/>`).join('') +
+  '</w:tblBorders>';
+
+function tabellaDocx(righe, colonne){
+  if(!righe.length) return '';
+  return '<w:tbl><w:tblPr><w:tblW w:w="5000" w:type="pct"/>' + BORDI_TABELLA + '</w:tblPr>' +
+    `<w:tblGrid>${colonne.map(c => `<w:gridCol w:w="${c}"/>`).join('')}</w:tblGrid>` +
+    righe.join('') +
+    '</w:tbl>' +
+    // Word vuole un paragrafo fra due tabelle consecutive e a fine documento
+    '<w:p><w:pPr><w:spacing w:after="0" w:line="120" w:lineRule="exact"/></w:pPr></w:p>';
+}
+
+const STILE_ETICHETTA = '<w:b/><w:color w:val="5C6664"/><w:sz w:val="15"/><w:caps/>';
+const STILE_VALORE    = '<w:sz w:val="20"/>';
+const STILE_MANCANTE  = '<w:i/><w:color w:val="8A908F"/><w:sz w:val="20"/>';
+
+function rigaCampoDocx(etichetta, valore){
+  return '<w:tr>' +
+    cellaDocx(etichetta, { larghezza: 1600, sfondo: 'F6F8F7', rpr: STILE_ETICHETTA }) +
+    cellaDocx(valore || 'Da richiedere al cliente',
+              { larghezza: 3400, rpr: valore ? STILE_VALORE : STILE_MANCANTE }) +
+    '</w:tr>';
+}
+
+function corpoDocx(){
+  let corpo =
+    paragrafoDocx('Worldwide Exhibition System', {
+      rpr: '<w:b/><w:color w:val="1A7272"/><w:sz w:val="15"/><w:caps/>',
+      ppr: '<w:spacing w:after="40"/>'
+    }) +
+    paragrafoDocx('Brief di commessa (Fiere)', {
+      rpr: '<w:b/><w:sz w:val="34"/>',
+      ppr: '<w:spacing w:after="40"/>'
+    }) +
+    paragrafoDocx(nomeCliente(), {
+      rpr: '<w:color w:val="5C6664"/><w:sz w:val="20"/>',
+      ppr: '<w:spacing w:after="280"/>'
+    });
+
+  SEZIONI_BRIEF.forEach(([titolo, etichette])=>{
+    corpo += paragrafoDocx(titolo, {
+      rpr: '<w:b/><w:color w:val="1A7272"/><w:sz w:val="22"/>',
+      ppr: '<w:spacing w:before="320" w:after="120"/>' +
+           '<w:pBdr><w:bottom w:val="single" w:sz="8" w:space="2" w:color="1A7272"/></w:pBdr>'
+    });
+
+    // L'elenco degli elementi stand è una tabella a sé: spezza quella della
+    // sezione, che riprende dopo con i campi rimanenti.
+    let righe = [];
+    etichette.forEach(etichetta=>{
+      if(etichetta === ELENCO_ELEMENTI_STAND){
+        corpo += tabellaDocx(righe, [3084, 6554]);
+        righe = [];
+        corpo += paragrafoDocx(ELENCO_ELEMENTI_STAND, {
+          rpr: '<w:b/><w:sz w:val="19"/>',
+          ppr: '<w:spacing w:before="200" w:after="100"/>'
+        });
+        corpo += tabellaDocx(elementiStand().map(e =>
+          '<w:tr>' +
+          cellaDocx(e.nome, { larghezza: 1600, sfondo: 'F6F8F7', rpr: '<w:b/><w:sz w:val="19"/>' }) +
+          cellaDocx(e.valore, { larghezza: 500, rpr: STILE_VALORE }) +
+          cellaDocx(e.nota || '—', { larghezza: 2900, rpr: e.nota ? STILE_VALORE : STILE_MANCANTE }) +
+          '</w:tr>'
+        ), [3084, 964, 5590]);
+        return;
+      }
+      righe.push(rigaCampoDocx(etichetta, valoreDelCampo(etichetta)));
+    });
+    corpo += tabellaDocx(righe, [3084, 6554]);
+  });
+
+  const generatoIl = new Date().toLocaleDateString('it-IT', { day:'2-digit', month:'long', year:'numeric' });
+  corpo += paragrafoDocx(`Documento generato dal modulo di raccolta brief WES il ${generatoIl}.`, {
+    rpr: '<w:color w:val="5C6664"/><w:sz w:val="15"/>',
+    ppr: '<w:spacing w:before="320"/>'
+  });
+
+  return corpo;
+}
+
+// ── Confezionamento dello ZIP ─────────────────────────────────────────────
+const TABELLA_CRC = (()=>{
+  const t = new Uint32Array(256);
+  for(let n = 0; n < 256; n++){
+    let c = n;
+    for(let k = 0; k < 8; k++) c = (c & 1) ? (0xEDB88320 ^ (c >>> 1)) : (c >>> 1);
+    t[n] = c >>> 0;
+  }
+  return t;
+})();
+
+function crc32(byte){
+  let c = 0xFFFFFFFF;
+  for(let i = 0; i < byte.length; i++) c = TABELLA_CRC[(c ^ byte[i]) & 0xFF] ^ (c >>> 8);
+  return (c ^ 0xFFFFFFFF) >>> 0;
+}
+
+function creaZip(voci){
+  const enc = new TextEncoder();
+  const file = voci.map(v => ({
+    nome: enc.encode(v.nome),
+    dati: enc.encode(v.contenuto)
+  }));
+
+  const dimensioneLocali = file.reduce((n, f) => n + 30 + f.nome.length + f.dati.length, 0);
+  const dimensioneCentrale = file.reduce((n, f) => n + 46 + f.nome.length, 0);
+  const buffer = new ArrayBuffer(dimensioneLocali + dimensioneCentrale + 22);
+  const vista = new DataView(buffer);
+  const byte = new Uint8Array(buffer);
+
+  let pos = 0;
+  file.forEach(f=>{
+    f.offset = pos;
+    f.crc = crc32(f.dati);
+    vista.setUint32(pos, 0x04034b50, true);      // firma intestazione locale
+    vista.setUint16(pos + 4, 20, true);          // versione necessaria
+    vista.setUint16(pos + 6, 0x0800, true);      // nomi in UTF-8
+    vista.setUint16(pos + 8, 0, true);           // metodo: store
+    vista.setUint16(pos + 10, 0, true);          // ora
+    vista.setUint16(pos + 12, 0x0021, true);     // data: 1980-01-01
+    vista.setUint32(pos + 14, f.crc, true);
+    vista.setUint32(pos + 18, f.dati.length, true);
+    vista.setUint32(pos + 22, f.dati.length, true);
+    vista.setUint16(pos + 26, f.nome.length, true);
+    vista.setUint16(pos + 28, 0, true);          // campo extra assente
+    pos += 30;
+    byte.set(f.nome, pos); pos += f.nome.length;
+    byte.set(f.dati, pos); pos += f.dati.length;
+  });
+
+  const inizioCentrale = pos;
+  file.forEach(f=>{
+    vista.setUint32(pos, 0x02014b50, true);      // firma indice centrale
+    vista.setUint16(pos + 4, 20, true);
+    vista.setUint16(pos + 6, 20, true);
+    vista.setUint16(pos + 8, 0x0800, true);
+    vista.setUint16(pos + 10, 0, true);
+    vista.setUint16(pos + 12, 0, true);
+    vista.setUint16(pos + 14, 0x0021, true);
+    vista.setUint32(pos + 16, f.crc, true);
+    vista.setUint32(pos + 20, f.dati.length, true);
+    vista.setUint32(pos + 24, f.dati.length, true);
+    vista.setUint16(pos + 28, f.nome.length, true);
+    vista.setUint16(pos + 30, 0, true);          // extra
+    vista.setUint16(pos + 32, 0, true);          // commento
+    vista.setUint16(pos + 34, 0, true);          // disco
+    vista.setUint16(pos + 36, 0, true);          // attributi interni
+    vista.setUint32(pos + 38, 0, true);          // attributi esterni
+    vista.setUint32(pos + 42, f.offset, true);
+    pos += 46;
+    byte.set(f.nome, pos); pos += f.nome.length;
+  });
+
+  vista.setUint32(pos, 0x06054b50, true);        // fine indice centrale
+  vista.setUint16(pos + 8, file.length, true);
+  vista.setUint16(pos + 10, file.length, true);
+  vista.setUint32(pos + 12, pos - inizioCentrale, true);
+  vista.setUint32(pos + 16, inizioCentrale, true);
+
+  return buffer;
+}
+
+const TIPI_CONTENUTO =
+  '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>' +
+  '<Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types">' +
+  '<Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/>' +
+  '<Default Extension="xml" ContentType="application/xml"/>' +
+  '<Override PartName="/word/document.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml"/>' +
+  '</Types>';
+
+const RELAZIONI =
+  '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>' +
+  '<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">' +
+  '<Relationship Id="rId1" Target="word/document.xml" ' +
+  'Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument"/>' +
+  '</Relationships>';
+
+function creaDocx(){
+  const documento =
+    '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>' +
+    '<w:document xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main"><w:body>' +
+    corpoDocx() +
+    '<w:sectPr><w:pgSz w:w="11906" w:h="16838"/>' +
+    '<w:pgMar w:top="1134" w:right="1134" w:bottom="1134" w:left="1134" ' +
+    'w:header="0" w:footer="0" w:gutter="0"/></w:sectPr>' +
+    '</w:body></w:document>';
+
+  return creaZip([
+    { nome: '[Content_Types].xml', contenuto: TIPI_CONTENUTO },
+    { nome: '_rels/.rels', contenuto: RELAZIONI },
+    { nome: 'word/document.xml', contenuto: documento }
+  ]);
+}
+
+function nomeFileWord(){
+  const cliente = nomeCliente().replace(/[\\/:*?"<>|]/g, '').trim().slice(0, 60);
+  return `Brief di commessa WES — ${cliente}.docx`;
+}
+
+document.getElementById('btnWord').addEventListener('click', ()=>{
+  let url;
+  try{
+    const blob = new Blob([creaDocx()], {
+      type: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+    });
+    url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = nomeFileWord();
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    mostraToast('Documento Word scaricato', false);
+  } catch(e){
+    console.error('[word]', e);
+    mostraToast('Generazione del Word non riuscita: usa Stampa / PDF', true);
+  } finally{
+    // Il revoke immediato, in alcuni browser, annulla il download appena avviato
+    if(url) setTimeout(()=> URL.revokeObjectURL(url), 10000);
+  }
+});
+
+// l'API asincrona degli appunti esiste solo in contesto sicuro (file:// e
+// https:// sì, http:// semplice no): senza ripiego il bottone non farebbe
+// nulla in silenzio, quindi si tenta il metodo legacy e in ultima istanza
+// si avvisa che il testo va copiato a mano
+let toastTimer;
+function mostraToast(messaggio, errore){
+  const t = document.getElementById('toast');
+  t.textContent = messaggio;
+  t.classList.toggle('error', !!errore);
+  t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(()=>t.classList.remove('show'), errore ? 4000 : 2200);
+}
+
+function copiaConMetodoLegacy(testo){
+  const ta = document.createElement('textarea');
+  ta.value = testo;
+  ta.setAttribute('readonly', '');
+  ta.style.cssText = 'position:fixed;top:0;left:-9999px;opacity:0';
+  document.body.appendChild(ta);
+  ta.select();
+  let riuscito = false;
+  try{ riuscito = document.execCommand('copy'); } catch(e){ riuscito = false; }
+  document.body.removeChild(ta);
+  return riuscito;
+}
+
+function copiaNegliAppunti(testo){
+  const ripiego = ()=>{
+    if(copiaConMetodoLegacy(testo)) mostraToast('Copiato negli appunti', false);
+    else mostraToast('Copia non riuscita: seleziona il testo e copialo a mano', true);
+  };
+  if(navigator.clipboard && navigator.clipboard.writeText){
+    navigator.clipboard.writeText(testo)
+      .then(()=> mostraToast('Copiato negli appunti', false))
+      .catch(ripiego);
+  } else {
+    ripiego();
+  }
+}
+</script>
+</body>
+</html>

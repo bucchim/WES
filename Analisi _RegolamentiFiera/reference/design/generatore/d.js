@@ -1,0 +1,147 @@
+const sections = [
+  {
+    title: 'A. Altezze e volumi',
+    rows: [
+      ['Altezza max, booth inline e corner', '8 ft, solo nei 5 ft posteriori', 'App. A, p.1', 'Maximum height of 8ft. ; permitted only in the rear five feet of the booth space.', 'Confermato'],
+      ['Altezza max, inline, parte verso la corsia', '4 ft', 'App. A, p.1', '4ft. height restriction imposed on all materials in the remaining space forward to the aisle.', 'Confermato'],
+      ["Inline: tre o più booth combinati", "Il limite di 4 ft vale solo per la porzione entro 10 ft da un booth adiacente", "App. A, p.1", "When three or more Linear Booths are used in combination as a single exhibit space, the 4ft. height limitation is applied only to that portion of exhibit space which is within 10ft. of an adjoining booth.", "Confermato"],
+      ['Altezza max parete di fondo, perimeter inline', '12 ft', 'App. A, p.1', 'The maximum back wall height permitted is 12ft. where facility allows.', 'Da verificare (condizionato)'],
+      ['Extended header inline (20 ft o più)', 'Altezza 8 ft; larghezza max 20% della lunghezza; profondità max 9 ft dal fondo', 'App. A, p.2', 'Maximum height: 8ft. / Maximum width: 20% of the length of the booth / Maximum depth: 9ft. from the back wall', 'Confermato'],
+      ['Altezza max, island', '20 ft, escluso hanging signage', 'App. A, p.2', 'The entire cubic content of the space may be used up to the maximum allowable height of 20ft, display and signage, excluding hanging signage.', 'Confermato'],
+      ['Altezza max, split island/peninsula: display', '16 ft', 'App. A, p.2', 'Display Pieces: Maximum height allowance is 16ft., excluding hanging signage.', 'Confermato'],
+      ['Split island: parete di fondo verso le corsie', '4 ft entro 5 ft da ogni corsia', 'App. A, p.2', 'Back Wall: Restriction to 4ft. high within 5ft.of each aisle, permitting adequate line of sight for the adjoining booth.', 'Confermato'],
+      ['Split island: segnaletica', '26 ft, ridotta se il soffitto lo richiede', 'App. A, p.2', 'All signage must be installed to a maximum of 26ft. (location ceiling height may reduce this).', 'Da verificare (condizionato)'],
+      ['Macchinari e attrezzature', 'Nessun limite oltre l\'altezza dei padiglioni', 'Reg. 6.6, p.16', 'No height limitation (other than ceiling height limitations of the exposition halls) shall apply to machinery or equipment placed in position comparable to actual utilization for industrial purposes.', 'Confermato'],
+      ['Altezza dei soffitti dei padiglioni', 'West Hall A, B, D: 40 ft; West Hall C: 33 ft; West Hall E: 30 ft; South/North Hall: 40 ft (fino alla trave)', 'Reg. 6.18, p.20', 'Ceiling Heights: West Hall A, B, D 40ft to beam West Hall C 33ft to beam West Hall E 30ft to beam South/North Hall 40ft to beam', 'Confermato'],
+      ['Altezza max elementi sospesi (Regolamento)', 'Insegne appese: base minima 18 ft, sommità max 26 ft. Le travi possono superare i 26 ft', 'Reg. 6.18, p.20', 'Bottoms of hanging signs must be a minimum of 18ft from the ground and no more than 26ft from the ground to the top of the sign. / Overhead trusses may exceed the 26ft height limit.', 'Da verificare (conflitto con App. A, vedi nota)'],
+      ['Altezza max elementi sospesi (Appendice A)', '20 ft per gli elementi appesi, travi sopra i 20 ft', 'App. A, p.3', 'Displays may have hanging elements to a maximum of 20ft. / All overhead trusses must be installed above the height limit of 20ft.', 'Da verificare (conflitto con Reg., vedi nota)'],
+      ["Soppalchi: ammissibilità", "Ammessi solo in booth di 800 sf o più", "App. A, p.4", "Only booths equal to or greater than 800sf. may utilize a multi-level.", "Confermato"],
+      ['Soppalchi: altezza max', 'Non specificato', 'n.a.', 'n.a.', 'Non specificato'],
+      ["Soppalchi: superficie max", "Max 1.000 sf per singola area di piano superiore", "App. A, p.4", "Individual areas of upper decks must be limited to dimensions that do not exceed 1,000sf.", "Confermato"],
+      ['Soppalchi: % rispetto all\'area dello stand', 'Non specificato', 'n.a.', 'n.a.', 'Non specificato'],
+      ['Soppalchi: autorizzazione', 'Approvazione preventiva obbligatoria, anche da OCCC', 'Reg. 6.1, p.15', 'Multi-level and covered booths must also be approved by the OCCC.', 'Confermato'],
+    ],
+    note: 'Sugli elementi sospesi le due fonti non sono conciliabili: il Regolamento fissa la sommità delle insegne a 26 ft con base minima a 18 ft, l\'Appendice A indica 20 ft come limite per gli elementi appesi e per le travi. Entrambe riguardano island e split island.'
+  },
+  {
+    title: 'B. Chiusure perimetrali',
+    rows: [
+      ['Percentuale max di chiusura del perimetro', 'Non specificato', 'n.a.', 'n.a.', 'Non specificato'],
+      ['Limite verso stand confinanti: corner inline', 'La partizione laterale esposta non può essere rimossa', 'App. A, p.1', 'All guidelines for Linear Booths apply and the exposed side partition may not be removed.', 'Confermato'],
+      ['Limite verso stand confinanti: linee di vista', 'Disposizione che non ostruisca le linee di vista dei vicini', 'App. A, p.1', 'Regardless of the space size, display materials should be arranged so as not to obstruct the sight lines of neighboring exhibitors.', 'Confermato'],
+      ['Split island: retro della parete comune', 'Finito, senza loghi', 'App. A, p.2', 'The back of the common wall must be finished and cannot display any graphics of company logos.', 'Confermato'],
+      ['Arretramento dalla corsia', '1 ft', 'Reg. 6.3, p.16', 'All displays, technology, machinery, engagements and furniture are required to have a 1-ft setback from the aisle.', 'Confermato'],
+    ]
+  },
+  {
+    title: 'C. Appendimenti e sospensioni',
+    rows: [
+      ['Possibilità di appendere', 'Insegne aziendali per island e split island di 400 sf o più in South e West Hall; escluse le inline', 'Reg. 6.18, p.20', 'Show Management permits ceiling-hung corporate identification for exhibiting companies occupying island or split island space of 400sf or more in the South and West Halls, except for inline booths and in a limited, low-ceiling areas in the West Hall, provided the guidelines listed below are followed.', 'Da verificare (copre le insegne, non carichi generici)'],
+      ['Inline: appendimenti', 'Non ammessi, salvo Show Management', 'App. A, p.1', 'These booth configurations do not allow for hanging, overhead signs, except for Show Management use.', 'Confermato'],
+      ['Autorizzazione', 'Approvazione preventiva entro il 5 marzo 2027', 'Reg. 6.18, p.20', 'Prior approval is required by March 5, 2027, for all hanging signs or elements.', 'Confermato'],
+      ['Altezza max di appendimento', '26 ft (Regolamento) contro 20 ft (Appendice A), vedi Sezione A', 'Reg. 6.18; App. A, p.3', 'Vedi Sezione A', 'Da verificare'],
+      ['Distanze', 'Arretramento di 10 ft dai booth adiacenti; 2 ft di apertura verticale tra struttura a terra ed elementi sospesi', 'Reg. 6.18, p.20; App. A, p.3', 'Hanging signs, trusses, and graphics must be set back 10ft from adjacent booths and be hung directly over an exhibitor\'s contracted space only. / This 2ft. vertical opening applies to the entire booth footprint.', 'Confermato'],
+      ['Portata max per punto (kg)', 'Non specificato', 'n.a.', 'n.a.', 'Non specificato'],
+      ['Limite di carico complessivo', 'Non specificato', 'n.a.', 'n.a.', 'Non specificato'],
+    ]
+  },
+  {
+    title: 'D. Alimentazione elettrica dall\'alto',
+    rows: [
+      ['Disponibilità, modalità, limiti di potenza', 'Non specificato', 'n.a.', 'n.a.', 'Non specificato'],
+    ],
+    note: 'Il Regolamento tratta solo l\'alimentazione in generale (art. 6.12, p.18): "The OCCC is the exclusive provider of electric service at NPE." Non dice nulla sull\'alimentazione aerea.'
+  },
+  {
+    title: 'E. Cielinature, coperture e controsoffitti',
+    rows: [
+      ['Superficie max copribile in modo pieno', 'Non specificato', 'n.a.', 'n.a.', 'Non specificato'],
+      ['Porzioni a rete o tessuto traspirante', 'Non specificato', 'n.a.', 'n.a.', 'Non specificato'],
+      ['Soglia m² per sprinkler/antincendio', 'Non specificato (la soglia di 300 sf coperti riguarda solo l\'approvazione del progetto)', 'n.a.', 'n.a.', 'Non specificato'],
+      ["Rilevatore di fumo ed estintore (strutture coperte)", "Rilevatore a batteria in ogni struttura coperta, qualunque sia la superficie; almeno un estintore portatile a polvere 2-A, 10-BC", "App. A, p.3", "Exhibitor must install a single station and battery-operated smoke detector on the interior of each covered exhibit or structure regardless of the square footage. / Exhibitor must provide at least one 2-A, 10-BC portable, dry chemical fire extinguisher.", "Confermato"],
+      ['Materiali ammessi', "Incombustibili o a combustibilità limitata (ignifughi)", "App. A, p.3", "All materials used in the construction of covered exhibits and all decorative materials within the exhibit must be noncombustible or limited combustible (flame-retardant) materials.", 'Confermato'],
+      ['Classe di reazione al fuoco', "Nessuna classe indicata; certificazione del trattamento ignifugo da presentare su richiesta e da tenere disponibile in fiera se richiesta", "App. A, p.3", "If requested in advance, certification of flame-retardant treatment, along with samples of said materials, must be submitted to the Orange County Fire Rescue Services Department. / It is required that certifications of flame-retardant treatments be available at show site, if requested by Show Management.", 'Da verificare (condizionato)'],
+      ['Coperture di 300 sf coperti o più', 'Progetto da approvare in anticipo da Show Management, OCCC e Fire Rescue; disegni firmati da architetto o ingegnere registrato', 'App. A, p.3', 'Guidelines for Covered Exhibits with Equal to or Larger than 300 Covered Square Feet must adhere to these additional rules: / Scaling, signature and date by a registered architect or engineer.', 'Confermato'],
+      ["Canopy (booth lineari e perimetrali): base dal pavimento", "Min 7 ft dal pavimento", "App. A, p.3", "Canopies for Linear or Perimeter Booths should comply with Line-of-Sight and the following requirements. / Bottom of the canopy should not be lower than 7ft. from the floor.", "Confermato"],
+      ['Canopy (booth lineari e perimetrali): distanza dalle corsie e supporti', 'Lati a oltre 5 ft da ogni corsia; supporti larghi al massimo 3 in', 'App. A, p.3', 'The sides of canopy should not be within 5ft. of any aisle. / Canopy supports should be no wider than 3in.', 'Confermato'],
+      ['Livello superiore dei soppalchi', 'Nessuna copertura ammessa', 'App. A, p.4', 'The upper level may not have a "cover" of any kind (e.g., roof, ceiling, tenting, lattice, fabric, and plastic).', 'Confermato'],
+    ]
+  },
+  {
+    title: 'F. Prescrizioni specifiche e di sicurezza',
+    rows: [
+      ['Oblò o finestratura sulle porte', 'Non specificato', 'n.a.', 'n.a.', 'Non specificato'],
+      ['Angoli arrotondati sulle pedane', 'Non specificato', 'n.a.', 'n.a.', 'Non specificato'],
+      ['Pedane: altezza max e rampa', 'Non specificato', 'n.a.', 'n.a.', 'Non specificato'],
+      ['Forma dello spazio', 'Solo spazi quadrati o rettangolari', 'Reg. 5.6, p.13', 'No space will be assigned to an L-shaped booth configuration.', 'Confermato'],
+      ['Arretramento di 1 ft', 'Per esposizioni, attrezzature, macchinari, insegne e gran parte degli arredi; esenti i monitor TV (Reg.) e il banco reception che non espone tali elementi (App. A)', 'Reg. 6.6, p.16; App. A, p.5', 'All demonstration equipment that includes machinery, machine monitors/screens (HMI\'s), keypads, rotating extensions, demonstration, and operators\' position must be located inside the rented booth space with a 1ft (.304m) set back from the aisle for safety purposes. / TV monitors are exempt from the 1ft (.304m) setback rule. / There must be a 1ft. (0.3m) setback for your booth items. This includes displays, equipment, machinery, signs, most furniture, etc. A reception counter that doesn\'t include or display these items is allowed to be at the booth edge.', 'Confermato'],
+      ['Pavimentazione', 'Moquette o altro materiale, non il cemento esistente', 'Reg. 6.16, p.19', 'All booths must have flooring in the form of carpet or other material that is not the pre-existing convention concrete floor.', 'Confermato'],
+      ['Finitura delle superfici', 'Pareti e divisori finiti, non "unsightly", da ogni direzione', 'Reg. 6.16, p.19', 'Exhibitors building back wall or side dividers for their displays agree that the surfaces of such are finished in a manner that are not unsightly, from any direction on the show floor.', 'Confermato'],
+      ['Insegne al neon', 'Vietate', 'Reg. 6.17, p.20', 'Signs involving the use of neon or similar gases are prohibited.', 'Confermato'],
+      ['Portata del pavimento', '400 PSF; 300 PSF in un\'area designata della West Hall A', 'Reg. 6.7, p.17', 'The floor load capacity is 400 pounds per square foot (PSF) in the South and North exhibit halls and 400PSF in the West halls except in a designated area within West Hall A where the floor load is 300PSF.', 'Confermato'],
+      ['Ancoraggi al suolo', 'Ammessi solo con approvazione preventiva OCCC; max 4 fori/punti; nessun ancoraggio in West Hall A; foratura eseguita da personale OCCC', 'Reg. 6.21, p.21', 'Anchoring is permitted but MUST be approved by the OCCC in advance and must comply with OCCC facility specifications and guidelines. OCCC staff must do all in booth anchoring/drilling. / A maximum of 4 holes/points – Available in West Exhibit Halls B-E & entire South Hall. NO anchoring is permitted in West Hall A.', 'Confermato'],
+      ['Impianti elettrici', 'Conformi a NFPA 70 e al codice elettrico di Orlando; cavi a pavimento protetti', 'Reg. 6.12, p.18', 'All wiring for displays or display fixtures must conform to the National Fire Protection Association NFPA 70 and Electrical Standard for Industrial Machinery or superseding standards and the Orlando Electrical Code. / Wiring laid across floors shall be guarded by wood, metal, or other acceptable covers.', 'Confermato'],
+      ["Scale dei piani occupati", "Larghezza min 3 ft, corrimano su almeno un lato, rettilinee o \"squadrate\"; scale a chiocciola vietate", "App. A, p.4", "All stairs must be a minimum of three feet in width, equipped with a handrail on at least one side and constitute a \"straight run\" or be \"squared off.\" Spiral stairs or winders are not permitted.", "Confermato"],
+      ["Scale, numero e soglia", "Piano occupato sotto i 300 sf: una scala; sopra i 300 sf: due scale distanti tra loro", "App. A, p.4", "If the second level is to be occupied and less than 300sf. one set of stairs is permitted. / If the second level is to be occupied and, greater than 300sf. two stairways are required, remote from each other and all of the above rules apply.", "Confermato"],
+      ['Avviso di capienza', 'Cartello alla base della scala con occupazione o carico max', 'App. A, p.4', 'Exhibits with an enclosed room or occupied second story must post notice at the bottom of the stairway, indicating maximum permitted occupancy (or total permitted weight load of the second level).', 'Confermato'],
+      ["Corridoio antincendio tra soppalchi", "Se i piani superiori superano insieme 1.000 sf: corridoio libero di almeno 10 ft su tutti e quattro i lati di ogni area di 1.000 sf, senza esposizioni, arredi o altri materiali", "App. A, p.4", "If the combined total of upper decks is greater than 1,000 sf. , a clear fire break (unobstructed aisle), of not less than 10ft. must be provided on all four sides of each 1,000sf. area. / To avoid transfer of fire to another area, the firebreak (unobstructed aisle) shall not contain displays, furniture, or other materials.", "Confermato"],
+      ["Rilevatore ed estintore sui piani superiori", "Rilevatore a batteria ed estintore portatile su ogni piano superiore", "App. A, p.4", "Exhibitor must install a battery-operated smoke detector and portable fire extinguisher on each upper-level deck.", "Confermato"],
+      ["Contenimento nello spazio assegnato", "Decor, arredi ed esposizioni entro il booth", "App. A, p.5", "To assist in reducing aisle crowding, all booth decor, furniture and displays must be enclosed in the booth space.", "Confermato"],
+      ['Apparecchiature antincendio', 'Non nascoste né ostruite', 'Reg. 6.15, p.19', 'Firefighting and emergency equipment may not be hidden or obstructed, including fire extinguishers, strobes, fire hose cabinets and standpipes.', 'Confermato'],
+      ['Protezione dei macchinari', 'Recinzioni o schermi adeguati contro il contatto', 'Reg. 6.3, p.16', 'Adequate fencing and/or shielding of all operating machinery displays shall be installed to prevent attendees from coming into contact with the operating machinery and/or its movement by reaching over, under or around such protection.', 'Confermato'],
+      ['Rumore', '85 dB(A) misurati in corsia o presso il vicino', 'Reg. 9.1, p.26', 'Exhibitors operating sound reproducing, or sound amplifying equipment are required to operate in such a manner that a maximum 85 decibel reading on the "A" scale of a sound level meter may be read at the aisle(s) space adjacent to their booth or measured at a neighboring booth in an area bordering that of the sound equipment user.', 'Confermato'],
+      ['Elementi aerei', 'Palloni, dispositivi ad aria e droni da approvare, entro il proprio spazio', 'Reg. 6.22, p.21', 'Any exhibitor intending to utilize balloons, air devices and/or drones are required to obtain approval from Show Management and the OCCC in advance.', 'Confermato'],
+      ['Accessibilità', 'Allestimento accessibile a persone con disabilità (ADA)', 'Reg. 11.3, p.31', 'The ADA requires that the exhibitor\'s display must be accessible to people with disabilities, and exhibitors acknowledge that it is solely responsible for assuring its display complies with the ADA.', 'Confermato'],
+      ['Arredi di sale riunioni espositive', 'Decorazione e segnaletica entro 3 ft dalla sala e dalle porte', 'App. A, p.4', 'Decoration and signage may be placed outside the room within 3ft. of the room, within 3ft. of each room entrance door, providing it doesn\'t obstruct a neighboring exhibitor door or fire access.', 'Confermato'],
+    ]
+  },
+  {
+    title: 'G. Adempimenti e scadenze',
+    rows: [
+      ['Presentazione progetto, booth di 400 sf o più', 'Obbligatoria entro il 5 marzo 2027, con tutti gli elementi sospesi', 'Reg. 6.1, p.15', 'Please note that all exhibitors in booths 400sf and over must submit their complete Booth Approval form, including booth drawings, in advance for approval by March 5, 2027. Drawings must include all hanging elements (ex: signage, truss lighting, etc.).', 'Confermato'],
+      ['Soglia: elementi sospesi', 'Approvazione preventiva entro il 5 marzo 2027, con elevazioni', 'Reg. 6.18, p.20', 'Prior approval is required by March 5, 2027, for all hanging signs or elements.', 'Confermato'],
+      ["Soglia: soppalchi e coperture", "Soppalchi e coperture: approvazione anche da OCCC (Reg.). Soppalchi e coperture da 300 sf coperti: revisione preventiva di Show Management, OCCC Event Management e Fire Rescue (App. A)", "Reg. 6.1, p.15; App. A, pp.3-4", "Multi-level and covered booths must also be approved by the OCCC. / Booth designs must be reviewed and approved, in advance, by NPE Show Management, OCCC Event Management, and the Orange County Fire Rescue Services Department.", "Confermato"],
+      ['Penale per ritardo', 'Penalità di montaggio e multe fino a 100 $ al giorno a discrezione di Show Management', 'Reg. 6.1, p.15', 'Failure to meet this deadline may result in a move-in penalty and fines up to $100 per day to cover the cost of expedited review at Show Management discretion.', 'Confermato'],
+      ['Altre scadenze collegate', 'Prova assicurativa (COI) entro il 29 gennaio 2027; registrazione degli appaltatori esterni (EAC) entro il 5 marzo 2027; richieste di modifica della data target entro il 1 marzo 2027', 'Reg. 10.2, p.30; 11.6, p.31; 8.2, p.24', 'Exhibitor agrees to carry and submit proof of insurance via submission form in the ERC - Exhibitor Resource Center no later than January 29, 2027. / must be registered as an Exhibitor Appointed Contractor (EAC) by March 5, 2027 / Any request for target date changes should be received by March 1, 2027.', 'Confermato'],
+    ]
+  },
+  {
+    title: 'H. Tempi, orari e accessi',
+    rows: [
+      ['Allestimento: giornate e fasce orarie', 'Assegnate per singolo booth, nel Target Floor Plan non fornito', 'Reg. 8.1, p.24', 'Please refer to the Target Floor Plan in the ERC - Exhibitor Resource Center for your assigned move-in and move-out dates and times.', 'Da verificare'],
+      ['Allestimento: zone LIFO', 'Non prima di venerdì 30 aprile 2027, ore 8:00 ET', 'Reg. 6.9, p.17', 'Exhibitors in LIFO zones may not begin move-in before Friday, April 30, 2027, at 8:00 a.m. ET.', 'Confermato (solo zone LIFO)'],
+      ['Allestimento: termine di completamento', 'Spazi non occupati alle 16:00 ET di domenica 2 maggio 2027 possono essere riutilizzati; la fonte non lo presenta come termine di completamento dello stand', 'Reg. 5.12, p.15', 'Show Management reserves the right to use any exhibit space that remains unoccupied at 4:00 p.m. ET on Sunday, May 2, 2027.', 'Da verificare'],
+      ['Allestimento: proroghe e lavoro notturno', 'Non specificato', 'n.a.', 'n.a.', 'Non specificato'],
+      ['Allestimento: dark day', 'Lavoro in booth consentito; fase e date non chiarite nel testo', 'Reg. 8.1, p.24', '*Dark Day: Exhibitors are allowed to work within their booth spaces. Freeman and other services will only be available if ordered in advance.', 'Da verificare'],
+      ['Disallestimento: inizio', 'Non prima della chiusura ufficiale, venerdì 7 maggio 2027, ore 15:00', 'Reg. 9.7, p.28', 'Exhibitors are not permitted to dismantle or remove their exhibits prior to the official show closing at 3:00 p.m. on Friday, May 7, 2027.', 'Confermato'],
+      ['Disallestimento: termine sgombero, zone LIFO', 'Inizio immediato, completamento entro la mezzanotte dello stesso giorno', 'Reg. 6.9, p.17', 'Exhibitors in LIFO zones must begin dismantling immediately after the show closes on Friday, May 7, 2027, at 3:00 p.m. ET, and complete move-out by midnight that day.', 'Confermato (solo zone LIFO)'],
+      ['Disallestimento: termine sgombero, altri booth', 'Rinvio al periodo di move-out stabilito da Show Management', 'Reg. 8.5, p.25', '...before the conclusion of the move-out period as specified by Show Management.', 'Da verificare'],
+      ['Disallestimento: penali per ritardo', 'Costi di stoccaggio, movimentazione e smaltimento; importi non indicati', 'Reg. 8.5, p.25', 'Exhibitor is liable for all storage, handling and refuse charges resulting from failure to properly remove all exhibit material from booth space and OCCC before the conclusion of the move-out period as specified by Show Management.', 'Da verificare'],
+      ['Accesso espositori: ingresso e uscita', 'Fino a due ore prima dell\'apertura e due ore dopo la chiusura', 'Reg. 11.2, p.30', 'On show days, booth personnel will be permitted to enter the exhibit hall up to two hours before the scheduled opening time and will be permitted to remain in the exhibit hall two hours after show closing.', 'Confermato'],
+      ['Orari della manifestazione', 'Lun-gio 9:00-17:00; ven 9:00-15:00', 'Reg. 11.1, p.30', 'Monday, May 3 9:00 a.m. – 5:00 p.m. (analoghe righe per martedì, mercoledì e giovedì); Friday, May 7 9:00 a.m. – 3:00 p.m.', 'Confermato'],
+      ['Accrediti', 'Registrazione obbligatoria; badge espositore gratuiti, 1 ogni 100 sf, minimo 7', 'Reg. 11.2, p.30; 5.1, p.9', 'All people on the exhibit floor must, at all times, have proper registration credentials as outlined by Show Management. / Complimentary booth personnel badges (1 for each 100sf of space, minimum of 7).', 'Confermato'],
+      ['Minori durante montaggio e smontaggio', 'Vietato l\'ingresso sotto i 16 anni', 'Reg. 11.4, p.31', 'No person under the age of 16 will be admitted in the exhibit halls during the installation and dismantling periods.', 'Confermato'],
+      ['Mezzi: finestre di scarico e prenotazione', 'Date e orari assegnati da Freeman per booth; arrivo al Marshaling Yard nella finestra assegnata', 'Reg. 8.2, p.24', 'All shipments must arrive on the assigned target date and time for check-in at the Freeman Marshaling Yard.', 'Da verificare (orari nel Target Floor Plan)'],
+      ['Mezzi: carico fuori finestra', 'Costi aggiuntivi', 'Reg. 8.2, p.24', 'Off-target freight will incur additional charges over and above the NPE Bundle Package pricing.', 'Confermato'],
+      ["Mezzi: corsie No Freight", "Alcune corsie sono designate \"No Freight\"; in montaggio e smontaggio non vi si possono collocare merci né materiali espositivi", "Reg. 6.8, p.17", "certain aisles (highlighted in red) have been designated as No Freight aisles. Exhibitors are not permitted to place any freight or display materials in the aisles during move-in or move-out.", "Confermato"],
+      ["Mezzi: varchi merci dedicati", "Il regolamento cita \"designated freight areas\" per i colli a mano, senza localizzarli", "Reg. 8.6, p.25", "Exhibitors are allowed to bring in small, hand carried items either through the front concourse or designated freight areas.", "Da verificare (ubicazione nel Target Floor Plan)"],
+      ["Mezzi: veicoli e check-in al marshalling yard", "Colli a mano alle porte merci con veicolo privato (auto, SUV, minivan); box truck e semirimorchi richiedono il check-in al marshalling yard, più altri mezzi indicati dal general contractor", "Reg. 8.6, pp.25-26", "If using the designated freight doors, exhibitors can utilize a personal vehicle for drop off. / The following vehicles are not considered hand carry vehicles and therefore require marshalling yard check-in procedures.", "Confermato"],
+    ]
+  },
+];
+
+const verifyRows = [
+  ['Altezza degli elementi sospesi', 'Conflitto tra fonti: il Regolamento 6.18 indica base minima 18 ft e sommità max 26 ft, con travi oltre i 26 ft; l\'Appendice A (p.3) indica 20 ft per gli elementi appesi e travi sopra i 20 ft.', 'Chiedere per iscritto a Show Management (exhibit@npe.org) quale delle due fonti prevale per island e split island. Non fissare le quote degli elementi sospesi prima della risposta.'],
+  ['Parete di fondo del perimeter inline a 12 ft', 'Valore condizionato da "where facility allows".', 'Verificare con Show Management se la posizione assegnata consente i 12 ft.'],
+  ['Segnaletica dello split island a 26 ft', 'Valore condizionato dall\'altezza del soffitto della sede.', 'Confrontare con le altezze dei soffitti per padiglione (Sezione A) una volta nota la posizione.'],
+  ['Appendimenti diversi dalle insegne', 'L\'articolo 6.18 copre le insegne aziendali; il Regolamento cita anche "truss lighting" nei disegni (6.1) ma non fissa regole su carichi appesi generici.', 'Chiedere a Show Management se sono ammessi carichi sospesi diversi dalle insegne e con quali limiti di portata.'],
+  ['Classe di reazione al fuoco dei materiali', 'Nessuna classe indicata; la certificazione del trattamento ignifugo è richiesta solo su richiesta.', 'Chiedere a Show Management o a Orange County Fire Rescue quale certificazione sia accettata per materiali certificati secondo norme europee.'],
+  ['Allestimento: giornate, fasce orarie, termine di completamento, dark day', 'Orari assegnati per singolo booth nel Target Floor Plan, non fornito.', 'Richiedere il Target Floor Plan e le procedure di Move In/Move Out nell\'Exhibitor Resource Center, disponibili dopo l\'assegnazione degli spazi.'],
+  ['Disallestimento: termine di sgombero e penali per i booth fuori dalle zone LIFO', 'Il testo rinvia al periodo di move-out stabilito da Show Management, senza date né importi.', 'Verificare nel Target Floor Plan e nelle procedure Freeman.'],
+  ['Accesso mezzi: finestre di scarico', 'Date e orari assegnati da Freeman nel Target Floor Plan.', 'Verificare nel Target Floor Plan e nel Marshaling Yard check-in.'],
+];
+
+const missingList = 'percentuale max di chiusura del perimetro; portata per punto di appendimento e carico complessivo; alimentazione elettrica dall\'alto; superficie copribile in modo pieno e porzioni a rete o tessuto; soglia di superficie per sprinkler; oblò sulle porte; angoli arrotondati, altezza e rampa delle pedane; altezza massima e percentuale dei soppalchi; proroghe e lavoro notturno in allestimento';
+
+
+module.exports={sections,verifyRows,missingList};
